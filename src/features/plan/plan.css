@@ -1,0 +1,292 @@
+@reference "@/styles/index.css";
+
+/* The paper: a white page in both themes, set like a printed one-pager. It uses the brand primitives, not the
+   semantic roles, so dark mode does not turn it dark. On paper it prints alone, on A4, 14 mm margins, 11 pt. */
+
+.paper {
+  /* a sheet of paper has nearly square corners: a one-off radius, not a UI shape */
+  @apply min-w-0 rounded-[6px] bg-white shadow-lift;
+  color: var(--brand-slate-900);
+  padding: 22px 18px;
+  color-scheme: light;
+}
+@media (min-width: 640px) {
+  .paper {
+    padding: 38px 42px;
+  }
+}
+@media (min-width: 900px) {
+  .paper {
+    aspect-ratio: 210 / 297;
+  }
+}
+
+.sheetpage {
+  @apply flex flex-col gap-3 font-sans;
+  font-size: 13.5px;
+  line-height: 1.45;
+  font-variant-numeric: lining-nums;
+}
+.sheetpage p {
+  margin: 0;
+}
+
+/* header: name or goal, contact line, date; a heavy rule under it */
+.sp-head {
+  @apply flex items-start justify-between gap-4;
+  border-bottom: 3px solid var(--brand-slate-900);
+  padding-bottom: 12px;
+}
+@media (max-width: 479px) {
+  .sp-head {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .sp-date {
+    order: 2;
+    padding-top: 0;
+  }
+}
+.sp-eyebrow {
+  @apply font-extrabold uppercase;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--brand-slate-500);
+}
+.sp-title {
+  @apply font-display font-semibold;
+  font-size: 26px;
+  line-height: 1.12;
+  color: var(--brand-slate-900);
+  margin-top: 2px;
+}
+.sp-contact {
+  font-size: 12.5px;
+  color: var(--brand-slate-600);
+  margin-top: 4px;
+}
+.sp-date {
+  @apply whitespace-nowrap;
+  font-size: 12px;
+  color: var(--brand-slate-500);
+  padding-top: 2px;
+}
+
+/* sections: uppercase headings with an apricot underline */
+.sp-sec {
+  @apply flex flex-col gap-1;
+  break-inside: avoid;
+}
+.sp-sec h2 {
+  @apply font-display font-semibold uppercase;
+  font-size: 13px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  color: var(--brand-slate-500);
+  border-bottom: 2px solid var(--brand-apricot-500);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+.sp-sec ul {
+  margin: 0;
+  padding-left: 18px;
+  list-style: disc;
+}
+.sp-sec li + li {
+  margin-top: 1px;
+}
+.sp-sec li::marker {
+  color: var(--brand-slate-400);
+}
+.sp-lead {
+  @apply font-extrabold;
+}
+.sp-goal {
+  @apply font-display font-semibold;
+  font-size: 17px;
+  line-height: 1.25;
+}
+.sp-note {
+  font-size: 12px;
+  color: var(--brand-slate-500);
+}
+.sp-via {
+  color: var(--brand-blue-700);
+}
+.sp-pending {
+  @apply italic;
+  color: var(--brand-slate-400);
+}
+.sp-tab {
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.sp-tab th,
+.sp-tab td {
+  padding: 2px 14px 2px 0;
+  vertical-align: top;
+  text-align: left;
+}
+.sp-tab th {
+  @apply font-normal whitespace-nowrap;
+  color: var(--brand-slate-500);
+}
+.sp-tab td {
+  overflow-wrap: anywhere;
+}
+.sp-url {
+  display: block;
+  font-size: 11.5px;
+  color: var(--brand-slate-500);
+  word-break: break-all;
+}
+.sp-text {
+  white-space: pre-line;
+}
+
+/* on a page-wide sheet (and on paper): the course facts and the list of gaps in two columns */
+@media (min-width: 640px), print {
+  /* (the measuring copy below always takes this layout too) */
+  .sp-tab tbody {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: 0;
+  }
+  .sp-tab tr {
+    display: contents;
+  }
+  .sp-cols {
+    columns: 2;
+    column-gap: 28px;
+  }
+  .sp-cols li {
+    break-inside: avoid;
+  }
+}
+
+/* The print look is denser than the screen, so a full plan fits one A4 page. The same rules apply to a hidden
+   copy at the printed width (182 mm), which measures the page: if it is still too long, the printed page is
+   scaled down to fit (--fit, set by Paper). */
+.sp-measure {
+  position: absolute;
+  top: 0;
+  left: -10000px;
+  width: 182mm;
+  visibility: hidden;
+  pointer-events: none;
+}
+.sp-measure .sp-head {
+  flex-direction: row;
+}
+.sp-measure .sp-tab tbody {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr);
+}
+.sp-measure .sp-tab tr {
+  display: contents;
+}
+.sp-measure .sp-cols {
+  columns: 2;
+  column-gap: 28px;
+}
+.sheetpage.sp-measure {
+  font-size: 10pt;
+  line-height: 1.36;
+  gap: 9px;
+}
+.sheetpage.sp-measure .sp-head {
+  padding-bottom: 8px;
+}
+.sheetpage.sp-measure .sp-title {
+  font-size: 22px;
+}
+.sheetpage.sp-measure .sp-sec {
+  gap: 2px;
+}
+.sheetpage.sp-measure .sp-sec h2 {
+  font-size: 11.5px;
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+}
+.sheetpage.sp-measure .sp-goal {
+  font-size: 14.5px;
+}
+.sheetpage.sp-measure .sp-note,
+.sheetpage.sp-measure .sp-date,
+.sheetpage.sp-measure .sp-contact,
+.sheetpage.sp-measure .sp-tab {
+  font-size: 8.5pt;
+}
+.sheetpage.sp-measure .sp-url {
+  font-size: 8pt;
+}
+.sheetpage.sp-measure .sp-tab th,
+.sheetpage.sp-measure .sp-tab td {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  html,
+  body,
+  #root,
+  #main {
+    background: white !important;
+  }
+  .paper {
+    display: block !important;
+    aspect-ratio: auto;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+  .sp-measure {
+    display: none;
+  }
+  .sheetpage {
+    zoom: var(--fit, 1);
+  }
+  .sheetpage {
+    font-size: 10pt;
+    line-height: 1.36;
+    gap: 9px;
+  }
+  .sp-head {
+    padding-bottom: 8px;
+  }
+  .sp-title {
+    font-size: 22px;
+  }
+  .sp-sec {
+    gap: 2px;
+  }
+  .sp-sec h2 {
+    font-size: 11.5px;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+  }
+  .sp-goal {
+    font-size: 14.5px;
+  }
+  .sp-note,
+  .sp-date,
+  .sp-contact,
+  .sp-tab {
+    font-size: 8.5pt;
+  }
+  .sp-url {
+    font-size: 8pt;
+  }
+  .sp-tab th,
+  .sp-tab td {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .sp-url {
+    print-color-adjust: exact;
+  }
+}

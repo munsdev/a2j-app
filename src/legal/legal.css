@@ -1,0 +1,36 @@
+@reference "@/styles/index.css";
+
+/* The legal text in the app's typography: the display face for headings, calm grey body text,
+   a measure of about 65 characters. */
+.legal {
+  @apply text-ink-2;
+  line-height: 1.65;
+}
+.legal h1 {
+  @apply mb-2 text-display text-ink;
+}
+.legal h2 {
+  @apply mt-9 mb-2 text-title text-ink;
+}
+.legal h1 + h2,
+.legal h1 + p + h2 {
+  @apply mt-7;
+}
+.legal p,
+.legal ul,
+.legal address {
+  @apply mt-3 max-w-[65ch];
+}
+.legal address {
+  @apply text-ink not-italic;
+}
+.legal ul {
+  @apply flex list-disc flex-col gap-2 pl-5 marker:text-accent-ink;
+}
+.legal a {
+  @apply font-bold text-ink underline decoration-line-2 underline-offset-3 transition-colors hover:decoration-ink;
+}
+.legal code {
+  /* inline code: a small radius and a size relative to the text around it (one-offs, no token fits) */
+  @apply rounded-md bg-surface-2 px-1.5 py-0.5 font-mono text-[0.88em] text-ink shadow-ring-soft;
+}

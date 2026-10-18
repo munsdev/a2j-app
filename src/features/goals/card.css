@@ -1,0 +1,92 @@
+@reference "@/styles/index.css";
+
+/* =================== THE JOB CARD: A REAL 3D FLIP ===================
+   The face you see is in the flow and sets the card's height; the other face lies on top of it (inset 0),
+   turned away. Turning the card swaps the two, so a card never keeps the empty height of its other side.
+   JobCard tweens the height change so what sits below the card slides instead of jumping. */
+
+.card3d {
+  position: relative;
+  width: 100%;
+  perspective: 1600px;
+  /* swipes move the whole card with the individual transform properties, so the faces keep their rotation */
+  transition:
+    translate 0.2s var(--ease-out-soft),
+    rotate 0.2s var(--ease-out-soft),
+    opacity 0.2s;
+}
+.card3d > .face {
+  @apply rounded-panel bg-surface shadow-lift;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.6s var(--ease-flip);
+  will-change: transform;
+}
+.card3d > .front {
+  position: relative;
+}
+.card3d > .back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  pointer-events: none;
+}
+.card3d[data-flipped] > .front {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(-180deg);
+  pointer-events: none;
+}
+.card3d[data-flipped] > .back {
+  position: relative;
+  inset: auto;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* cards side by side: every card as tall as the tallest in the row */
+.card3d[data-fill] {
+  flex: 1;
+}
+.card3d[data-fill] > .front {
+  height: 100%;
+}
+.card3d[data-fill][data-flipped] > .back {
+  min-height: 100%;
+}
+
+/* a new card is dealt */
+.card3d[data-deal] {
+  animation: var(--animate-deal-in);
+}
+
+/* swiping: follow the finger exactly, then fly out */
+.card3d[data-swiping] {
+  transition: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.card3d[data-gone] {
+  opacity: 0;
+  transition:
+    translate 0.24s cubic-bezier(0.4, 0, 1, 1),
+    rotate 0.24s cubic-bezier(0.4, 0, 1, 1),
+    opacity 0.24s;
+}
+/* a vertical drag on a card still scrolls the page */
+[data-swipe] .card3d {
+  touch-action: pan-y;
+}
+
+/* the deck on phones: two cards peek out behind the one on top */
+.deck-stack > i {
+  @apply absolute rounded-panel bg-surface shadow-card;
+  /* the far card first, so the near one lies on top of it */
+  inset: -6px 28px 12px;
+  opacity: 0.45;
+}
+.deck-stack > i + i {
+  inset: 0 14px 12px;
+  opacity: 0.7;
+}

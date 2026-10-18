@@ -1,0 +1,162 @@
+/* ============================================================================
+   DESIGN TOKENS
+   Three tiers. Rebranding means changing tier 1 (and, rarely, tier 2). Components only ever use
+   tier 3: the Tailwind utilities generated from the semantic roles (bg-surface, text-ink-2, bg-have…).
+
+   1. Brand primitives: the raw palette, type families, radii and shadows.
+   2. Semantic roles: what a colour means in the product, per theme (light, dark).
+   3. Utilities: mapped in index.css with @theme inline.
+
+   The three skill states are the heart of the product and must stay distinguishable without colour:
+   have = solid fill + check, course = tinted fill + solid outline + book, learn = dashed outline.
+   ========================================================================== */
+
+/* ---------- 1. brand primitives ---------- */
+:root {
+  --brand-slate-50: #f5f7fa;
+  --brand-slate-100: #eef2f6;
+  --brand-slate-150: #e4e9f0;
+  --brand-slate-200: #dce3eb;
+  --brand-slate-300: #c3ccd7;
+  --brand-slate-400: #9aa5b3;
+  --brand-slate-500: #636e7e;
+  --brand-slate-600: #4a5566;
+  --brand-slate-900: #1e2633;
+
+  --brand-night-950: #0e1218;
+  --brand-night-900: #12161d;
+  --brand-night-850: #1b212b;
+  --brand-night-800: #222a35;
+  --brand-night-700: #2c3542;
+  --brand-night-600: #3c4756;
+  --brand-night-400: #6d7887;
+  --brand-night-300: #97a2b1;
+  --brand-night-200: #bcc5d1;
+
+  --brand-apricot-100: #ffe8d4;
+  --brand-apricot-400: #f4a462;
+  --brand-apricot-500: #f2994a;
+  --brand-apricot-800: #8a4a10;
+  --brand-apricot-900: #4a2e14;
+  --brand-apricot-ink-dark: #ffd3ae;
+
+  --brand-blue-100: #e3f0fa;
+  --brand-blue-300: #6aa9de;
+  --brand-blue-600: #2b74b3;
+  --brand-blue-700: #1d5f96;
+  --brand-blue-900: #17324a;
+  --brand-blue-ink-dark: #b9daf5;
+
+  --brand-green-100: #e1f3e8;
+  --brand-green-400: #5cc28a;
+  --brand-green-600: #237545;
+  --brand-green-900: #173a27;
+  --brand-green-950: #0d1f15;
+
+  --brand-red-100: #fbe6e3;
+  --brand-red-400: #f08a7e;
+  --brand-red-600: #b23c32;
+  --brand-red-900: #40201c;
+
+  --brand-blush-300: #f7a7a1;
+  --brand-blush-600: #c46d68;
+
+  /* Holland interest types (RIASEC): one hue each, used only for the interest code letters */
+  --brand-riasec-r: #c26a1f;
+  --brand-riasec-i: #2b74b3;
+  --brand-riasec-a: #a24d9a;
+  --brand-riasec-s: #2e8b57;
+  --brand-riasec-e: #c2453a;
+  --brand-riasec-c: #5b6b85;
+
+  --brand-font-display: "Fredoka Variable", ui-rounded, "Nunito Variable", system-ui, sans-serif;
+  --brand-font-text: "Nunito Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --brand-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --brand-radius-tile: 12px;
+  --brand-radius-control: 14px;
+  --brand-radius-option: 16px;
+  --brand-radius-card: 18px;
+  --brand-radius-panel: 26px;
+}
+
+/* ---------- 2. semantic roles: light ---------- */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --canvas: var(--brand-slate-100);
+  --surface: #ffffff;
+  --surface-2: var(--brand-slate-50);
+  --sunk: var(--brand-slate-150);
+  --ink: var(--brand-slate-900);
+  --ink-2: var(--brand-slate-600);
+  --ink-3: var(--brand-slate-500);
+  --line: var(--brand-slate-200);
+  --line-2: var(--brand-slate-300);
+  /* text on top of a solid accent (have, the mascot) in both themes */
+  --on-accent: var(--brand-slate-900);
+
+  --have: var(--brand-apricot-500);
+  --have-bg: var(--brand-apricot-100);
+  --have-ink: var(--brand-apricot-800);
+  --course: var(--brand-blue-600);
+  --course-bg: var(--brand-blue-100);
+  --course-ink: var(--brand-blue-700);
+  --learn: var(--brand-slate-400);
+
+  --yes: var(--brand-green-600);
+  --yes-bg: var(--brand-green-100);
+  --on-yes: #ffffff;
+  --no: var(--brand-red-600);
+  --no-bg: var(--brand-red-100);
+  --on-no: #ffffff;
+  --cheek: var(--brand-blush-300);
+  --focus: var(--brand-blue-600);
+  /* decoration that is not a skill state (call-to-action panels, the sample bar, highlights) */
+  --accent-soft: var(--brand-apricot-100);
+  --accent-ink: var(--brand-apricot-800);
+
+  --shadow-card: 0 1px 2px rgb(30 38 51 / 0.06), 0 6px 20px rgb(30 38 51 / 0.07);
+  --shadow-lift: 0 2px 6px rgb(30 38 51 / 0.08), 0 18px 40px rgb(30 38 51 / 0.12);
+  --scrim: rgb(14 18 24 / 0.5);
+}
+
+/* ---------- 2. semantic roles: dark ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: var(--brand-night-900);
+  --surface: var(--brand-night-850);
+  --surface-2: var(--brand-night-800);
+  --sunk: var(--brand-night-950);
+  --ink: var(--brand-slate-100);
+  --ink-2: var(--brand-night-200);
+  --ink-3: var(--brand-night-300);
+  --line: var(--brand-night-700);
+  /* a step lighter than the light theme's equivalent: dashed "learn" outlines and empty bar segments
+     must stay visible on dark surfaces */
+  --line-2: #4d5a6b;
+  --on-accent: var(--brand-slate-900);
+
+  --have: var(--brand-apricot-400);
+  --have-bg: var(--brand-apricot-900);
+  --have-ink: var(--brand-apricot-ink-dark);
+  --course: var(--brand-blue-300);
+  --course-bg: var(--brand-blue-900);
+  --course-ink: var(--brand-blue-ink-dark);
+  --learn: #7d8999;
+
+  --yes: var(--brand-green-400);
+  --yes-bg: var(--brand-green-900);
+  --on-yes: var(--brand-green-950);
+  --no: var(--brand-red-400);
+  --no-bg: var(--brand-red-900);
+  --on-no: var(--brand-red-900);
+  --cheek: var(--brand-blush-600);
+  --focus: var(--brand-blue-300);
+  --accent-soft: #33281f;
+  --accent-ink: var(--brand-apricot-ink-dark);
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 6px 20px rgb(0 0 0 / 0.25);
+  --shadow-lift: 0 2px 6px rgb(0 0 0 / 0.35), 0 18px 40px rgb(0 0 0 / 0.4);
+  --scrim: rgb(0 0 0 / 0.6);
+}

@@ -1,0 +1,20 @@
+name: Idea or change
+description: Suggest a feature, a better wording or a change to how something works
+labels: [idea]
+body:
+  - type: textarea
+    id: who
+    attributes:
+      label: Who is it for, and what problem does it solve?
+      description: For example "people with little German who …", "course trainers who …".
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: The app keeps everything in the browser and never calls an AI model; see CONTRIBUTING.md for the fixed principles.

@@ -1,0 +1,9 @@
+{
+  "name": "a2j-app",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-12",
+  // the built app (npm run build → dist/); the worker runs first so other hosts can be redirected to a2j.app
+  "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": true },
+  // a2j.app, www.a2j.app and cms.muns.dev are attached as custom domains in the Cloudflare dashboard
+  "observability": { "enabled": true }
+}

@@ -1,0 +1,41 @@
+@reference "@/styles/index.css";
+
+/* =================== THE MATCH RING ===================
+   The arcs draw in once when the card appears: the score first, then the lighter arc on to the score with
+   courses. Later changes (a skill rated, a course saved) slide to the new length. The interest bar grows in
+   with the ring. Reduced motion: everything is simply there (global rule in index.css). */
+
+.fit-ring .ring-arc,
+.fit-ring .ring-ext {
+  transition: stroke-dasharray 0.6s var(--ease-out-soft);
+}
+.fit-ring .ring-arc {
+  animation: ring-draw 0.9s var(--ease-out-soft) backwards;
+}
+/* hidden while the score draws, then grows out of its end */
+.fit-ring .ring-ext {
+  opacity: 0.45;
+  animation:
+    ring-draw 0.7s var(--ease-out-soft) 0.75s backwards,
+    ring-wait 0s 0.75s backwards;
+}
+@keyframes ring-draw {
+  from {
+    stroke-dasharray: 0 100;
+  }
+}
+@keyframes ring-wait {
+  from {
+    opacity: 0;
+  }
+}
+
+.fit-bar {
+  transition: width 0.6s var(--ease-out-soft);
+  animation: bar-grow 0.9s var(--ease-out-soft) backwards;
+}
+@keyframes bar-grow {
+  from {
+    width: 0;
+  }
+}

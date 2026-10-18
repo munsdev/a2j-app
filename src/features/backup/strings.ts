@@ -1,0 +1,91 @@
+import { defineStrings } from "@/i18n";
+
+/* Backup, the sample picker and Delete all data. Copied from the previous app (backup.js); same keys, except the
+   sample bar and sample toasts (sb_*, t_own_*, t_example: app/samples.ts) and fin_done (main.tsx), which live where
+   they are used. New in this app: the file picker (bk_choose, bk_nofile). */
+export const backupStrings = defineStrings(
+  {
+    bk_title: "Backup",
+    bk_lede:
+      "Your data lives only in this browser. A backup file keeps it safe and moves it to another device.",
+    bk_save_h: "Save a backup",
+    bk_dl: "Download backup file",
+    bk_copy: "Copy as text",
+    bk_restore_h: "Restore a backup",
+    bk_restore_p:
+      "Open a backup file or paste backup text. You see what is in it before anything changes, and you can undo it.",
+    bk_file: "Backup file",
+    bk_choose: "Choose a file",
+    bk_nofile: "No file chosen",
+    bk_paste: "Or paste backup text",
+    bk_check: "Check",
+    bk_old: "This backup is from an older version of the app and cannot be opened here.",
+    bk_bad: "This is not a backup from this app.",
+    bk_has: "In this backup: {x}",
+    bk_replace: "Replace my data with it",
+    bk_restored: "Backup restored",
+    bk_dl_done: "Backup downloaded",
+    bk_dl_fail: "The download was blocked. Use Copy as text instead.",
+    bk_none: "No backup saved yet.",
+    bk_when: "Last backup: {d}. Changes since: {n}.",
+    bk_uptodate: "Last backup: {d}. Up to date.",
+    bk_empty: "Nothing to back up yet.",
+    bk_sample: "A sample is open. Backups made now contain the sample.",
+    bk_n_parts: "{n} of 6 profile parts",
+    bk_n_jobs: "{n} jobs",
+    bk_n_skills: "{n} rated skills",
+    bk_n_courses: "{n} courses",
+    bk_n_ads: "{n} job ads",
+    pk_h: "Pick a sample profile",
+    pk_p: "Each one fills every part of the app, so you can see how it works. Your own profile is kept aside until you come back.",
+    fin_h: "Delete all data",
+    fin_p:
+      "This deletes everything this app has stored in this browser: your profile, answers, skills, goals, courses, job ads, plan and settings. The app starts again as on the first visit.",
+    fin_warn:
+      "This cannot be undone. To keep your data, download a backup first. On a shared computer, do this when you finish.",
+    fin_ok: "I understand that everything will be deleted",
+    fin_go: "Delete everything",
+  },
+  {
+    bk_title: "Sicherung",
+    bk_lede:
+      "Ihre Daten liegen nur in diesem Browser. Eine Sicherungsdatei bewahrt sie auf und bringt sie auf ein anderes Gerät.",
+    bk_save_h: "Sicherung speichern",
+    bk_dl: "Sicherungsdatei herunterladen",
+    bk_copy: "Als Text kopieren",
+    bk_restore_h: "Sicherung wiederherstellen",
+    bk_restore_p:
+      "Öffnen Sie eine Sicherungsdatei oder fügen Sie Sicherungstext ein. Sie sehen, was darin ist, bevor sich etwas ändert, und können es rückgängig machen.",
+    bk_file: "Sicherungsdatei",
+    bk_choose: "Datei auswählen",
+    bk_nofile: "Keine Datei ausgewählt",
+    bk_paste: "Oder Sicherungstext einfügen",
+    bk_check: "Prüfen",
+    bk_old: "Diese Sicherung stammt aus einer älteren Version der App und lässt sich hier nicht öffnen.",
+    bk_bad: "Das ist keine Sicherung aus dieser App.",
+    bk_has: "In dieser Sicherung: {x}",
+    bk_replace: "Meine Daten damit ersetzen",
+    bk_restored: "Sicherung wiederhergestellt",
+    bk_dl_done: "Sicherung heruntergeladen",
+    bk_dl_fail: "Der Download wurde blockiert. Nutzen Sie stattdessen „Als Text kopieren“.",
+    bk_none: "Noch keine Sicherung gespeichert.",
+    bk_when: "Letzte Sicherung: {d}. Änderungen seitdem: {n}.",
+    bk_uptodate: "Letzte Sicherung: {d}. Auf dem neuesten Stand.",
+    bk_empty: "Noch nichts zu sichern.",
+    bk_sample: "Ein Beispiel ist geöffnet. Eine Sicherung enthält jetzt das Beispiel.",
+    bk_n_parts: "{n} von 6 Profilteilen",
+    bk_n_jobs: "{n} Berufe",
+    bk_n_skills: "{n} bewertete Fähigkeiten",
+    bk_n_courses: "{n} Kurse",
+    bk_n_ads: "{n} Stellenanzeigen",
+    pk_h: "Beispielprofil auswählen",
+    pk_p: "Jedes füllt alle Teile der App, damit Sie sehen, wie sie funktioniert. Ihr eigenes Profil wird beiseitegelegt, bis Sie zurückkommen.",
+    fin_h: "Alle Daten löschen",
+    fin_p:
+      "Das löscht alles, was diese App in diesem Browser gespeichert hat: Profil, Antworten, Fähigkeiten, Ziele, Kurse, Stellenanzeigen, Plan und Einstellungen. Die App startet wieder wie beim ersten Besuch.",
+    fin_warn:
+      "Das lässt sich nicht rückgängig machen. Wenn Sie Ihre Daten behalten wollen, laden Sie vorher eine Sicherung herunter. An einem gemeinsam genutzten Computer tun Sie das, wenn Sie fertig sind.",
+    fin_ok: "Ich verstehe, dass alles gelöscht wird",
+    fin_go: "Alles löschen",
+  },
+);

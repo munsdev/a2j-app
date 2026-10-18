@@ -1,0 +1,140 @@
+@reference "@/styles/index.css";
+
+/* Home: the entrance and the hero picture. Everything here is decoration; with reduced motion the global rule
+   switches the animations off and every element simply stands in its final place. */
+
+/* ---------- the entrance: blocks rise in, one after the other ---------- */
+.home-rise {
+  animation: home-rise 0.6s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 40ms);
+}
+@keyframes home-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* ---------- the hero picture ---------- */
+.hart {
+  --tile-shadow: drop-shadow(0 5px 7px color-mix(in srgb, var(--scrim) 26%, transparent));
+}
+.hart .tile {
+  transform-box: fill-box;
+  transform-origin: 50% 60%;
+  filter: var(--tile-shadow);
+  animation: hart-pop 0.55s var(--ease-bounce) both;
+  animation-delay: calc(var(--i) * 90ms + 150ms);
+}
+@keyframes hart-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.6);
+  }
+}
+
+/* the trail draws itself from A to the flag */
+.hart .trail-reveal {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: hart-draw 1.5s 0.25s cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+@keyframes hart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* the guide hops from A over the first two tiles, lands where the person is, then breathes */
+.hart .guide-hop {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: hart-hop 1.25s 0.85s cubic-bezier(0.35, 0, 0.3, 1) both;
+}
+@keyframes hart-hop {
+  0% {
+    opacity: 0;
+    transform: translate(-112px, 48px);
+  }
+  8% {
+    opacity: 1;
+    transform: translate(-112px, 48px);
+  }
+  27% {
+    transform: translate(-84px, 2px);
+  }
+  46% {
+    transform: translate(-56px, 24px) scale(1.04, 0.94);
+  }
+  50% {
+    transform: translate(-56px, 24px);
+  }
+  71% {
+    transform: translate(-28px, -24px);
+  }
+  92% {
+    transform: translate(0, 0) scale(1.05, 0.93);
+  }
+  100% {
+    transform: none;
+  }
+}
+.hart .guide-idle {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: hart-idle 3.6s 2.3s ease-in-out infinite;
+}
+@keyframes hart-idle {
+  0%,
+  100% {
+    transform: none;
+  }
+  35% {
+    transform: translateY(-7px) rotate(-5deg);
+  }
+  55% {
+    transform: translateY(-2px) rotate(-1deg);
+  }
+}
+
+/* the flag waves a little, now and then */
+.hart .flag-wave {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+  animation: hart-wave 4s 2.6s ease-in-out infinite;
+}
+@keyframes hart-wave {
+  0%,
+  70%,
+  100% {
+    transform: none;
+  }
+  80% {
+    transform: skewY(-8deg) scaleX(0.92);
+  }
+  90% {
+    transform: skewY(5deg);
+  }
+}
+
+/* the stage cards lift a little under the pointer */
+.home-stage {
+  transition:
+    transform 0.2s var(--ease-out-soft),
+    box-shadow 0.2s var(--ease-out-soft);
+}
+@media (hover: hover) {
+  .home-stage:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+  .home-stage:hover .home-stage-go {
+    transform: translateX(3px);
+    color: var(--ink);
+  }
+}
+.home-stage-go {
+  transition:
+    transform 0.2s var(--ease-out-soft),
+    color 0.2s;
+}

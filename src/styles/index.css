@@ -1,0 +1,182 @@
+@import "tailwindcss";
+@import "@fontsource-variable/fredoka";
+@import "@fontsource-variable/nunito";
+@import "@fontsource-variable/nunito/wght-italic.css";
+@import "./tokens.css";
+
+/* The theme is always set on <html data-theme> by the boot script in index.html (stored choice or system). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------- 3. utilities from the semantic roles ---------- */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-sunk: var(--sunk);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-on-accent: var(--on-accent);
+  --color-have: var(--have);
+  --color-have-bg: var(--have-bg);
+  --color-have-ink: var(--have-ink);
+  --color-course: var(--course);
+  --color-course-bg: var(--course-bg);
+  --color-course-ink: var(--course-ink);
+  --color-learn: var(--learn);
+  --color-yes: var(--yes);
+  --color-yes-bg: var(--yes-bg);
+  --color-on-yes: var(--on-yes);
+  --color-no: var(--no);
+  --color-no-bg: var(--no-bg);
+  --color-on-no: var(--on-no);
+  --color-cheek: var(--cheek);
+  --color-focus: var(--focus);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-riasec-r: var(--brand-riasec-r);
+  --color-riasec-i: var(--brand-riasec-i);
+  --color-riasec-a: var(--brand-riasec-a);
+  --color-riasec-s: var(--brand-riasec-s);
+  --color-riasec-e: var(--brand-riasec-e);
+  --color-riasec-c: var(--brand-riasec-c);
+
+  --font-display: var(--brand-font-display);
+  --font-sans: var(--brand-font-text);
+  --font-mono: var(--brand-font-mono);
+
+  --radius-tile: var(--brand-radius-tile);
+  --radius-control: var(--brand-radius-control);
+  --radius-option: var(--brand-radius-option);
+  --radius-card: var(--brand-radius-card);
+  --radius-panel: var(--brand-radius-panel);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
+  /* outlines drawn as inset shadows (they do not change the box size) */
+  --shadow-ring: inset 0 0 0 1.5px var(--line-2);
+  --shadow-ring-soft: inset 0 0 0 1px var(--line);
+  --shadow-ring-strong: inset 0 0 0 1.5px var(--ink-3);
+  /* THE selected treatment, for every single or multiple choice: a 2.5px ink ring (plus a check mark in the
+     option). Never use the skill colours (have, course) to mean "selected". */
+  --shadow-selected: 0 0 0 2.5px var(--ink);
+
+  /* type scale: six steps for text, two for display. Sizes in rem so browser zoom settings are respected */
+  --text-caption: 0.8125rem; /* 13px: tags, eyebrows, meta */
+  --text-caption--line-height: 1.35;
+  --text-small: 0.875rem; /* 14px: hints, secondary text */
+  --text-small--line-height: 1.45;
+  --text-label: 0.9375rem; /* 15px: buttons, navigation, option labels */
+  --text-label--line-height: 1.25;
+  --text-body: 1rem; /* 16px: body */
+  --text-body--line-height: 1.5;
+  --text-lead: 1.0625rem; /* 17px: ledes, large buttons */
+  --text-lead--line-height: 1.5;
+  --text-title: 1.1875rem; /* 19px: card and panel titles */
+  --text-title--line-height: 1.2;
+  --text-heading: 1.5rem; /* 24px: section and sheet headings */
+  --text-heading--line-height: 1.15;
+  --text-display: clamp(1.75rem, 6vw, 2.5rem); /* page titles */
+  --text-display--line-height: 1.1;
+  --text-hero: clamp(2rem, 7.5vw, 3.125rem); /* the home headline */
+  --text-hero--line-height: 1.05;
+
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --ease-flip: cubic-bezier(0.2, 0.75, 0.25, 1);
+  --ease-bounce: cubic-bezier(0.3, 1.6, 0.5, 1);
+
+  --animate-deal-in: deal-in 0.35s var(--ease-out-soft);
+  --animate-bob: bob 1.6s ease-in-out infinite;
+  --animate-pop-in: pop-in 0.9s var(--ease-bounce) both;
+  --animate-sheet-in: sheet-in 0.28s var(--ease-out-soft);
+  --animate-sheet-up: sheet-up 0.3s var(--ease-out-soft);
+
+  --animate-fade-in: fade-in 0.2s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes deal-in {
+    from {
+      transform: translateY(16px) scale(0.98);
+      opacity: 0;
+    }
+  }
+  @keyframes bob {
+    50% {
+      transform: translateY(-8px) rotate(-4deg);
+    }
+  }
+  @keyframes pop-in {
+    0% {
+      transform: translateY(30px) scale(0.6);
+      opacity: 0;
+    }
+    100% {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+  }
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 120px;
+    /* a focused field never hides behind the sticky action bar */
+    scroll-padding-bottom: calc(var(--actionbar-h, 0px) + 16px);
+  }
+  body {
+    @apply min-h-dvh bg-canvas font-sans text-body text-ink antialiased;
+  }
+  #root {
+    @apply flex min-h-dvh flex-col;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold text-balance;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    letter-spacing: -0.005em;
+  }
+  :focus-visible {
+    @apply rounded-lg outline-3 outline-offset-2 outline-focus;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--have) 40%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,56 @@
+@reference "@/styles/index.css";
+
+/* Six pieces of confetti falling once over the done screen. Hidden with reduced motion (global rule stops the
+   animation, so they would hang at the top). */
+.confetti {
+  @apply pointer-events-none absolute inset-0 overflow-hidden;
+}
+.confetti i {
+  @apply absolute -top-2.5 h-3.5 w-2.5 rounded-sm opacity-0;
+  animation: confetti-fall 1.6s ease-in forwards;
+}
+.confetti i:nth-child(1) {
+  left: 12%;
+  background: var(--have);
+  animation-delay: 0.05s;
+}
+.confetti i:nth-child(2) {
+  left: 28%;
+  background: var(--course);
+  animation-delay: 0.2s;
+}
+.confetti i:nth-child(3) {
+  left: 46%;
+  background: var(--yes);
+  animation-delay: 0.1s;
+}
+.confetti i:nth-child(4) {
+  left: 62%;
+  background: var(--have);
+  animation-delay: 0.3s;
+}
+.confetti i:nth-child(5) {
+  left: 78%;
+  background: var(--course);
+  animation-delay: 0s;
+}
+.confetti i:nth-child(6) {
+  left: 90%;
+  background: var(--cheek);
+  animation-delay: 0.25s;
+}
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(340px) rotate(540deg);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+}

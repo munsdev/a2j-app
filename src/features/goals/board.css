@@ -1,0 +1,264 @@
+@reference "@/styles/index.css";
+
+/* =================== THE BOARD: A PATH WITH MILESTONES ===================
+   Narrow boxes: one line down the left, a square per milestone on it, the milestone's content to the right.
+   Wide boxes (container query): the milestones become columns along a horizontal line, squares on top.
+   Each milestone draws the line on to the next one; lit (apricot) up to where the guide stands. */
+
+.path {
+  container-type: inline-size;
+}
+/* the guide on the first square needs room above it */
+.path[data-here="you"] {
+  padding-top: 14px;
+}
+.path-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ms {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 12px;
+  padding-bottom: 22px;
+}
+.ms:last-child {
+  padding-bottom: 0;
+}
+/* the line on to the next milestone, from under this square to the top of the next one */
+.ms:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 40px;
+  bottom: 0;
+  width: 4px;
+  background: var(--line-2);
+  transition: background-color 0.4s;
+}
+.ms[data-lit]::before {
+  background: var(--have);
+}
+
+/* ---------- squares ---------- */
+.ms-sq {
+  @apply relative z-[1] flex size-10 items-center justify-center rounded-tile font-display text-caption font-semibold;
+}
+.ms-sq svg {
+  width: 20px;
+  height: 20px;
+}
+.ms-sq-you,
+.ms-sq-job {
+  @apply bg-ink text-canvas;
+}
+.ms-sq-job svg {
+  color: var(--have);
+}
+.ms-sq-have {
+  @apply bg-have text-on-accent;
+}
+.ms-sq-have svg {
+  stroke-width: 2.8;
+}
+.ms-sq-courses {
+  @apply bg-course-bg text-course-ink;
+  box-shadow: inset 0 0 0 2px var(--course);
+}
+.ms-sq-learn {
+  @apply bg-surface text-lead text-ink-3 tabular-nums outline-2 -outline-offset-2 outline-learn outline-dashed;
+}
+/* nothing here yet: a quiet square */
+.ms-sq[data-quiet] {
+  @apply bg-surface-2 text-ink-3 shadow-ring;
+}
+.ms-sq-have[data-quiet] svg {
+  stroke-width: 2;
+}
+
+/* the guide stands on the milestone you have reached: it pops in where it lands, then bobs */
+.ms-token {
+  position: absolute;
+  bottom: calc(100% - 12px);
+  left: 50%;
+  margin-left: -15px;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.18));
+  animation: var(--animate-pop-in);
+}
+.ms-token > svg {
+  width: 30px;
+  height: 30px;
+  animation: var(--animate-bob);
+  animation-duration: 2.2s;
+}
+
+/* ---------- content ---------- */
+.ms-body {
+  @apply flex min-w-0 flex-col items-stretch gap-2.5;
+}
+.ms-title {
+  @apply flex min-h-10 items-center font-display text-[1.125rem] leading-tight font-semibold text-balance;
+}
+.ms-quiet {
+  @apply font-sans text-label font-bold text-ink-2;
+}
+.ms-title.ms-quiet {
+  font-size: var(--text-label);
+}
+.ms-caption {
+  display: none;
+}
+
+/* a skill: opens its sheet. Looks small, but the tap area is 44px tall */
+.ms-chip {
+  @apply relative inline-flex min-h-8 items-center rounded-full px-2.5 py-1 text-left text-caption leading-snug font-bold transition-[transform,box-shadow] duration-150 active:scale-[.97];
+}
+.ms-chip::after {
+  content: "";
+  position: absolute;
+  inset: -6px 0;
+}
+.ms-chip-have {
+  @apply bg-have-bg text-have-ink hover:shadow-[inset_0_0_0_1.5px_var(--have)];
+}
+.ms-chip-learn {
+  @apply bg-surface text-ink-2 outline-[1.5px] -outline-offset-[1.5px] outline-learn outline-dashed hover:text-ink;
+}
+.ms-chip-more {
+  @apply bg-transparent text-ink-2 underline underline-offset-2 hover:text-ink;
+}
+.ms-link {
+  @apply underline-offset-2 hover:underline;
+}
+
+/* what just arrived (a skill rated, a course saved) pops in */
+.ms-fresh {
+  animation: ms-arrive 0.5s var(--ease-bounce) both;
+}
+@keyframes ms-arrive {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* ---------- wide boxes: the milestones as columns along the line ---------- */
+@container (min-width: 46rem) {
+  .path-list {
+    display: grid;
+    grid-template-columns: var(--path-cols);
+    column-gap: 22px;
+    align-items: start;
+  }
+  .ms {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 0;
+  }
+  .ms:not(:last-child)::before {
+    left: 56px;
+    right: -22px;
+    top: 26px;
+    bottom: auto;
+    width: auto;
+    height: 4px;
+  }
+  .ms[data-narrow] {
+    align-items: center;
+  }
+  .ms-sq {
+    @apply size-14 rounded-option text-label;
+  }
+  .ms-sq svg {
+    width: 26px;
+    height: 26px;
+  }
+  .ms-sq-learn {
+    @apply text-title;
+  }
+  .ms-token {
+    margin-left: -16px;
+    width: 32px;
+    height: 32px;
+    bottom: calc(100% - 10px);
+  }
+  .ms-token > svg {
+    width: 32px;
+    height: 32px;
+  }
+  .ms-title {
+    @apply min-h-0 text-title;
+  }
+  .ms-from,
+  .ms-wide-hide {
+    display: none;
+  }
+  .ms-caption {
+    @apply block text-center font-display text-caption font-semibold text-ink-2;
+  }
+}
+
+/* =================== NO GOAL YET ===================
+   You, a dashed line, a question mark that wiggles now and then */
+.sq {
+  @apply relative flex aspect-square flex-col items-center justify-center gap-0.5 rounded-control p-0 font-display text-lead font-semibold;
+}
+.sq-start {
+  @apply cursor-default bg-ink text-canvas;
+}
+.sq-start b {
+  font-size: 0.8125rem;
+  line-height: 1;
+}
+.sq-start svg.mascot-in {
+  width: 46%;
+  max-width: 28px;
+}
+.qboard {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.qboard .sq {
+  width: 60px;
+}
+.qboard-dash {
+  width: 30px;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, var(--line-2) 0 6px, transparent 6px 10px);
+}
+.sq-q {
+  /* one-off: the question mark fills the square */
+  @apply cursor-default bg-surface-2 text-[1.875rem] text-ink-3 outline-[2.5px] -outline-offset-[3px] outline-learn outline-dashed;
+  animation: wiggle 3s ease-in-out infinite;
+}
+@keyframes wiggle {
+  0%,
+  90%,
+  100% {
+    transform: rotate(0);
+  }
+  93% {
+    transform: rotate(-6deg);
+  }
+  96% {
+    transform: rotate(6deg);
+  }
+}
+@media (max-width: 559px) {
+  /* the text goes under the squares; the last track takes its width, so the squares stay together */
+  .qboard {
+    row-gap: 14px;
+  }
+  .qboard > div {
+    grid-column: 1 / -1;
+  }
+}

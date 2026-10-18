@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>From A to Job</title>
+    <meta
+      name="description"
+      content="Find out what you are good at, choose a job to aim for, and create a one-page plan to take to your meeting. Everything stays in your browser."
+    />
+    <link rel="canonical" href="https://a2j.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://a2j.app/" />
+    <meta property="og:title" content="From A to Job" />
+    <meta
+      property="og:description"
+      content="Find out what you are good at, choose a job to aim for, and create a one-page plan to take to your meeting. No account; everything stays in your browser."
+    />
+    <meta property="og:image" content="https://a2j.app/icons/icon-512.png" />
+    <meta name="theme-color" content="#eef2f6" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="A2J" />
+    <!-- set the theme before the first paint, so dark mode never flashes light -->
+    <script>
+      try {
+        var t = localStorage.getItem("a2j:theme");
+        if (t !== "light" && t !== "dark")
+          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>From A to Job needs JavaScript. Everything you enter stays in your browser.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

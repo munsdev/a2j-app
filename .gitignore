@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+.wrangler/
+test-results/
+playwright-report/
+e2e/__screens__/
+*.tsbuildinfo
+.claude/worktrees/
