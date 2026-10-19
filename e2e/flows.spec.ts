@@ -103,3 +103,41 @@ test("the match score with courses, and rating skills on a liked idea", async ({
   await expect(btn).toHaveAttribute("aria-pressed", "false");
   expect(errors).toEqual([]);
 });
+
+test("browse the job ideas: next and back, and change a mark on a card seen before", async ({ page }) => {
+  await seed(page, { sample: "holmes" });
+  const errors = watchErrors(page);
+  await page.goto("#goals/ideas");
+  const count = page.getByText(/^\d+ of \d+$/);
+  await expect(count).toHaveText(/^1 of /, { timeout: 30000 });
+  const first = (await page.locator(".card3d").first().getAttribute("aria-label"))!;
+  const back = page.getByRole("button", { name: "Back", exact: true });
+  await expect(back).toHaveAttribute("aria-disabled", "true");
+
+  // Next and the arrow keys move through the deck; nothing is used up
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(count).toHaveText(/^2 of /);
+  await page.keyboard.press("ArrowLeft");
+  await expect(count).toHaveText(/^1 of /);
+  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+
+  // "Not for me" marks the card and goes on; going back shows the mark, which can be changed
+  await page.getByRole("button", { name: "Not for me" }).first().click();
+  await expect(count).toHaveText(/^2 of /);
+  await back.click();
+  await expect(count).toHaveText(/^1 of /);
+  const card = page.locator(".card3d").first();
+  await expect(card).toHaveAttribute("aria-label", first);
+  await expect(card.getByText("Not for me")).toBeVisible();
+  await page.getByRole("button", { name: "Remove the mark" }).first().click();
+  await expect(page.getByRole("button", { name: "I like it", exact: true }).first()).toBeVisible();
+
+  // the letter key marks too, and the toast's Undo takes the mark back; the card keeps its place
+  await page.keyboard.press("n");
+  await expect(count).toHaveText(/^2 of /);
+  await page.getByRole("button", { name: "Undo" }).click();
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+  await expect(page.locator(".card3d").first().getByText("Not for me")).toBeHidden();
+  expect(errors).toEqual([]);
+});

@@ -21,11 +21,16 @@ interface GoalsState {
   flipped: Record<string, true>;
   /** preparation level filter, 0 = any */
   zone: Zone | 0;
-  /** the deck this position belongs to (see deckKey) */
+  /** the deck the position and history belong to (filter, profile, catalogue); another one starts afresh */
   deckKey: string;
-  idx: number;
-  /** ideas passed over without a thumb; they come back when the deck is dealt again */
-  skip: number[];
+  /** the ideas seen so far, in the order they were first seen: Back walks this list */
+  seen: number[];
+  /** the position in the deck (or in `pass`); the deck's length means "seen them all" */
+  pos: number;
+  /** going through the ideas left unmarked: those cards, in deck order; null = the whole deck */
+  pass: number[] | null;
+  /** bumped when marks change, so the cards still ahead are ranked again */
+  rankVer: number;
   /** occupation whose card is in rating mode */
   rating: number | null;
   last: LastIdea | null;
@@ -37,8 +42,10 @@ const initial = (): GoalsState => ({
   flipped: {},
   zone: 0,
   deckKey: "",
-  idx: 0,
-  skip: [],
+  seen: [],
+  pos: 0,
+  pass: null,
+  rankVer: 0,
   rating: null,
   last: null,
   cmp: null,
@@ -46,12 +53,28 @@ const initial = (): GoalsState => ({
 });
 export const useGoals = create<GoalsState>(initial);
 
-/* the ranked ideas: a stable list for the visit, so voting does not reshuffle the deck */
-let ideaCache: { key: string; rows: Idea[] } | null = null;
-/** The idea list for a deck key, ranked once (rankAll walks every occupation). */
-export function ideaRows(key: string, rank: () => Idea[]): Idea[] {
-  if (ideaCache?.key !== key) ideaCache = { key, rows: rank().slice(0, 60) };
-  return ideaCache.rows;
+/* the ranked ideas of a deck. Ranked again only when marks changed (rankAll walks every occupation). The
+   ranking row of a card is kept from the first time it was ranked while it is on screen or behind you, so a
+   card you go back to says what it said before. */
+let ideaCache: { key: string; ver: number; ranked: number[]; rows: Map<number, Idea> } | null = null;
+/** The ranked occupations for a deck key and rank version, best first (at most `max`). */
+export function ideaRanking(
+  key: string,
+  ver: number,
+  rank: () => Idea[],
+  keep: readonly number[],
+  max: number,
+) {
+  if (ideaCache?.key !== key || ideaCache.ver !== ver) {
+    const rows = ideaCache?.key === key ? ideaCache.rows : new Map<number, Idea>();
+    const fresh = rank().slice(0, max);
+    const stay = new Set(keep);
+    fresh.forEach((r) => {
+      if (!stay.has(r.i) || !rows.has(r.i)) rows.set(r.i, r);
+    });
+    ideaCache = { key, ver, ranked: fresh.map((r) => r.i), rows };
+  }
+  return ideaCache;
 }
 
 useProfileEpoch.subscribe(() => {

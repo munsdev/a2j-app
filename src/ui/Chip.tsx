@@ -60,6 +60,7 @@ const tag = cva(
         neutral: "bg-surface-2 text-ink-2",
         goal: "bg-ink text-canvas",
         like: "bg-yes-bg text-yes",
+        no: "bg-no-bg text-no",
         have: "bg-have-bg text-have-ink",
         course: "bg-course-bg text-course-ink",
       },

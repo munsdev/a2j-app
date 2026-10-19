@@ -4,8 +4,13 @@ import {
   bandWidth,
   boardPath,
   compareRows,
+  DECK_SIZE,
+  clampPos,
   dealHand,
-  deckIndex,
+  deckOrder,
+  markSeen,
+  stepPos,
+  unmarked,
   ideaSlots,
   slashParts,
   titleForms,
@@ -159,17 +164,41 @@ describe("pickDroppingOldest", () => {
 });
 
 describe("the deck", () => {
-  const occs = [10, 11, 12, 13, 14];
-  const hidden = (o: number) => o === 10 || o === 12;
-  it("skips hidden ideas but keeps the card being rated", () => {
-    expect(deckIndex(occs, 0, hidden, null)).toBe(1);
-    expect(deckIndex(occs, 0, hidden, 10)).toBe(0);
-    expect(deckIndex(occs, 2, hidden, null)).toBe(3);
-    expect(deckIndex(occs, 0, () => true, null)).toBe(5);
+  it("keeps the cards seen in the order they were seen, then the best-ranked of the rest", () => {
+    expect(deckOrder([], [10, 11, 12], 60)).toEqual([10, 11, 12]);
+    // a new ranking after a mark reorders only the cards still ahead
+    expect(deckOrder([10, 11], [12, 14, 11, 13], 60)).toEqual([10, 11, 12, 14, 13]);
+    // marked cards drop out of the ranking but stay where they were seen
+    expect(deckOrder([10, 11, 12], [13], 60)).toEqual([10, 11, 12, 13]);
+    expect(deckOrder([5, 6], [1, 2, 3, 4], 4)).toEqual([5, 6, 1, 2]);
+    expect(deckOrder([1, 2, 3], [4], 2)).toEqual([1, 2, 3]);
+    expect(DECK_SIZE).toBe(60);
   });
-  it("deals a hand of visible cards", () => {
-    expect(dealHand(occs, 0, 3, hidden, null)).toEqual([11, 13, 14]);
-    expect(dealHand(occs, 0, 2, hidden, 12)).toEqual([11, 12]);
+  it("deals the cards at a position", () => {
+    const view = [10, 11, 12, 13, 14];
+    expect(dealHand(view, 0, 1)).toEqual([10]);
+    expect(dealHand(view, 1, 3)).toEqual([11, 12, 13]);
+    expect(dealHand(view, 4, 3)).toEqual([14]);
+    expect(dealHand(view, 5, 3)).toEqual([]);
+  });
+  it("adds the cards on the table to the history once, in table order", () => {
+    const seen = [10, 11];
+    expect(markSeen(seen, [11])).toBe(seen);
+    expect(markSeen(seen, [11, 12, 13])).toEqual([10, 11, 12, 13]);
+    expect(markSeen([], [3, 1])).toEqual([3, 1]);
+  });
+  it("steps one card on or back, between the first card and the end", () => {
+    expect(stepPos(0, -1, 5)).toBe(0);
+    expect(stepPos(0, 1, 5)).toBe(1);
+    expect(stepPos(4, 1, 5)).toBe(5);
+    expect(stepPos(5, 1, 5)).toBe(5);
+    expect(stepPos(5, -1, 5)).toBe(4);
+    expect(stepPos(9, -1, 5)).toBe(4);
+    expect(clampPos(9, 5)).toBe(5);
+    expect(clampPos(-1, 5)).toBe(0);
+  });
+  it("collects the unmarked cards in deck order", () => {
+    expect(unmarked([10, 11, 12, 13], (o) => o === 11 || o === 13)).toEqual([10, 12]);
   });
   it("breaks titles after slashes", () => {
     expect(slashParts("waiter/waitress")).toEqual(["waiter/", "waitress"]);

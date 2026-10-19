@@ -37,9 +37,13 @@ export interface JobCardProps {
   deal?: boolean;
   /** the card's title is the page's h1 (the job page) */
   main?: boolean;
+  /** job ideas: how the person marked this idea (shown as a tag on the front) */
+  mark?: IdeaMark;
 }
+/** How an idea is marked: on the shortlist, one of the goals, not for me, or not at all. */
+export type IdeaMark = "like" | "goal" | "no" | null;
 
-export function JobCard({ occ, job, idea, rate, fill, deal, main }: JobCardProps) {
+export function JobCard({ occ, job, idea, rate, fill, deal, main, mark }: JobCardProps) {
   const E = useEscoReady();
   const key = cardKey(occ, job?.id);
   const flipped = useFlipped(key) || !!rate;
@@ -60,7 +64,7 @@ export function JobCard({ occ, job, idea, rate, fill, deal, main }: JobCardProps
       data-deal={deal || undefined}
     >
       <div className="face front" aria-hidden={flipped || undefined} inert={flipped} onClick={onFront}>
-        <CardFront occ={occ} job={job ?? null} idea={idea ?? null} main={!!main} />
+        <CardFront occ={occ} job={job ?? null} idea={idea ?? null} main={!!main} mark={mark ?? null} />
       </div>
       <div className="face back" aria-hidden={!flipped || undefined} inert={!flipped}>
         <CardBack occ={occ} job={job ?? null} rate={!!rate} main={!!main} />
@@ -119,11 +123,13 @@ function CardFront({
   job,
   idea,
   main,
+  mark,
 }: {
   occ: number;
   job: Job | null;
   idea: Idea | null;
   main: boolean;
+  mark: IdeaMark;
 }) {
   const t = useT(strings);
   const E = useEscoReady();
@@ -131,7 +137,7 @@ function CardFront({
   const d = useDoc();
   const m = useMatch(occ, job);
   const title = job ? job.title : occLabel(E, occ);
-  const isMain = !!job && job.id === mainGoal(d)?.id;
+  const isMain = job ? job.id === mainGoal(d)?.id : mark === "goal" && mainGoal(d)?.occ === occ;
   const info = useMemo(() => {
     if (occ < 0) return null;
     const why: string[] = [];
@@ -164,15 +170,20 @@ function CardFront({
 
   const tags = (
     <div className="flex flex-wrap gap-1.5">
-      {job?.role === "goal" ? (
+      {job?.role === "goal" || mark === "goal" ? (
         <Tag tone="goal">
           <Icon name="flag" />
           {t(isMain ? "g_main" : "g_goal")}
         </Tag>
-      ) : job?.role === "maybe" ? (
+      ) : job?.role === "maybe" || mark === "like" ? (
         <Tag tone="like">
           <Icon name="up" />
           {t("c_liked")}
+        </Tag>
+      ) : mark === "no" ? (
+        <Tag tone="no">
+          <Icon name="up" flip />
+          {t("c_no")}
         </Tag>
       ) : null}
       {info?.zone != null && <Tag>{t(`z${info.zone}`)}</Tag>}

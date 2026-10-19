@@ -188,34 +188,45 @@ export function pickDroppingOldest(picks: readonly string[], id: string, max = 3
   return next.length > max ? next.slice(next.length - max) : next;
 }
 
-/* ---------- the idea deck ---------- */
-/** The first idea at or after `from` that is still to show: not skipped, not saved, not voted down.
- *  The card being rated stays, even though it is now voted on. */
-export function deckIndex(
-  occs: readonly number[],
-  from: number,
-  hidden: (occ: number) => boolean,
-  rating: number | null,
-): number {
-  let i = Math.max(0, from);
-  while (i < occs.length && occs[i] !== rating && hidden(occs[i])) i++;
-  return i;
-}
-/** The cards on the table when several fit side by side. */
-export function dealHand(
-  occs: readonly number[],
-  from: number,
-  n: number,
-  hidden: (occ: number) => boolean,
-  rating: number | null,
-): number[] {
-  const out: number[] = [];
-  for (let j = from; j < occs.length && out.length < n; j++) {
-    const o = occs[j];
-    if (o === rating || !hidden(o)) out.push(o);
+/* ---------- the idea deck ----------
+   A deck you browse, not a pile you use up: Next and Back (or a swipe) move through it, marking a card
+   ("I like it", "Not for me") never takes it out. The cards you have seen keep the order you saw them in
+   (`seen`), so Back is predictable; the cards still ahead follow the latest ranking, which marks may change. */
+
+/** How many ideas one deck holds. */
+export const DECK_SIZE = 60;
+/** The deck in order: the cards seen so far, in the order they were seen, then the best-ranked of the rest,
+ *  up to `cap` cards in all. */
+export function deckOrder(seen: readonly number[], ranked: readonly number[], cap = DECK_SIZE): number[] {
+  const out = [...seen];
+  const has = new Set(out);
+  for (const o of ranked) {
+    if (out.length >= cap) break;
+    if (!has.has(o)) {
+      has.add(o);
+      out.push(o);
+    }
   }
   return out;
 }
+/** The cards on the table at `pos`: one on phones, two or three side by side. */
+export const dealHand = (view: readonly number[], pos: number, n: number): number[] =>
+  view.slice(Math.max(0, pos), Math.max(0, pos) + n);
+/** `seen` with the cards now on the table added at the end, in table order (the same array when nothing is new). */
+export function markSeen(seen: readonly number[], hand: readonly number[]): readonly number[] {
+  const has = new Set(seen);
+  const fresh = hand.filter((o) => !has.has(o));
+  return fresh.length ? [...seen, ...fresh] : seen;
+}
+/** One card on (dir 1) or back (dir -1). Positions run from the first card (0) to the end of the deck
+ *  (`len`, the "you have seen them all" state). */
+export const stepPos = (pos: number, dir: 1 | -1, len: number): number =>
+  Math.min(len, Math.max(0, Math.min(pos, len) + dir));
+/** Where you are, kept inside the deck when it got shorter (a filter, a smaller catalogue). */
+export const clampPos = (pos: number, len: number): number => Math.min(len, Math.max(0, pos));
+/** The cards not marked yet, in deck order: the pile for "go through the unmarked ones again". */
+export const unmarked = (view: readonly number[], marked: (occ: number) => boolean): number[] =>
+  view.filter((o) => !marked(o));
 /** A title with a break opportunity after each slash ("Waiter/waitress" wraps after the slash). */
 export const slashParts = (title: string): string[] => title.split(/(?<=\/)/);
 

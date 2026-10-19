@@ -1,7 +1,7 @@
 import { useRef, type MouseEvent, type PointerEvent } from "react";
 
 /* Swipe a card sideways: it follows the finger with a slight rotation, and past a threshold flies out the way
-   it was thrown. A vertical drag still scrolls the page (the card has touch-action: pan-y). The click that ends a
+   it was thrown (on job ideas: to the left for the next card, to the right for the one before). A vertical drag still scrolls the page (the card has touch-action: pan-y). The click that ends a
    swipe must not turn the card over or press a tile. The card is moved straight in the DOM, so a swipe never
    re-renders React: it stays at 60fps on slow phones. */
 
@@ -14,8 +14,9 @@ interface Drag {
   card: HTMLElement;
 }
 
-/** Handlers for the element that holds a `.card3d`. onOut runs once the card has flown out. */
-export function usePointerSwipe(onOut: (dir: -1 | 1) => void) {
+/** Handlers for the element that holds a `.card3d`. onOut runs once the card has flown out (dir -1: thrown to
+ *  the left). can(dir) false: the card does not go that way and springs back (the first card of the deck). */
+export function usePointerSwipe(onOut: (dir: -1 | 1) => void, can: (dir: -1 | 1) => boolean = () => true) {
   const drag = useRef<Drag | null>(null);
   const ate = useRef(-Infinity);
   const place = (card: HTMLElement, dx: number) => {
@@ -29,11 +30,28 @@ export function usePointerSwipe(onOut: (dir: -1 | 1) => void) {
     if (!s.on) return;
     ate.current = e.timeStamp;
     delete s.card.dataset.swiping;
-    if (e.type === "pointerup" && Math.abs(s.dx) > Math.min(110, s.card.offsetWidth * 0.3)) {
-      const dir = s.dx < 0 ? -1 : 1;
+    const dir = s.dx < 0 ? -1 : 1;
+    if (e.type === "pointerup" && Math.abs(s.dx) > Math.min(110, s.card.offsetWidth * 0.3) && can(dir)) {
       s.card.dataset.gone = "";
       place(s.card, dir * (window.innerWidth + 60));
-      setTimeout(() => onOut(dir), 200);
+      // with reduced motion the card does not fly, so there is nothing to wait for
+      const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const card = s.card;
+      setTimeout(
+        () => {
+          onOut(dir);
+          // a card that stays on the table (side by side, going back) comes back into place once the deck has
+          // moved; a card that left the table is gone by then
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              if (!card.isConnected) return;
+              delete card.dataset.gone;
+              place(card, 0);
+            }),
+          );
+        },
+        still ? 0 : 200,
+      );
     } else place(s.card, 0);
   };
   return {
