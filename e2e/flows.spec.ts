@@ -64,11 +64,11 @@ test("undoing 'Back to my profile' never loses the own profile", async ({ page }
   await page.getByRole("menuitem", { name: "Try a sample profile" }).click();
   await page.getByRole("button", { name: /Sherlock Holmes/ }).click();
   await page.getByRole("button", { name: "Back to my profile" }).first().click();
-  await expect(page.getByRole("heading", { name: /Ada/ })).toBeVisible();
+  await expect(page.getByText(/Your line, Ada/)).toBeVisible();
   await page.keyboard.press("Control+z");
   await expect(page.getByText(/Sample: Sherlock Holmes/).first()).toBeVisible();
   await page.getByRole("button", { name: "Back to my profile" }).first().click();
-  await expect(page.getByRole("heading", { name: /Ada/ })).toBeVisible();
+  await expect(page.getByText(/Your line, Ada/)).toBeVisible();
 });
 
 test("answer keys do nothing while a dialog is open", async ({ page }) => {
