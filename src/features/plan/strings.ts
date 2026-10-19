@@ -33,6 +33,7 @@ export const strings = defineStrings(
     sm_why_fill: "Suggest a start",
     sm_course_pick: "Course",
     sm_none: "None",
+    sm_direct_short: "No course needed",
     sm_other_ph: "Other jobs or routes you looked at, and why you chose this one.",
     sm_next_ph: "What you will do next, with dates if you have them.",
     sm_date: "As of {d}",
@@ -53,6 +54,8 @@ export const strings = defineStrings(
     sm_options: "Other options I am keeping open",
     sm_via: "via {x}",
     sm_progress: "{h} of {t} core skills, {c} more with the course",
+    sm_progress0: "{h} of {t} core skills",
+    sm_direct: "No course needed: I am applying for this job directly.",
   },
   {
     sm_title: "Ihr Plan",
@@ -86,6 +89,7 @@ export const strings = defineStrings(
     sm_why_fill: "Anfang vorschlagen",
     sm_course_pick: "Kurs",
     sm_none: "Keiner",
+    sm_direct_short: "Kein Kurs nötig",
     sm_other_ph: "Andere Berufe oder Wege, die Sie sich angesehen haben, und warum Sie diesen gewählt haben.",
     sm_next_ph: "Was Sie als Nächstes tun, mit Terminen, wenn Sie welche haben.",
     sm_date: "Stand {d}",
@@ -106,5 +110,7 @@ export const strings = defineStrings(
     sm_options: "Weitere Optionen, die ich offen halte",
     sm_via: "über {x}",
     sm_progress: "{h} von {t} Kernfähigkeiten, {c} weitere mit dem Kurs",
+    sm_progress0: "{h} von {t} Kernfähigkeiten",
+    sm_direct: "Kein Kurs nötig: Ich bewerbe mich direkt auf diese Stelle.",
   },
 );

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { RouteId } from "@/data/types";
 import { useDoc } from "@/data/store";
 import { jobById } from "@/data/doc";
-import { MAX_ROUTES, firstCourseFor, routeById, sortedRoutes } from "@/data/routes";
+import { DIRECT, MAX_ROUTES, firstCourseFor, routeById, sortedRoutes } from "@/data/routes";
 import { useEsco, useLoadCatalog, useOnet } from "@/app/catalog";
 import { go } from "@/app/router";
 import { closeSheet } from "@/app/sheet";
@@ -51,7 +51,7 @@ export function RouteList() {
                 aria-current={here || undefined}
                 lead={<RouteDisc id={r.id} solid={here} />}
                 title={w.job}
-                detail={w.course?.name ?? t("r_no_course")}
+                detail={w.course?.name ?? t(w.direct ? "r_direct" : "r_no_course")}
                 chevron={false}
                 className={cn("flex-1", here && "shadow-[inset_0_0_0_2px_var(--ink)]")}
                 onClick={() => {
@@ -194,6 +194,17 @@ export function RouteSheet({ id, jobId }: { id: RouteId | null; jobId: string | 
                 />
               );
             })}
+            <Choice
+              name="route-course"
+              checked={course === DIRECT}
+              onChange={() => setCourse(DIRECT)}
+              label={
+                <span className="flex flex-col gap-0.5">
+                  <span>{t("r_direct")}</span>
+                  <span className="text-small font-normal text-ink-3">{t("r_direct_p")}</span>
+                </span>
+              }
+            />
             <Choice
               name="route-course"
               checked={course === null}

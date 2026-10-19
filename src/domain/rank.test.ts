@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { emptyDoc } from "@/data/doc";
 import type { Doc } from "@/data/types";
 import type { ContextKey, Onet } from "./catalog";
-import { physicalOf, warnings } from "./rank";
+import { isReady, physicalOf, warnings } from "./rank";
 
 /* One occupation with the given O*NET measures. */
 function onet(c: Partial<Record<ContextKey, number>>): Onet {
@@ -44,5 +44,21 @@ describe("physicalOf", () => {
     expect(physicalOf(onet({ standing: 90, hands: 60, strength: 30 }), 0)).toBeCloseTo(0.6);
     expect(physicalOf(onet({ standing: 40 }), 0)).toBeCloseTo(0.4);
     expect(physicalOf(onet({}), 0)).toBeNull();
+  });
+});
+
+describe("isReady", () => {
+  const O = (z: number): Onet => ({ ...onet({}), z: [z] });
+  const cov = (have: number, miss: number) => ({
+    score: 0,
+    have: Array.from({ length: have }, (_, i) => i),
+    miss: Array.from({ length: miss }, (_, i) => i),
+  });
+  it("little preparation and at least half the core skills", () => {
+    expect(isReady(O(2), 0, cov(3, 3))).toBe(true);
+    expect(isReady(O(1), 0, cov(4, 1))).toBe(true);
+    expect(isReady(O(3), 0, cov(6, 0))).toBe(false);
+    expect(isReady(O(2), 0, cov(2, 3))).toBe(false);
+    expect(isReady(O(2), 0, null)).toBe(false);
   });
 });

@@ -182,3 +182,22 @@ test("a work-setting scale starts in the middle, and Next keeps it", async ({ pa
   await page.getByRole("button", { name: /^Back/ }).click();
   await expect(page.getByRole("radio", { name: "Either" })).toHaveAttribute("aria-checked", "true");
 });
+
+test("a route that needs no course: Home points to applying, the plan leaves the course out", async ({
+  page,
+}) => {
+  await seed(page, { sample: "geppetto" });
+  const errors = watchErrors(page);
+  await page.goto("#goals");
+  await page.getByRole("button", { name: /You're on route/ }).click();
+  await page.getByRole("button", { name: /^Edit route A/ }).click();
+  await page.getByLabel(/No course needed/).check();
+  await page.getByRole("button", { name: "Save route A" }).click();
+  await expect(page.getByText("No course needed").first()).toBeVisible();
+  await page.goto("#home");
+  await expect(page.getByText(/^Find a course for/)).toHaveCount(0);
+  await expect(page.getByText(/^(Apply for|Look at job ads for)/).first()).toBeVisible();
+  await page.goto("#plan");
+  await expect(page.getByText(/No course chosen yet/)).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

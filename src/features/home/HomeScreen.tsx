@@ -287,6 +287,7 @@ const STEP_ICON: Record<StepId, IconName> = {
   dupes: "copy",
   route2: "plus",
   ads: "bag",
+  apply: "bag",
   plan: "doc",
   plan_print: "print",
 };
@@ -296,7 +297,7 @@ function NextStops({ way }: { way: Way }) {
   const d = useDoc();
   const headId = useId();
   const { g } = way;
-  const steps = appSteps(d);
+  const steps = appSteps(d, way.p?.next.kind === "done");
   const r = currentRoute(d);
   const x = g ? short(g.title) : "";
   const run = (id: StepId) => {
@@ -306,6 +307,7 @@ function NextStops({ way }: { way: Way }) {
     else if (id === "route") go("goals");
     else if (id === "course" && r) openFinder("course", r.job);
     else if (id === "ads" && r) openFinder("jobad", r.job);
+    else if (id === "apply" && r) go("goals/job/" + r.job);
     else if (id === "dupes") go("edit");
     else if (id === "route2") openRouteSheet(null);
     else go("plan");

@@ -8,6 +8,7 @@ import { strings } from "./strings";
 
 export type TextKey = "why" | "other" | "next";
 
+import { DIRECT } from "@/data/routes";
 /* The edit side of the plan: the page language, then each section with what belongs to it. A section's
    own fields sit under its checkbox, so the list reads top to bottom like the page. */
 export function Controls({
@@ -40,6 +41,7 @@ export function Controls({
   onSuggest: () => void;
 }) {
   const t = useT(strings);
+  const direct = s.course === DIRECT;
   const check = (k: PlanSection) => (
     <Checkbox label={t(`sm_s_${k}`)} checked={s.inc[k]} onChange={(e) => onInc(k, e.target.checked)} />
   );
@@ -103,7 +105,8 @@ export function Controls({
         {check("course")}
         <Nested>
           <p className="text-small text-ink-2">
-            <b className="text-ink">{t("sm_course_pick")}:</b> {course ? course.name : t("sm_none")}
+            <b className="text-ink">{t("sm_course_pick")}:</b>{" "}
+            {course ? course.name : t(direct ? "sm_direct_short" : "sm_none")}
           </p>
         </Nested>
       </Group>

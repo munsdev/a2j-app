@@ -3,6 +3,7 @@ import examples from "@/data/examples.json";
 import { emptyDoc, shape } from "@/data/doc";
 import type { Doc, PartKey } from "@/data/types";
 import { PARTS } from "@/domain/assess";
+import { DIRECT } from "@/data/routes";
 import { appSteps, countWord, firstName, lineStop, nextStep, planStarted } from "./model";
 
 const holmes = (): Doc => ({ ...shape(structuredClone(examples.examples.holmes.en)), example: "holmes" });
@@ -93,5 +94,29 @@ describe("appSteps: the next thing to do in the app, not the next skill", () => 
     expect(s).not.toContain("course");
     expect(s).not.toContain("route2");
     expect(["plan", "plan_print"]).toContain(s.at(-1));
+  });
+});
+
+describe("appSteps: a route ready to apply on", () => {
+  const base = () => shape(withGoal(withDone(emptyDoc(), PARTS)));
+  const direct = () => {
+    const d = base();
+    d.routes[0].course = DIRECT;
+    return d;
+  };
+  const withAd = (d: Doc, status?: "applied" | "interested"): Doc => ({
+    ...d,
+    jobads: [{ id: "a1", name: "Baker at Müller", goals: ["j1"], status }],
+  });
+  it("no course needed: job ads first, never a course", () => {
+    expect(appSteps(direct())).toEqual(["ads", "route2", "plan"]);
+    expect(lineStop(direct(), false)).toBe("plan");
+  });
+  it("with every core skill, the same, even without saying so", () => {
+    expect(appSteps(base(), true)).toEqual(["ads", "route2", "plan"]);
+  });
+  it("ads saved but none applied for: apply comes first", () => {
+    expect(appSteps(withAd(direct()))[0]).toBe("apply");
+    expect(appSteps(withAd(direct(), "applied"))).not.toContain("apply");
   });
 });

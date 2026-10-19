@@ -118,7 +118,7 @@ export interface Assess {
   done?: Partial<Record<PartKey, string>>;
 }
 
-export type ItemStatus = "interested" | "contacted" | "applied" | "rejected" | "accepted";
+export type ItemStatus = "interested" | "contacted" | "applied" | "interview" | "rejected" | "accepted";
 
 export interface Course {
   id: string;
@@ -176,7 +176,8 @@ export interface Summary {
   next?: string;
 }
 
-/** A way to a job: one job (a goal) and the one course that gets you there (null: none picked yet).
+/** A way to a job: one job (a goal) and the one course that gets you there (null: none picked yet; "direct": no
+ *  course needed, the person applies straight away).
  *  Up to three, named by their letter. The person is always on one of them (Doc.route). */
 export type RouteId = "A" | "B" | "C";
 export const ROUTE_IDS: readonly RouteId[] = ["A", "B", "C"];

@@ -41,6 +41,8 @@ const ICON: Record<PromptKey, IconName> = {
   dayjob: "bag",
   translate: "flip",
   interview: "person",
+  cover: "edit",
+  cv: "doc",
   meeting: "doc",
   compare: "grid",
   funding: "shield",
@@ -70,10 +72,11 @@ export function PromptsList() {
   );
 }
 
-const LABEL: Record<PromptOpt, "pl_job" | "pl_goal" | "pl_past"> = {
+const LABEL: Record<PromptOpt, "pl_job" | "pl_goal" | "pl_past" | "pl_ad"> = {
   job: "pl_job",
   goal: "pl_goal",
   past: "pl_past",
+  ad: "pl_ad",
 };
 
 export function PromptItem({ k }: { k: PromptKey }) {
@@ -97,7 +100,8 @@ export function PromptItem({ k }: { k: PromptKey }) {
       {it.opts.length > 0 && (
         <FieldGrid>
           {it.opts.map((n) => {
-            const list = namesFor(d, n === "past" ? "done" : "goal");
+            const list =
+              n === "ad" ? d.jobads.map((a) => a.name) : namesFor(d, n === "past" ? "done" : "goal");
             const value = choices[n] ?? list[0] ?? "";
             const q = normTxt(value);
             /* a name from the list: offer the others; typed words: the names that contain them */

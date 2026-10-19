@@ -1,6 +1,6 @@
 import type { Course, Doc, Job, JobAd, Lang, PlanSection, Profile } from "@/data/types";
 import { jobById, mainGoal } from "@/data/doc";
-import { currentRoute } from "@/data/routes";
+import { DIRECT, currentRoute, isDirect } from "@/data/routes";
 import { interestCode, assessOf, strongest } from "@/domain/assess";
 import { skIn, type Esco } from "@/domain/catalog";
 import { VALUES } from "@/domain/items";
@@ -11,8 +11,9 @@ import { strings as courseStrings } from "@/features/courses/strings";
 import { strings } from "./strings";
 
 /* =================== THE PLAN: ONE PAGE FOR THE MEETING ===================
-   Built around what a caseworker needs for a Bildungsgutschein: goal, fit, what is missing and how to get
-   it, the chosen course, job ads as evidence, other routes, next steps. Pure: the state, the data, the page
+   Built around what a caseworker needs: goal, fit, what is missing and how to get it, the chosen course (for a
+   Bildungsgutschein) or "no course needed" on a route that applies directly, job ads with how far each
+   application got, other routes, next steps. Pure: the state, the data, the page
    as a small block model (rendered as the paper and as plain text). Ported from the previous app (plan.js). */
 
 export const SECTIONS: readonly PlanSection[] = [
@@ -48,11 +49,13 @@ export interface PlanState {
 export function planState(d: Doc, appLang: Lang): PlanState {
   const s = d.summary || {};
   const inc = {} as Record<PlanSection, boolean>;
-  SECTIONS.forEach((k) => (inc[k] = s.inc?.[k] ?? true));
   const fresh = !s.lang || s.langFor !== appLang;
   const goal = mainGoal(d)?.id || "";
   /* the plan is about the route you are on: its job and its one course */
   const r = currentRoute(d);
+  /* a route that needs no course leaves the course section off, unless the person ticked it */
+  const direct = isDirect(r) && r?.job === goal;
+  SECTIONS.forEach((k) => (inc[k] = s.inc?.[k] ?? !(k === "course" && direct)));
   const course = (r && r.job === goal && r.course) || "";
   return {
     lang: fresh ? appLang : s.lang!,
@@ -210,7 +213,11 @@ export function pageModel(x: PlanData, why: string, now: Date): PageModel {
     if (x.cnt && x.cnt.total)
       goal.push({
         t: "p",
-        text: T("sm_progress", { h: x.cnt.have, t: x.cnt.total, c: x.cnt.course }),
+        text: T(x.cnt.course ? "sm_progress" : "sm_progress0", {
+          h: x.cnt.have,
+          t: x.cnt.total,
+          c: x.cnt.course,
+        }),
         tone: "note",
       });
     if (why) goal.push({ t: "p", text: why });
@@ -265,12 +272,17 @@ export function pageModel(x: PlanData, why: string, now: Date): PageModel {
     : [];
   sec(
     "course",
-    c
-      ? [
-          { t: "p", text: c.name, tone: "goal" },
-          { t: "table", rows: rows.filter((r): r is [string, string] => !!r[1]).map(([k, v]) => [L2(k), v]) },
-        ]
-      : [{ t: "p", text: T("sm_no_course"), tone: "pending" }],
+    s.course === DIRECT
+      ? [{ t: "p", text: T("sm_direct") }]
+      : c
+        ? [
+            { t: "p", text: c.name, tone: "goal" },
+            {
+              t: "table",
+              rows: rows.filter((r): r is [string, string] => !!r[1]).map(([k, v]) => [L2(k), v]),
+            },
+          ]
+        : [{ t: "p", text: T("sm_no_course"), tone: "pending" }],
   );
 
   sec(
@@ -282,7 +294,14 @@ export function pageModel(x: PlanData, why: string, now: Date): PageModel {
             items: x.ads.map((j) => ({
               name: j.name,
               strong: true,
-              detail: [j.org, j.place, j.deadline].filter(Boolean).join(", "),
+              detail: [
+                j.org,
+                j.place,
+                j.deadline,
+                j.status && j.status !== "interested" ? L2("st_" + j.status) : "",
+              ]
+                .filter(Boolean)
+                .join(", "),
               url: j.url || "",
             })),
           },

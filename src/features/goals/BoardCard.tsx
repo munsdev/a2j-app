@@ -1,6 +1,6 @@
 import { useId, useMemo } from "react";
 import { mainGoal } from "@/data/doc";
-import { courseForJob, currentRoute } from "@/data/routes";
+import { courseForJob, currentRoute, isDirect } from "@/data/routes";
 import { openFinder, openItem } from "@/features/courses/api";
 import { strings as routeStrings } from "@/features/routes/strings";
 import { LinkButton } from "@/ui";
@@ -66,6 +66,8 @@ export function BoardCard({ actions = true }: { actions?: boolean }) {
               <Icon name="book" />
               {rc.name}
             </LinkButton>
+          ) : isDirect(route) ? (
+            <span className="flex min-h-11 items-center text-small text-ink-3">{tr("r_direct")}</span>
           ) : (
             <LinkButton className="min-h-11 self-start text-small" onClick={() => openFinder("course", g.id)}>
               {tr("r_no_course")} · {tr("r_find")}

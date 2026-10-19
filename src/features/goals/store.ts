@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import type { Vote } from "@/data/types";
-import type { Idea, Zone } from "@/domain/rank";
+import { READY, type DeckFilter, type Idea } from "@/domain/rank";
 import { useProfileEpoch } from "@/app/samples";
 import { storage } from "@/lib/storage";
 import { bandWidth, widthBand } from "./layout";
@@ -21,8 +21,8 @@ export interface LastIdea {
 interface GoalsState {
   /** card keys shown on their back */
   flipped: Record<string, true>;
-  /** preparation level filter, 0 = any */
-  zone: Zone | 0;
+  /** preparation level filter, READY for jobs to apply for now, 0 = any */
+  zone: DeckFilter;
   /** the deck the position and history belong to (filter, profile, catalogue); another one starts afresh */
   deckKey: string;
   /** the ideas seen so far, in the order they were first seen: Back walks this list */
@@ -68,7 +68,7 @@ function savedDeck(): Partial<SavedDeck> {
     const nums = (a: unknown) => Array.isArray(a) && a.every((n) => Number.isInteger(n));
     if (!v || typeof v.deckKey !== "string" || !nums(v.seen) || !Number.isInteger(v.pos)) return {};
     return {
-      zone: ([0, 1, 2, 3, 4] as const).includes(v.zone) ? v.zone : 0,
+      zone: ([0, 1, 2, 3, 4, READY] as const).includes(v.zone) ? v.zone : 0,
       deckKey: v.deckKey,
       seen: v.seen,
       pos: v.pos,

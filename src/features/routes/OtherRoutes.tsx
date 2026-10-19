@@ -58,7 +58,7 @@ export function OtherRoutes() {
                   <span className="flex min-w-0 flex-col">
                     <b className="font-display text-label leading-snug font-semibold break-words">{w.job}</b>
                     <span className="truncate text-small text-ink-3">
-                      {w.course?.name ?? t("r_no_course")}
+                      {w.course?.name ?? t(w.direct ? "r_direct" : "r_no_course")}
                     </span>
                   </span>
                   {m ? <Score m={m} /> : <Icon name="chev" className="text-ink-3" />}

@@ -81,6 +81,10 @@ export const strings = defineStrings(
     c_zone_none_p:
       "None of your job ideas needs this much preparation. Show all levels, or answer more of your profile for new ideas.",
     c_zone_all: "Show all levels",
+    c_ready: "Ready now: you have most skills",
+    c_ready_none_h: "No ideas you are ready for yet",
+    c_ready_none_p:
+      "Ready means little preparation and at least half the core skills. Rate more of your skills in part 6 of your profile, or show all levels.",
     c_count: "{n} of {t}",
     c_count_pass: "Unmarked: {n} of {t}",
     c_pos: "Card {n} of {t}: {x}",
@@ -259,6 +263,10 @@ export const strings = defineStrings(
     c_zone_none_p:
       "Keine Ihrer Berufsideen braucht so viel Vorbereitung. Zeigen Sie alle Stufen oder ergänzen Sie Ihr Profil für neue Ideen.",
     c_zone_all: "Alle Stufen zeigen",
+    c_ready: "Jetzt bereit: Sie haben das meiste",
+    c_ready_none_h: "Noch keine Ideen, für die Sie bereit sind",
+    c_ready_none_p:
+      "Bereit heißt: wenig Vorbereitung und mindestens die Hälfte der Kernfähigkeiten. Bewerten Sie mehr Fähigkeiten in Teil 6 Ihres Profils oder zeigen Sie alle Stufen.",
     c_count: "{n} von {t}",
     c_count_pass: "Ohne Markierung: {n} von {t}",
     c_pos: "Karte {n} von {t}: {x}",

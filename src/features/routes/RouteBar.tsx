@@ -32,7 +32,10 @@ export function RouteBar() {
           <span className="text-caption opacity-80">{t("r_on", { x: r.id })}</span>
           <b className="truncate text-small sm:text-body">
             {w.job}
-            <span className="font-normal opacity-80"> · {w.course?.name ?? t("r_no_course")}</span>
+            <span className="font-normal opacity-80">
+              {" "}
+              · {w.course?.name ?? t(w.direct ? "r_direct" : "r_no_course")}
+            </span>
           </b>
         </span>
         <span className="flex flex-none items-center gap-1 text-small font-extrabold">

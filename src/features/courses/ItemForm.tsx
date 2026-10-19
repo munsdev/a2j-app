@@ -42,7 +42,14 @@ import type { ItemKind } from "./types";
    The few fields that matter up front, the rest under "More details". The draft lives in the form;
    Save writes it in one step (one Undo). Save and Delete stay in view at the bottom of the sheet. */
 
-const STATUSES: readonly ItemStatus[] = ["interested", "contacted", "applied", "rejected", "accepted"];
+const STATUSES: readonly ItemStatus[] = [
+  "interested",
+  "contacted",
+  "applied",
+  "interview",
+  "rejected",
+  "accepted",
+];
 type Azav = NonNullable<Course["azav"]>;
 type Fields = Partial<Record<TextField, string>>;
 interface DraftItem {

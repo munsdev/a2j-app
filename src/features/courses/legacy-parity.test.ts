@@ -60,6 +60,8 @@ const L = legacy as unknown as Record<Lang, Record<string, Answers>> & {
 const EX = (examples as unknown as { examples: Record<string, Record<Lang, unknown>> }).examples;
 const IDS = ["holmes", "robin", "geppetto"] as const;
 
+const NEW_PROMPTS: string[] = ["cover", "cv"];
+
 describe.each(["en", "de"] as const)("courses, prompts and plan match the previous app (%s)", (lang) => {
   let E: Esco;
   beforeAll(async () => {
@@ -96,8 +98,10 @@ describe.each(["en", "de"] as const)("courses, prompts and plan match the previo
       const d = load(id);
       const theirs = L[lang][id];
       expect(profileFacts(d, E, lang)).toEqual(theirs.facts);
-      expect(LIB.map((x) => x.k).sort()).toEqual(Object.keys(theirs.library).sort());
-      for (const item of LIB) {
+      /* prompts added after the previous app (cover letter, CV) are left out of the comparison */
+      const old = LIB.filter((x) => !NEW_PROMPTS.includes(x.k));
+      expect(old.map((x) => x.k).sort()).toEqual(Object.keys(theirs.library).sort());
+      for (const item of old) {
         expect(libText(d, E, lang, item.k)).toBe(theirs.library[item.k].text);
         expect(libContains(d, E, lang, item)).toBe(theirs.library[item.k].contains);
       }

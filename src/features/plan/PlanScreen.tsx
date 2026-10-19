@@ -161,7 +161,12 @@ function Plan() {
             why={why}
             routes={sortedRoutes(d).map((r) => {
               const w = routeWords(d, r);
-              return { id: r.id, label: [r.id, w.job, w.course?.name].filter(Boolean).join(" · ") };
+              return {
+                id: r.id,
+                label: [r.id, w.job, w.course?.name ?? (w.direct ? t("sm_direct_short") : "")]
+                  .filter(Boolean)
+                  .join(" · "),
+              };
             })}
             route={currentRoute(d)?.id ?? null}
             course={x.course}

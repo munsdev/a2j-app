@@ -1,6 +1,6 @@
 import type { Doc } from "@/data/types";
 import { jobsIn, mainGoal } from "@/data/doc";
-import { currentRoute, routeCourse } from "@/data/routes";
+import { currentRoute, isDirect, routeCourse } from "@/data/routes";
 import { dupePairs } from "@/data/dupes";
 import { canRank } from "@/domain/rank";
 import { nextPart, partsDone } from "@/domain/assess";
@@ -41,11 +41,21 @@ export type StepId =
   | "dupes"
   | "route2"
   | "ads"
+  | "apply"
   | "plan"
   | "plan_print";
 
-/** The steps still open, first the one to do now. */
-export function appSteps(d: Doc): StepId[] {
+/** A route is ready to apply on when it needs no course, or the person has every core skill of its job. */
+export function readyToApply(d: Doc, allHad: boolean): boolean {
+  return allHad || isDirect(currentRoute(d));
+}
+
+/** Saved ads for the route's job that the person has applied for (or got further with). */
+const APPLIED = new Set(["applied", "rejected", "accepted", "interview"]);
+
+/** The steps still open, first the one to do now. allHad: every core skill of the route's job is had. On a
+ *  route ready to apply on, finding a course gives way to job ads and applying. */
+export function appSteps(d: Doc, allHad = false): StepId[] {
   const done = partsDone(d);
   const r = currentRoute(d);
   const liked = jobsIn(d, "maybe").length + jobsIn(d, "goal").length > 0;
@@ -55,10 +65,14 @@ export function appSteps(d: Doc): StepId[] {
   else if (!liked && done > 0) out.push("ideas_unlock");
   else if (liked && !r) out.push("route");
   if (done > 0 && done < 6) out.push("profile");
-  if (r && !routeCourse(d, r)) out.push("course");
+  const ready = readyToApply(d, allHad);
+  const ads = r ? d.jobads.filter((a) => a.goals.includes(r.job)) : [];
+  if (ready && !ads.length) out.push("ads");
+  if (ready && ads.length && !ads.some((a) => APPLIED.has(a.status ?? ""))) out.push("apply");
+  if (r && !ready && !routeCourse(d, r)) out.push("course");
   if (dupePairs(d).length) out.push("dupes");
   if (r && d.routes.length < 2) out.push("route2");
-  if (r && !d.jobads.some((a) => a.goals.includes(r.job))) out.push("ads");
+  if (r && !ready && !ads.length) out.push("ads");
   if (r) out.push(planStarted(d) ? "plan_print" : "plan");
   return out;
 }
@@ -75,7 +89,7 @@ export const LINE_STOPS: readonly LineStop[] = ["start", "profile", "goals", "pl
  *  goal is had. */
 export function lineStop(d: Doc, allHad: boolean): Exclude<LineStop, "start"> {
   if (!mainGoal(d)) return partsDone(d) < 6 ? "profile" : "goals";
-  if (!allHad) return "goals";
+  if (!readyToApply(d, allHad)) return "goals";
   return planStarted(d) ? "job" : "plan";
 }
 

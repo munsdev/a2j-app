@@ -13,14 +13,16 @@ export type PromptKey =
   | "dayjob"
   | "translate"
   | "interview"
+  | "cover"
+  | "cv"
   | "meeting"
   | "compare"
   | "funding"
   | "underrated"
   | "patterns"
   | "newdirs";
-/** The choices a prompt offers: a job, a goal, a past job. */
-export type PromptOpt = "job" | "goal" | "past";
+/** The choices a prompt offers: a job, a goal, a past job, a saved job ad. */
+export type PromptOpt = "job" | "goal" | "past" | "ad";
 export type Uses = FactKey | "saved";
 export interface LibItem {
   k: PromptKey;
@@ -32,6 +34,8 @@ export const LIB: readonly LibItem[] = [
   { k: "dayjob", uses: ["setting", "strengths"], opts: ["job"] },
   { k: "translate", uses: ["skills"], opts: ["past", "goal"] },
   { k: "interview", uses: ["strengths", "skills", "jobs"], opts: ["job"] },
+  { k: "cover", uses: ["strengths", "skills", "jobs", "german"], opts: ["ad"] },
+  { k: "cv", uses: ["jobs", "skills", "german", "hobbies"], opts: ["goal"] },
   { k: "meeting", uses: ["goals", "strengths", "gaps", "saved", "situation"], opts: ["goal"] },
   { k: "compare", uses: ["saved", "gaps", "setting", "goals"], opts: [] },
   { k: "funding", uses: ["situation", "goals", "german"], opts: [] },
@@ -39,6 +43,13 @@ export const LIB: readonly LibItem[] = [
   { k: "patterns", uses: FACT_ORDER.filter((k) => k !== "place"), opts: [] },
   { k: "newdirs", uses: ["strengths", "interests", "values", "setting", "jobs", "german"], opts: [] },
 ];
+
+/** A saved job ad as lines for a prompt: what the employer wrote, nothing about the person. */
+export function adText(d: Doc, name: string): string {
+  const a = d.jobads.find((x) => x.name === name);
+  if (!a) return "";
+  return [a.name, a.org, a.place, a.hours, a.pay, a.reqs, a.notes, a.url].filter(Boolean).join("\n");
+}
 
 /** The job titles a choice suggests: past jobs, or goals and maybes. */
 export const namesFor = (d: Doc, role: JobRole): string[] =>
@@ -53,6 +64,8 @@ interface TextArgs {
   job: string;
   goal: string;
   pjob: string;
+  /** the chosen job ad, as lines */
+  ad: string;
   facts: (keys: readonly FactKey[]) => string;
   saved: string;
 }
@@ -126,6 +139,27 @@ ${x.saved ? "\nWhat I have found so far:\n" + x.saved : ""}`,
     ) => `Practise a job interview with me for a position as ${x.job}. Ask one question at a time and wait for my answer. After each answer, give me one short tip. Stop after 6 questions and sum up what went well and what to work on.
 
 ${x.facts(["strengths", "skills", "jobs"])}`,
+    cover: (
+      x,
+    ) => `Help me write a cover letter (Anschreiben) in German for the job ad below. Use the usual German form: one page, short paragraphs, plain and honest, no exaggeration. Show how my experience fits what the ad asks for.
+
+Use only facts from my profile below. Where something is missing, write [ ] for me to fill in instead of inventing it. Leave out my name and address; I will add them.
+
+The job ad:
+${x.ad || "[Paste the job ad here.]"}
+
+${x.facts(["strengths", "skills", "jobs", "german"])}`,
+    cv: (
+      x,
+    ) => `Help me build my CV (Lebenslauf) for jobs as ${x.goal} in Germany, in the usual German table form.
+
+1. Give me the sections with headings, and fill in what my profile below shows.
+2. Put the skills that matter most for ${x.goal} first.
+3. Where something is missing (dates, schools, certificates), write [ ] for me to fill in. Do not invent anything.
+
+Leave out my name, address, photo and date of birth; I will add what I want.
+
+${x.facts(["jobs", "skills", "german", "hobbies"])}`,
     compare: (
       x,
     ) => `Compare the courses and job ads I saved, in one short table, then give me your top pick with two reasons. Point out anything important that is missing, such as price, dates or funding. Do not invent facts.
@@ -202,6 +236,27 @@ ${x.saved ? "\nWas ich bisher gefunden habe:\n" + x.saved : ""}`,
     ) => `Übe mit mir ein Vorstellungsgespräch für eine Stelle als ${x.job}. Stell eine Frage nach der anderen und warte auf meine Antwort. Gib mir nach jeder Antwort einen kurzen Tipp. Hör nach 6 Fragen auf und fasse zusammen, was gut lief und woran ich arbeiten sollte.
 
 ${x.facts(["strengths", "skills", "jobs"])}`,
+    cover: (
+      x,
+    ) => `Hilf mir, ein Anschreiben auf Deutsch für die Stellenanzeige unten zu schreiben. Halte dich an die übliche Form: eine Seite, kurze Absätze, schlicht und ehrlich, ohne Übertreibung. Zeig, wie meine Erfahrung zu dem passt, was die Anzeige verlangt.
+
+Nutze nur Angaben aus meinem Profil unten. Wo etwas fehlt, schreib [ ], damit ich es ergänze, statt etwas zu erfinden. Lass meinen Namen und meine Adresse weg; die füge ich selbst ein.
+
+Die Stellenanzeige:
+${x.ad || "[Fügen Sie hier die Stellenanzeige ein.]"}
+
+${x.facts(["strengths", "skills", "jobs", "german"])}`,
+    cv: (
+      x,
+    ) => `Hilf mir, meinen Lebenslauf für Stellen als ${x.goal} in Deutschland zu erstellen, in der üblichen Tabellenform.
+
+1. Gib mir die Abschnitte mit Überschriften und füll aus, was mein Profil unten zeigt.
+2. Stell die Fähigkeiten, die für ${x.goal} am wichtigsten sind, nach vorn.
+3. Wo etwas fehlt (Daten, Schulen, Zeugnisse), schreib [ ], damit ich es ergänze. Erfinde nichts.
+
+Lass Namen, Adresse, Foto und Geburtsdatum weg; ich füge selbst ein, was ich möchte.
+
+${x.facts(["jobs", "skills", "german", "hobbies"])}`,
     compare: (
       x,
     ) => `Vergleiche die Kurse und Stellen, die ich mir gemerkt habe, in einer kurzen Tabelle. Nenne dann deinen Favoriten mit zwei Gründen. Weise darauf hin, wenn etwas Wichtiges fehlt, etwa Preis, Termine oder Förderung. Erfinde nichts.
@@ -223,11 +278,13 @@ export function libText(d: Doc, E: Esco | null, lang: Lang, k: PromptKey, o: Pro
   const job = o.job || goals[0] || "[job]";
   const goal = o.goal || goals[0] || "[goal]";
   const pjob = o.past || past[0] || "[past job]";
+  const ad = adText(d, o.ad ?? d.jobads[0]?.name ?? "") || o.ad || "";
   return PL_TEXT[lang][k]({
     f,
     job,
     goal,
     pjob,
+    ad,
     facts: (keys) => factLines(f, keys, lang),
     saved: savedText(d),
   });

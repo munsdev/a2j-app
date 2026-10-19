@@ -18,6 +18,7 @@ const STATUS_TONE: Record<ItemStatus, ChipTone> = {
   interested: "plain",
   contacted: "plain",
   applied: "yes",
+  interview: "yes",
   accepted: "yes",
   rejected: "no",
 };

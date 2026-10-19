@@ -11,7 +11,7 @@ import { useEscoReady, useOnet } from "@/app/catalog";
 import { go } from "@/app/router";
 import { toast, toastUndo } from "@/app/toast";
 import { loadOnet, occLabel } from "@/domain/catalog";
-import { type Idea, type Zone, canRank, rankAll, setVote, voteOf } from "@/domain/rank";
+import { type DeckFilter, type Idea, READY, canRank, rankAll, setVote, voteOf } from "@/domain/rank";
 import { useT } from "@/i18n";
 import { ActionBar, Button, EmptyState, Icon, Page, RunHeader, Select } from "@/ui";
 import { JobCard, type IdeaMark } from "./JobCard";
@@ -66,7 +66,7 @@ export function Ideas() {
 
   /* preparation levels come with the O*NET file: without it there is nothing to filter by */
   const zones = !!O?.z;
-  const zone: Zone | 0 = zones ? st.zone : 0;
+  const zone: DeckFilter = zones ? st.zone : 0;
   /* the profile, not the epoch: the place in the deck is kept across reloads (another profile opening clears it
      anyway, see the store) */
   const key = `${d.example ?? "own"}:${zone}:${O ? 1 : 0}`;
@@ -221,7 +221,7 @@ export function Ideas() {
     at({ pass: unmarked(order, (o) => markOf(o) !== null), pos: 0, rating: null });
     aimFocus(['[data-nav="next"]']);
   };
-  const setZone = (z: Zone | 0) => useGoals.setState({ zone: z, rating: null });
+  const setZone = (z: DeckFilter) => useGoals.setState({ zone: z, rating: null });
 
   useEffect(() => {
     const aim = focusAim.current;
@@ -302,12 +302,13 @@ export function Ideas() {
         <Select
           aria-label={t("c_filter")}
           value={zone}
-          onChange={(e) => setZone(+e.target.value as Zone | 0)}
+          onChange={(e) => setZone(+e.target.value as DeckFilter)}
           className="min-h-11 w-auto max-w-full self-start rounded-tile py-1.5 pr-9 pl-3 text-small font-bold"
         >
           <option value={0}>
             {t("c_filter")}: {t("c_any")}
           </option>
+          <option value={READY}>{t("c_ready")}</option>
           {ZONES.map((z) => (
             <option key={z} value={z}>
               {t(`z${z}`)}
@@ -345,14 +346,14 @@ export function Ideas() {
     return shell(
       <EmptyState
         size={72}
-        title={t("c_zone_none_h")}
+        title={t(zone === READY ? "c_ready_none_h" : "c_zone_none_h")}
         actions={
           <Button variant="primary" onClick={() => setZone(0)}>
             {t("c_zone_all")}
           </Button>
         }
       >
-        {t("c_zone_none_p")}
+        {t(zone === READY ? "c_ready_none_p" : "c_zone_none_p")}
       </EmptyState>,
     );
   if (!order.length)

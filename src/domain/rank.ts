@@ -32,6 +32,10 @@ export type WarningKey =
   | "w_heights"
   | "w_noise";
 export type Zone = 1 | 2 | 3 | 4;
+/** The deck filter for "ready now": jobs to apply for straight away. */
+export const READY = 5;
+/** What the ideas are filtered by: a preparation level, READY, or 0 for all. */
+export type DeckFilter = Zone | 0 | typeof READY;
 export type FitBand = 0 | 1 | 2 | 3;
 
 /* ---------- interests ---------- */
@@ -367,8 +371,15 @@ const hasRatings = (d: Doc) => Object.values(d.esco.rated).some((l) => l > 0);
 /** Ideas need interests (part 2) or rated skills (part 6). */
 export const canRank = (d: Doc): boolean => !!userInterests(d) || hasRatings(d);
 
-/** Every occupation worth suggesting, best first. zone limits to a preparation level (1..4). */
-export function rankAll(d: Doc, E: Esco, O: Onet | null, zone?: Zone | 0): Idea[] {
+/** Ready now: little preparation (level 1 or 2) and at least half the core skills had. */
+export function isReady(O: Onet | null, i: number, cov: Coverage | null): boolean {
+  const z = zoneOf(O, i);
+  return z != null && z <= 2 && !!cov && cov.have.length * 2 >= cov.have.length + cov.miss.length;
+}
+
+/** Every occupation worth suggesting, best first. zone limits to a preparation level (1..4), or with READY to
+ *  jobs the person could apply for now. */
+export function rankAll(d: Doc, E: Esco, O: Onet | null, zone?: DeckFilter): Idea[] {
   const st = d.esco;
   const u = userInterests(d);
   const rated = hasRatings(d);
@@ -393,9 +404,10 @@ export function rankAll(d: Doc, E: Esco, O: Onet | null, zone?: Zone | 0): Idea[
     .forEach((j) => E.g.e[j.occ!].forEach((x) => goalSk.add(x)));
   E.g.e.forEach((ess, i) => {
     if (chosen.has(i) || hidden.has(i) || ess.length < 3) return;
-    if (zone && zoneOf(O, i) !== zone) return;
+    if (zone && zone !== READY && zoneOf(O, i) !== zone) return;
     const fit = u ? interestFit(O, i, u) : null;
     const cov = rated ? coverage(d, E, i) : null;
+    if (zone === READY && !isReady(O, i, cov)) return;
     if (fit == null && !(cov && cov.have.length >= 2)) return;
     if (cov && cov.score > maxCov) maxCov = cov.score;
     rows.push({ i, fit, cov, skillOnly: fit == null, score: 0, base: 0 });

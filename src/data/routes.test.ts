@@ -3,6 +3,8 @@ import { produce } from "immer";
 import type { Doc } from "./types";
 import { emptyDoc, shape } from "./doc";
 import {
+  DIRECT,
+  isDirect,
   addRoute,
   courseForJob,
   currentRoute,
@@ -113,5 +115,19 @@ describe("routes", () => {
     expect(d.routes.find((r) => r.job === "j3")?.course).toBe("c3");
     d = change(d, (x) => expect(switchToJob(x, "j3")).toBe(true));
     expect(d.route).toBe("B");
+  });
+});
+
+describe("a route that needs no course", () => {
+  it("keeps DIRECT as its course and is not given one", () => {
+    const d = produce(doc(), (x) => {
+      fixRoutes(x);
+      x.routes[0].course = DIRECT;
+      fixRoutes(x);
+      fillRouteCourse(x, "c1", "j1");
+    });
+    expect(d.routes[0].course).toBe(DIRECT);
+    expect(isDirect(d.routes[0])).toBe(true);
+    expect(courseForJob(d, "j1")).toBeNull();
   });
 });

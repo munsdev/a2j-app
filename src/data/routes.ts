@@ -2,13 +2,19 @@ import type { Course, Doc, Job, Route, RouteId } from "./types";
 import { ROUTE_IDS } from "./types";
 
 /* =================== ROUTES ===================
-   A route is one job and the one course that gets you there. A person keeps up to three (A, B, C) and is
+   A route is one job and the one course that gets you there, or no course at all when the person can apply
+   straight away (DIRECT). A person keeps up to three (A, B, C) and is
    always on one of them: Home, the Goals board and the plan follow it until they switch. The profile is the
    same on every route.
    A job is a goal exactly when a route uses it: fixRoutes keeps the two in step after every change, so the
    rest of the app can keep asking for goals and the main goal. Pure; the changing helpers take a draft. */
 
 export const MAX_ROUTES = ROUTE_IDS.length;
+
+/** Stored as a route's course when it needs none: the person applies for the job directly. Older app
+ *  versions find no course with this id and show "no course yet". */
+export const DIRECT = "direct";
+export const isDirect = (r: Route | null | undefined): boolean => r?.course === DIRECT;
 
 export const routeById = (d: Doc, id: string | null | undefined): Route | null =>
   (id && d.routes.find((r) => r.id === id)) || null;
@@ -67,7 +73,7 @@ export function fixRoutes(d: Doc): void {
   for (const r of d.routes) {
     if (!r || !ROUTE_IDS.includes(r.id) || kept.some((k) => k.id === r.id)) continue;
     if (jobs.get(r.job)?.role !== "goal") continue;
-    const course = r.course && courses.has(r.course) ? r.course : null;
+    const course = r.course && (r.course === DIRECT || courses.has(r.course)) ? r.course : null;
     if (kept.some((k) => same(k, { job: r.job, course }))) continue;
     kept.push(r.course === course ? r : { ...r, course });
   }

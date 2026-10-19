@@ -1,5 +1,5 @@
 import type { Course, Doc, Route, SkillRef } from "@/data/types";
-import { routeCourse, routeJob } from "@/data/routes";
+import { isDirect, routeCourse, routeJob } from "@/data/routes";
 import type { Tile } from "@/domain/skills";
 
 /* The quilt: one row per skill any of the compared routes needs, one square per route. Pure, so it is
@@ -67,6 +67,6 @@ const CELL_KEY = {
 export const cellKey = (c: Cell) => CELL_KEY[c];
 
 /** A route as words: its job and its course. */
-export function routeWords(d: Doc, r: Route): { job: string; course: Course | null } {
-  return { job: routeJob(d, r)?.title ?? "", course: routeCourse(d, r) };
+export function routeWords(d: Doc, r: Route): { job: string; course: Course | null; direct: boolean } {
+  return { job: routeJob(d, r)?.title ?? "", course: routeCourse(d, r), direct: isDirect(r) };
 }

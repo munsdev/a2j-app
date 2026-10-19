@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { produce } from "immer";
 import examples from "@/data/examples.json";
 import { shape } from "@/data/doc";
+import { DIRECT } from "@/data/routes";
 import type { Doc } from "@/data/types";
 import { loadCatalog, type Esco } from "@/domain/catalog";
 import { keepFound } from "@/features/courses/found";
@@ -101,5 +102,19 @@ describe("keeping found items", () => {
       source: "ai",
     });
     expect(next.courses.length).toBe(d.courses.length + 1);
+  });
+
+  it("a route that needs no course leaves the course section off, and says so when ticked", () => {
+    const d = doc("holmes");
+    const r = d.routes.find((x) => x.id === d.route)!;
+    r.course = DIRECT;
+    /* the sample ticked its sections; a person who never touched the course box gets the default */
+    if (d.summary?.inc) delete d.summary.inc.course;
+    const s = planState(d, "en");
+    expect(s.inc.course).toBe(false);
+    const on = { ...s, inc: { ...s.inc, course: true } };
+    const page = pageModel(planData(d, E, on), "", new Date(2026, 9, 19));
+    const sec = page.sections.find((x) => x.k === "course")!;
+    expect(sec.blocks).toEqual([{ t: "p", text: "No course needed: I am applying for this job directly." }]);
   });
 });
