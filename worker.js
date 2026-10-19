@@ -5,9 +5,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.hostname !== HOME && !url.hostname.endsWith(".workers.dev")) {
-      url.hostname = HOME; url.protocol = "https:"; url.port = "";
+      url.hostname = HOME;
+      url.protocol = "https:";
+      url.port = "";
       return Response.redirect(url.toString(), 301);
     }
     return env.ASSETS.fetch(request);
-  }
+  },
 };

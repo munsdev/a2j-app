@@ -17,13 +17,13 @@ A browser-only career orientation app for people in reorientation courses (Arbei
 
 Requires Node 22. `npm ci`, then:
 
-| Command | |
-| --- | --- |
-| `npm run dev` | dev server with hot reload |
-| `npm run verify` | typecheck, lint, format check, unit tests, build |
-| `npm run e2e` | end-to-end and accessibility tests (Playwright) |
-| `npm run preview` | serve the production build on :8765 |
-| `npm run deploy` | build and deploy to Cloudflare |
+| Command           |                                                  |
+| ----------------- | ------------------------------------------------ |
+| `npm run dev`     | dev server with hot reload                       |
+| `npm run verify`  | typecheck, lint, format check, unit tests, build |
+| `npm run e2e`     | end-to-end and accessibility tests (Playwright)  |
+| `npm run preview` | serve the production build on :8765              |
+| `npm run deploy`  | build and deploy to Cloudflare                   |
 
 The stack (Vite, React 19, TypeScript strict, Tailwind CSS v4, Radix, Zustand + Immer), folder structure and coding rules are in [`docs/architecture.md`](docs/architecture.md). Colours, type, components and how to rebrand are in [`docs/design-system.md`](docs/design-system.md). CI runs `verify` and the end-to-end tests on every pull request.
 
@@ -43,17 +43,83 @@ Search links: mein NOW `https://mein-now.de/weiterbildungssuche/?sw=<term>`, Job
 
 ```json
 {
-  "app": "a2j", "version": 2,
-  "profile": {"name": "", "location": "", "languages": "", "contact": "", "german": "b1", "computer": "daily",
-              "situation": "", "current": "", "want": "", "avoid": "", "hours": "", "place": "", "limits": "", "hobbies": "", "projects": "",
-              "coursePrefs": {"lang": "de", "where": "near", "time": "any", "start": "any", "voucher": true}},
-  "jobs": [{"id": "j1", "title": "", "occ": 1151, "role": "done | goal | maybe", "org": "", "when": "", "current": false, "extra": ["needs outside the catalogue"]}],
+  "app": "a2j",
+  "version": 2,
+  "profile": {
+    "name": "",
+    "location": "",
+    "languages": "",
+    "contact": "",
+    "german": "b1",
+    "computer": "daily",
+    "situation": "",
+    "current": "",
+    "want": "",
+    "avoid": "",
+    "hours": "",
+    "place": "",
+    "limits": "",
+    "hobbies": "",
+    "projects": "",
+    "coursePrefs": { "lang": "de", "where": "near", "time": "any", "start": "any", "voucher": true }
+  },
+  "jobs": [
+    {
+      "id": "j1",
+      "title": "",
+      "occ": 1151,
+      "role": "done | goal | maybe",
+      "org": "",
+      "when": "",
+      "current": false,
+      "extra": ["needs outside the catalogue"]
+    }
+  ],
   "mainGoal": "j1",
-  "esco": {"rated": {"662": 3}, "own": [{"name": "", "level": 3, "esco": 662}], "want": {"662": 1}, "votes": [{"o": 1151, "d": 1, "sk": [[662, -1]], "ctx": []}], "hidden": [], "more": false},
-  "assess": {"answers": {"plan_1": 4}, "adjusted": {}, "setting": {"people": 2}, "ruledOut": [], "values": [], "done": {"apt": "2026-10-17"}},
-  "courses": [{"id": "c1", "name": "", "provider": "", "url": "", "start": "", "length": "", "azav": "provider", "goals": ["j1"], "covers": [662, "Computer basics"], "status": "interested", "notes": ""}],
-  "jobads": [{"id": "a1", "name": "", "org": "", "place": "", "url": "", "deadline": "", "goals": ["j1"], "status": "interested"}],
-  "summary": {"lang": "en", "goal": "j1", "course": "c1", "inc": {}, "why": "", "other": "", "next": ""}
+  "esco": {
+    "rated": { "662": 3 },
+    "own": [{ "name": "", "level": 3, "esco": 662 }],
+    "want": { "662": 1 },
+    "votes": [{ "o": 1151, "d": 1, "sk": [[662, -1]], "ctx": [] }],
+    "hidden": [],
+    "more": false
+  },
+  "assess": {
+    "answers": { "plan_1": 4 },
+    "adjusted": {},
+    "setting": { "people": 2 },
+    "ruledOut": [],
+    "values": [],
+    "done": { "apt": "2026-10-17" }
+  },
+  "courses": [
+    {
+      "id": "c1",
+      "name": "",
+      "provider": "",
+      "url": "",
+      "start": "",
+      "length": "",
+      "azav": "provider",
+      "goals": ["j1"],
+      "covers": [662, "Computer basics"],
+      "status": "interested",
+      "notes": ""
+    }
+  ],
+  "jobads": [
+    {
+      "id": "a1",
+      "name": "",
+      "org": "",
+      "place": "",
+      "url": "",
+      "deadline": "",
+      "goals": ["j1"],
+      "status": "interested"
+    }
+  ],
+  "summary": { "lang": "en", "goal": "j1", "course": "c1", "inc": {}, "why": "", "other": "", "next": "" }
 }
 ```
 
