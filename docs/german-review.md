@@ -344,7 +344,6 @@ Strings added by `assess.js`, `directions.js`, `library.js`, `saved.js`, `summar
 | `run_overview` | Back to the overview | Zurück zur Übersicht |
 | `set_h` | Where you want to work | Wo Sie arbeiten möchten |
 | `set_p` | For each row, pick where you would rather be. Choose "Doesn't matter" if you have no preference. | Wählen Sie in jeder Zeile, was Ihnen lieber ist. Nehmen Sie „Egal“, wenn Sie keine Vorliebe haben. |
-| `set_any` | Doesn't matter | Egal |
 | `set_out_h` | Ruled out for me | Geht für mich nicht |
 | `set_out_p` | Tick anything you cannot or do not want to do. You don't need to give a reason. | Kreuzen Sie an, was Sie nicht können oder nicht möchten. Sie müssen keinen Grund nennen. |
 | `set_save` | Save | Speichern |

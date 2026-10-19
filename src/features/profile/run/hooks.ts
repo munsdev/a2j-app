@@ -1,4 +1,4 @@
-import { useEffect, useRef, type TouchEvent } from "react";
+import { createContext, useContext, useEffect, useRef, type MutableRefObject, type TouchEvent } from "react";
 import { isShortcutBlocked } from "@/lib/keys";
 import { focusForStep } from "@/lib/focus";
 import { digitKey, swipeDir } from "../logic";
@@ -52,3 +52,17 @@ export function useDigitKeys(min: number, max: number, onDigit: ((n: number) => 
 
 /** Answers inside a run are saved quietly; leaving the run closes them into one undo step. */
 export { useCommitOnLeave } from "@/data/hooks";
+
+/** The step back of the run on screen, for phone Back (PartRun takes Back; null = leave the part). */
+export const RunBack = createContext<MutableRefObject<(() => void) | null> | null>(null);
+/** Give phone Back the run's own step back. */
+export function useRunBack(back: (() => void) | null) {
+  const ref = useContext(RunBack);
+  useEffect(() => {
+    if (!ref) return;
+    ref.current = back;
+    return () => {
+      ref.current = null;
+    };
+  });
+}

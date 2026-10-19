@@ -148,6 +148,7 @@ Four problems can strand or hurt a new user:
 - What happens: the 5-point rows use custom circles, but "Doesn't matter" is a native blue radio button that is pre-selected. The middle circle is smaller and has no label.
 - Fix: style "Doesn't matter" like the other controls. Label the scale ends as now, and give the middle a visible "Either" or "No preference".
 - **Fixed:** "Doesn't matter" is now a pill button like the other controls instead of a native radio, all five circles are the same size, and the middle one has a visible label ("Either", "Beides").
+- **Later:** the separate "Doesn't matter" button is gone. Each scale starts on the middle ("Either"), and Next keeps it.
 
 ---
 

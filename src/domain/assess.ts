@@ -1,5 +1,5 @@
 import type { Assess, Doc, Lang, PartKey } from "@/data/types";
-import { APTITUDES, APT_ITEMS, INTERESTS, INT_ITEMS, type AptGroup, type InterestId } from "./items";
+import { APTITUDES, APT_ITEMS, INTERESTS, INT_ITEMS, SETTING, type AptGroup, type InterestId } from "./items";
 
 /* =================== THE SELF-ASSESSMENT ===================
    Six parts: 1 How you work (aptitudes), 2 What you enjoy (interests), 3 Where you want to work (setting),
@@ -104,8 +104,11 @@ export function partStatus(d: Doc, k: PartKey): PartStatus {
   const a = assessOf(d);
   if (k === "apt" || k === "int") {
     const items = k === "apt" ? APT_ITEMS : INT_ITEMS;
-    return { n: items.filter((x) => a.answers[x.id]).length, t: items.length, done: !!a.done[k] };
+    const n = items.filter((x) => a.answers[x.id]).length;
+    /* every question answered counts as done, also when the run was left before its last Next */
+    return { n, t: items.length, done: !!a.done[k] || n === items.length };
   }
+  if (k === "set") return { done: !!a.done.set || SETTING.every((s) => a.setting[s.id]) };
   if (k === "skills")
     return { n: Object.keys(d.esco.rated).length + d.esco.own.length, done: !!a.done.skills };
   return { done: !!a.done[k] };

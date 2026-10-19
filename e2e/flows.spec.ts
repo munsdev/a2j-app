@@ -153,3 +153,32 @@ test("browse the job ideas: next and back, and change a mark on a card seen befo
   await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
   expect(errors).toEqual([]);
 });
+
+test("phone back inside a part goes back a step, and leaves for the overview from the first", async ({
+  page,
+}) => {
+  await seed(page);
+  await page.goto("#profile");
+  await page.goto("#profile/apt");
+  await expect(page.getByText("1 of 45")).toBeVisible();
+  await page.getByRole("button", { name: "Often" }).click();
+  await page.getByRole("button", { name: /^Next/ }).click();
+  await expect(page.getByText("2 of 45")).toBeVisible();
+  await page.goBack();
+  await expect(page.getByText("1 of 45")).toBeVisible();
+  await expect(page).toHaveURL(/#profile\/apt$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/#profile$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test("a work-setting scale starts in the middle, and Next keeps it", async ({ page }) => {
+  await seed(page);
+  await page.goto("#profile/set");
+  await expect(page.getByRole("radio", { name: "Either" })).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByRole("button", { name: "Doesn't matter" })).toHaveCount(0);
+  await page.getByRole("button", { name: /^Next/ }).click();
+  await expect(page.getByText("2 of 7")).toBeVisible();
+  await page.getByRole("button", { name: /^Back/ }).click();
+  await expect(page.getByRole("radio", { name: "Either" })).toHaveAttribute("aria-checked", "true");
+});

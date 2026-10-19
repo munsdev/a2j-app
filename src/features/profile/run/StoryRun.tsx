@@ -10,7 +10,7 @@ import { GERMAN_LEVELS, HOURS, PC_LEVELS, PLACES, SITUATIONS } from "@/data/prof
 import { STORY, type StoryStep } from "../constants";
 import { cleanJobs } from "../logic";
 import { strings } from "../strings";
-import { useStepFocus } from "./hooks";
+import { useRunBack, useStepFocus } from "./hooks";
 import { JobRow } from "./JobRow";
 import { BackButton, PauseButton, RunFrame, StepHeading, StepIntro } from "./RunFrame";
 
@@ -73,6 +73,8 @@ export function StoryRun({ onFinish }: { onFinish: (recipe: (d: Doc) => void) =>
       });
     else goStep(pos + 1);
   };
+  const back = pos ? () => goStep(pos - 1) : null;
+  useRunBack(back);
 
   return (
     <RunFrame part="story" step={[pos + 1, STORY.length]}>
@@ -142,7 +144,7 @@ export function StoryRun({ onFinish }: { onFinish: (recipe: (d: Doc) => void) =>
           )}
         </div>
         <ActionBar>
-          <BackButton onClick={pos ? () => goStep(pos - 1) : undefined} disabled={!pos} />
+          <BackButton onClick={back ?? undefined} disabled={!back} />
           <PauseButton />
           <Button type="submit" variant="primary">
             {t(last ? "done" : "next")}

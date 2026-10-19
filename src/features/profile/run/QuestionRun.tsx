@@ -8,7 +8,7 @@ import { ActionBar, Icon } from "@/ui";
 import { advance, startPos, type QuestionPos } from "../logic";
 import { optionLook } from "../constants";
 import { strings } from "../strings";
-import { useDigitKeys, useStepFocus, useTouchSwipe } from "./hooks";
+import { useDigitKeys, useRunBack, useStepFocus, useTouchSwipe } from "./hooks";
 import {
   BackButton,
   Context,
@@ -54,6 +54,7 @@ export function QuestionRun({ part, onFinish }: { part: "apt" | "int"; onFinish:
     buttons.current[n - 1]?.focus({ preventScroll: true });
   });
   const swipe = useTouchSwipe(next, back);
+  useRunBack(back);
 
   return (
     <RunFrame part={part} step={[cur.pos + 1, items.length]} swipe={swipe}>

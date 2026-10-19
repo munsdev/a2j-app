@@ -8,7 +8,7 @@ import { useT } from "@/i18n";
 import { ActionBar, Button, Eyebrow, Hint, Icon, LevelPicker, LineMark, type LineState } from "@/ui";
 import { strings } from "../strings";
 import { AddSkill } from "./AddSkill";
-import { useDigitKeys, useStepFocus, useTouchSwipe } from "./hooks";
+import { useDigitKeys, useRunBack, useStepFocus, useTouchSwipe } from "./hooks";
 import { BackButton, Context, ForwardButton, PauseButton, RunFrame, StepHeading } from "./RunFrame";
 
 /* Part 6: the skills of the jobs done, one card at a time, rated 0 to 5 with the kit's LevelPicker (arrow
@@ -56,6 +56,7 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
       : null,
   );
   const swipe = useTouchSwipe(next, back);
+  useRunBack(back);
 
   const done = (
     <Button variant="primary" onClick={onFinish}>

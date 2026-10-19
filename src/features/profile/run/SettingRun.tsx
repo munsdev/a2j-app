@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from "react";
-import { update, useDoc } from "@/data/store";
+import { getDoc, update, useDoc } from "@/data/store";
 import { ensureAssess } from "@/domain/assess";
 import { RULED_GROUPS, RULED_OUT, SETTING, type SettingRow } from "@/domain/items";
 import { pick, useLang, useT } from "@/i18n";
@@ -7,10 +7,11 @@ import { cn } from "@/lib/cn";
 import { ActionBar, Button, Chips, Eyebrow, Icon, Lede, ToggleChip } from "@/ui";
 import { midSentence } from "../logic";
 import { strings } from "../strings";
-import { useStepFocus, useTouchSwipe } from "./hooks";
+import { useRunBack, useStepFocus, useTouchSwipe } from "./hooks";
 import { BackButton, ForwardButton, PauseButton, RunFrame, StepHeading, StepIntro } from "./RunFrame";
 
-/* Part 3: one two-ended scale per screen, then what is ruled out. */
+/* Part 3: one two-ended scale per screen, then what is ruled out. A scale starts in the middle (either), so
+   there is no separate "doesn't matter": Next keeps the middle when the dot was not moved. */
 const STEPS = SETTING.length + 1;
 
 export function SettingRun({ onFinish }: { onFinish: () => void }) {
@@ -18,11 +19,18 @@ export function SettingRun({ onFinish }: { onFinish: () => void }) {
   const [pos, setPos] = useState(0);
   const heading = useStepFocus<HTMLHeadingElement>(pos);
   const row = SETTING[pos] as SettingRow | undefined;
-  const value = useDoc((d) => (row ? d.assess.setting?.[row.id] : undefined));
+  const value = useDoc((d) => (row ? d.assess.setting?.[row.id] : undefined)) ?? 3;
 
-  const next = () => setPos((p) => Math.min(p + 1, SETTING.length));
+  const set = (v: number) => {
+    if (row) update((d) => void (ensureAssess(d).setting[row.id] = v), { quiet: true });
+  };
+  const next = () => {
+    if (row && !getDoc().assess.setting?.[row.id]) set(3);
+    setPos((p) => Math.min(p + 1, SETTING.length));
+  };
   const back = pos > 0 ? () => setPos((p) => p - 1) : null;
   const swipe = useTouchSwipe(next, back);
+  useRunBack(back);
 
   if (!row)
     return (
@@ -33,7 +41,7 @@ export function SettingRun({ onFinish }: { onFinish: () => void }) {
         </StepIntro>
         <RuledOut />
         <ActionBar>
-          <BackButton onClick={() => setPos(SETTING.length - 1)} />
+          <BackButton onClick={back ?? undefined} />
           <PauseButton />
           <Button variant="primary" onClick={onFinish}>
             {t("save")}
@@ -43,36 +51,16 @@ export function SettingRun({ onFinish }: { onFinish: () => void }) {
       </RunFrame>
     );
 
-  const set = (v: number | null) =>
-    update(
-      (d) => {
-        const s = ensureAssess(d).setting;
-        if (v) s[row.id] = v;
-        else delete s[row.id];
-      },
-      { quiet: true },
-    );
-
   return (
     <RunFrame part="set" step={[pos + 1, STEPS]} swipe={swipe}>
       <StepIntro>
         <StepHeading ref={heading}>{t("set_q")}</StepHeading>
       </StepIntro>
       <Scale key={row.id} row={row} value={value} onChange={set} />
-      <Button
-        wide
-        className="min-h-13"
-        onClick={() => {
-          set(null);
-          next();
-        }}
-      >
-        {t("set_any")}
-      </Button>
       <ActionBar>
         <BackButton onClick={back ?? undefined} disabled={!back} />
         <PauseButton />
-        <ForwardButton ready={value != null} onClick={next} />
+        <ForwardButton ready onClick={next} />
       </ActionBar>
     </RunFrame>
   );
@@ -83,15 +71,7 @@ export function SettingRun({ onFinish }: { onFinish: () => void }) {
 const DOT_SIZE = ["size-10", "size-7.5", "size-5.5", "size-7.5", "size-10"];
 
 /** A five-point scale between two ends, as a radio group: arrow keys move and choose, Tab leaves. */
-function Scale({
-  row,
-  value,
-  onChange,
-}: {
-  row: SettingRow;
-  value: number | undefined;
-  onChange: (v: number) => void;
-}) {
+function Scale({ row, value, onChange }: { row: SettingRow; value: number; onChange: (v: number) => void }) {
   const t = useT(strings);
   const lang = useLang();
   const [left, right] = pick(row, lang);
@@ -137,7 +117,7 @@ function Scale({
               role="radio"
               aria-checked={on}
               aria-label={label(n)}
-              tabIndex={on || (value == null && n === 3) ? 0 : -1}
+              tabIndex={on ? 0 : -1}
               onClick={() => onChange(n)}
               onKeyDown={(e) => onKey(e, n)}
               className="group relative flex size-12 items-center justify-center rounded-full"
