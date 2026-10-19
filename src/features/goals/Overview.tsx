@@ -12,6 +12,7 @@ import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Button, Hint, Icon, Page, PageHeader, Panel, PanelTitle, SuggestInput, Tag } from "@/ui";
 import { BoardCard } from "./BoardCard";
+import { OtherRoutes } from "@/features/routes/OtherRoutes";
 import { FitBadge } from "./Fit";
 import { useFitText, useMatch } from "./useFit";
 import { Title } from "./Title";
@@ -22,10 +23,8 @@ import { strings } from "./strings";
 export function Overview() {
   const t = useT(strings);
   const d = useDoc();
-  const goals = jobsIn(d, "goal");
   const short = jobsIn(d, "maybe");
   const main = mainGoal(d);
-  const others = goals.filter((g) => g !== main);
   const ranks = canRank(d);
   return (
     <Page width="wide">
@@ -33,14 +32,7 @@ export function Overview() {
       <div className="grid gap-[18px] min-[1000px]:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] min-[1000px]:items-start">
         <div className="flex min-w-0 flex-col gap-[18px]">
           <BoardCard />
-          {others.length > 0 && (
-            <section className="flex flex-col gap-2.5" aria-labelledby="goals-others">
-              <h2 id="goals-others" className="mt-2.5 text-title">
-                {t("g_goal")}
-              </h2>
-              <MiniList jobs={others} />
-            </section>
-          )}
+          {main && <OtherRoutes />}
         </div>
         <div className="flex min-w-0 flex-col gap-[18px]">
           <Panel aria-labelledby="goals-short">
@@ -49,12 +41,6 @@ export function Overview() {
                 <PanelTitle id="goals-short">{t("g_short")}</PanelTitle>
                 <Hint>{t("g_short_p")}</Hint>
               </div>
-              {short.length + goals.length >= 2 && (
-                <Button size="sm" onClick={() => go("goals/compare")}>
-                  <Icon name="grid" />
-                  {t("g_compare")}
-                </Button>
-              )}
             </div>
             {short.length ? <MiniList jobs={short} inPanel narrow /> : <Hint>{t("g_short_none")}</Hint>}
           </Panel>

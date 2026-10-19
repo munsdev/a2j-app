@@ -55,6 +55,8 @@ const BACKUP_MOVED = [
 ];
 /* strings for UI the previous app did not have */
 const EDIT_ADDED = ["e_filter", "e_filter_none"];
+/* reworded on purpose: the main goal became the route you are on */
+const EDIT_CHANGED = ["e_main"];
 const BACKUP_ADDED = ["bk_choose", "bk_nofile"];
 /* Home of a returning person: the line (l_), the next stops (n_), the stages (s_) */
 const HOME_ADDED = Object.keys(homeStrings.en).filter((k) => /^[lns]_/.test(k));
@@ -65,7 +67,7 @@ describe("copy taken over from the previous app", () => {
     expect(ownKeys(homeStrings, HOME_ADDED)).toEqual(legacyKeys("home.js", [...HOME_MOVED, ...HOME_DROPPED]));
   });
   it("edit: every string of edit.js, plus the labels it borrows, word for word", () => {
-    expectCopied(editStrings, ["edit.js", "profile.js", "goals.js"], EDIT_ADDED);
+    expectCopied(editStrings, ["edit.js", "profile.js", "goals.js"], [...EDIT_ADDED, ...EDIT_CHANGED]);
     for (const k of legacyKeys("edit.js", EDIT_MOVED)) expect(editStrings.en).toHaveProperty(k);
   });
   it("backup: every string of backup.js, word for word", () => {

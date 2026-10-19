@@ -42,6 +42,7 @@ describe("the board's line", () => {
     key,
     name: key,
     state,
+    also: false,
     course: c ? course(c) : null,
     level: state === "have" ? 2 : 0,
     extra: true,
@@ -141,6 +142,7 @@ describe("compareRows", () => {
     name,
     state,
     course: null,
+    also: false,
     level: 0,
     extra: true,
   });

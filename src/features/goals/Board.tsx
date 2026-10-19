@@ -6,6 +6,9 @@ import { canRank } from "@/domain/rank";
 import { useEsco } from "@/app/catalog";
 import { go } from "@/app/router";
 import { jobCount } from "@/domain/skills";
+import { courseForJob } from "@/data/routes";
+import { coversThis } from "@/features/routes/actions";
+import { strings as routeStrings } from "@/features/routes/strings";
 import { openFinder, openItem } from "@/features/courses/api";
 import { useLang, useT } from "@/i18n";
 import { cn } from "@/lib/cn";
@@ -47,15 +50,9 @@ export function Board({ job }: { job: Job }) {
   const E = useEsco();
   const d = useDoc();
   const tiles = useMemo(() => jobCount(d, E, job.occ, job).tiles, [d, E, job]);
-  const courses = d.courses;
-  const p = useMemo(
-    () =>
-      boardPath(
-        tiles,
-        courses.filter((c) => c.goals.includes(job.id)),
-      ),
-    [tiles, courses, job.id],
-  );
+  /* only the course of the job's route counts on its line */
+  const rc = courseForJob(d, job.id);
+  const p = useMemo(() => boardPath(tiles, rc ? [rc] : []), [tiles, rc]);
   const [open, setOpen] = useState<ReadonlySet<Zone>>(() => new Set());
   const rows = useMemo(() => boardLine(p, CAP, open), [p, open]);
   const badges = useMemo(() => courseBadges(p.courses), [p.courses]);
@@ -114,7 +111,7 @@ export function Board({ job }: { job: Job }) {
           <Row
             r={r}
             dot={
-              <span className={cn("lr-dot", `lr-dot-${x.state}`)}>
+              <span className={cn("lr-dot", `lr-dot-${x.state}`, x.also && "lr-dot-also")}>
                 {x.state === "have" && <Icon name="check" />}
               </span>
             }
@@ -134,7 +131,9 @@ export function Board({ job }: { job: Job }) {
                 ,{" "}
                 {x.state === "course" && x.course
                   ? t("b_covered_by", { x: x.course.name })
-                  : t(x.state === "have" ? "c_legend_have" : "c_legend_learn")}
+                  : x.also && x.course
+                    ? t("b_also", { x: x.course.name })
+                    : t(x.state === "have" ? "c_legend_have" : "c_legend_learn")}
               </span>
             </button>
           </Row>
@@ -162,7 +161,7 @@ export function Board({ job }: { job: Job }) {
       case "next":
         return (
           <Row r={r} kind="next" dot={<span className="lr-dot lr-dot-next" />}>
-            <NextStop p={p} job={job} />
+            <NextStop p={p} job={job} badge={rc ? badges.get(rc.id) : undefined} />
           </Row>
         );
       case "job":
@@ -256,8 +255,10 @@ function CourseKey({
 
 /** The next stop, highlighted: the first skill still to learn (find a course, or say you can do it), starting
  *  your course once every skill is covered, or job ads once you have them all. */
-function NextStop({ p, job }: { p: BoardPath; job: Job }) {
+function NextStop({ p, job, badge }: { p: BoardPath; job: Job; badge?: string }) {
   const t = useT(strings);
+  const tr = useT(routeStrings);
+  const rc = courseForJob(useDoc(), job.id);
   const n = p.next;
   if (n.kind === "skill")
     return (
@@ -274,6 +275,13 @@ function NextStop({ p, job }: { p: BoardPath; job: Job }) {
         <Button size="sm" onClick={() => openSkill(n.tile.x, job.occ, job.id)}>
           {t("b_can")}
         </Button>
+        {/* the route's course teaches it after all (it was missed when the course was saved) */}
+        {rc && (
+          <Button size="sm" variant="ghost" onClick={() => coversThis(rc.id, n.tile.x, n.tile.name)}>
+            <Icon name="book" />
+            {tr("r_covers_this", { c: badge ?? rc.name })}
+          </Button>
+        )}
       </NextCard>
     );
   if (n.kind === "course")

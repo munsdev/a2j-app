@@ -3,6 +3,7 @@ import type { Course, Doc, Job, JobAd, SkillRef } from "@/data/types";
 import { lc, safeUrl, splitList, uid } from "@/data/doc";
 import { normTxt, type Esco } from "@/domain/catalog";
 import { jobTiles, skKey } from "@/domain/skills";
+import { fillRouteCourse } from "@/data/routes";
 import { extractJSON, str, type Json } from "./parse";
 import { finderCtx } from "./text";
 import type { FinderSpec, ItemKind } from "./types";
@@ -121,6 +122,8 @@ export function keepFound(d: Draft<Doc>, F: FinderSpec, items: readonly FoundIte
       list.push(c);
       ids.push(c.id);
     });
+    /* a route to this job without a course takes the first one saved */
+    if (F.job) ids.forEach((id) => fillRouteCourse(d, id, F.job!));
   } else {
     const list = d.jobads;
     items.forEach((x) => {

@@ -1,0 +1,141 @@
+import type { Match } from "@/domain/match";
+import type { Tile } from "@/domain/skills";
+import { useT } from "@/i18n";
+import { cn } from "@/lib/cn";
+import { Icon } from "@/ui";
+import { cellKey, cellOf, type Cell } from "./model";
+import { strings } from "./strings";
+
+/* Small pieces every route screen shares: the letter, the score, a skill as a chip, a square of the quilt. */
+
+/** The route's letter in a disc: ink when it is the route you are on (or `solid`), ringed otherwise. */
+export function RouteDisc({
+  id,
+  solid,
+  size = "md",
+  className,
+}: {
+  id: string;
+  solid?: boolean;
+  size?: "sm" | "md" | "lg";
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "flex flex-none items-center justify-center rounded-full font-display leading-none font-extrabold",
+        size === "sm" && "size-6 text-[0.8rem]",
+        size === "md" && "size-8 text-[0.95rem]",
+        size === "lg" && "size-9 text-[1.1rem]",
+        solid ? "bg-ink text-canvas" : "bg-surface text-ink shadow-[inset_0_0_0_2px_var(--ink)]",
+        className,
+      )}
+    >
+      {id}
+    </span>
+  );
+}
+
+/** The match today and with the course: "31 → 41", or one number when the course adds nothing. */
+export function Score({ m, className }: { m: Match; className?: string }) {
+  const t = useT(strings);
+  const w = m.withCourses;
+  return (
+    <span className={cn("flex items-baseline gap-1 font-display tabular-nums", className)}>
+      <span className="sr-only">
+        {w != null ? t("r_score_sr", { a: m.score, b: w }) : t("r_score1_sr", { a: m.score })}
+      </span>
+      <span aria-hidden="true" className={cn("font-bold", w != null ? "text-ink-3" : "text-ink")}>
+        {m.score}
+      </span>
+      {w != null && (
+        <>
+          <span aria-hidden="true" className="text-small text-ink-3">
+            →
+          </span>
+          <b aria-hidden="true" className="text-title leading-none font-extrabold text-have-ink">
+            {w}
+          </b>
+        </>
+      )}
+    </span>
+  );
+}
+
+/** The look of each state, told apart by shape as well as colour: have a brick fill and a check; also the
+ *  same with a blue ring around it; course a blue ring and a book; learn a dashed outline; none a dot. */
+const LOOK: Record<Cell, string> = {
+  have: "bg-have text-on-accent",
+  also: "bg-have text-on-accent shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--course)]",
+  course: "bg-surface text-course-ink shadow-[inset_0_0_0_2px_var(--course)]",
+  learn: "bg-transparent text-ink-2 outline-2 -outline-offset-2 outline-learn outline-dashed",
+  none: "bg-transparent text-ink-3",
+};
+const MARK = (c: Cell) =>
+  c === "have" || c === "also" ? (
+    <Icon name="check" />
+  ) : c === "course" ? (
+    <Icon name="book" />
+  ) : c === "none" ? (
+    <i className="size-1.5 rounded-full bg-line-2" />
+  ) : null;
+
+/** A square of the quilt (or a swatch of its key, with `small`). The words are for screen readers. */
+export function Patch({ cell, small, className }: { cell: Cell; small?: boolean; className?: string }) {
+  const t = useT(strings);
+  return (
+    <span
+      className={cn(
+        "flex items-center justify-center rounded-tile [&_svg]:stroke-[2.8]",
+        small ? "h-5 w-8 flex-none [&_svg]:size-3" : "h-8 w-full [&_svg]:size-4",
+        LOOK[cell],
+        className,
+      )}
+    >
+      <span aria-hidden="true" className="flex">
+        {MARK(cell)}
+      </span>
+      {!small && <span className="sr-only">{t(cellKey(cell))}</span>}
+    </span>
+  );
+}
+
+/** A skill as a chip, in its state on the route. */
+export function SkillChip({ tile }: { tile: Tile }) {
+  const t = useT(strings);
+  const c = cellOf(tile);
+  return (
+    <li
+      className={cn(
+        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 text-small leading-tight font-bold [&_svg]:size-3.5 [&_svg]:flex-none [&_svg]:stroke-[2.8]",
+        LOOK[c],
+        c === "also" && "mx-1",
+      )}
+    >
+      <span aria-hidden="true" className="flex">
+        {MARK(c)}
+      </span>
+      <span className="min-w-0 break-words hyphens-auto">{tile.name}</span>
+      <span className="sr-only">, {t(cellKey(c))}</span>
+    </li>
+  );
+}
+
+/** The key under a quilt or a preview. */
+export function QuiltKey({ cells, className }: { cells: readonly Cell[]; className?: string }) {
+  const t = useT(strings);
+  return (
+    <ul
+      aria-hidden="true"
+      className={cn("flex flex-wrap gap-x-4 gap-y-2 text-caption text-ink-2", className)}
+    >
+      {cells.map((c) => (
+        <li key={c} className="flex items-center gap-2">
+          <Patch cell={c} small />
+          {t(cellKey(c))}
+        </li>
+      ))}
+    </ul>
+  );
+}

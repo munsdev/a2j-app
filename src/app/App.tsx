@@ -4,6 +4,7 @@ import { useDocStore } from "@/data/store";
 import { useT } from "@/i18n";
 import { TopBar } from "./shell/TopBar";
 import { SampleBar } from "./shell/SampleBar";
+import { RouteBar } from "@/features/routes/RouteBar";
 import { Footer } from "./shell/Footer";
 import { ErrorBoundary } from "./shell/ErrorBoundary";
 import { SheetHost } from "@/ui/SheetHost";
@@ -103,6 +104,7 @@ export function App() {
       </a>
       <TopBar />
       <SampleBar />
+      <RouteBar />
       <StorageWarning />
       <main id="main" tabIndex={-1} className="flex-1 outline-none" data-view={route.view}>
         <ErrorBoundary resetKey={route.path}>

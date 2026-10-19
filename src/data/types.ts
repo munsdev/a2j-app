@@ -176,12 +176,27 @@ export interface Summary {
   next?: string;
 }
 
+/** A way to a job: one job (a goal) and the one course that gets you there (null: none picked yet).
+ *  Up to three, named by their letter. The person is always on one of them (Doc.route). */
+export type RouteId = "A" | "B" | "C";
+export const ROUTE_IDS: readonly RouteId[] = ["A", "B", "C"];
+export interface Route {
+  id: RouteId;
+  /** a job with role "goal" */
+  job: string;
+  course: string | null;
+}
+
 export interface Doc {
   app: "a2j";
   version: 2;
   profile: Profile;
   jobs: Job[];
+  /** the job of the route the person is on (kept for older app versions reading a backup) */
   mainGoal: string | null;
+  routes: Route[];
+  /** the route the person is on */
+  route: RouteId | null;
   esco: EscoState;
   assess: Assess;
   courses: Course[];

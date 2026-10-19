@@ -1,9 +1,11 @@
 import { getDoc, update } from "@/data/store";
-import { jobById, makeGoal, removeJob } from "@/data/doc";
+import { jobById, removeJob } from "@/data/doc";
+import { routeForJob } from "@/data/routes";
+import { goRoute, startRoute } from "@/features/routes/actions";
 import { setVote } from "@/domain/rank";
 import { go } from "@/app/router";
 import { closeSheet, useSheetStore } from "@/app/sheet";
-import { toast, toastUndo } from "@/app/toast";
+import { toastUndo } from "@/app/toast";
 import { useSettings } from "@/app/settings";
 import { makeT } from "@/i18n";
 import { strings } from "./strings";
@@ -12,25 +14,21 @@ import { strings } from "./strings";
 
 const t = () => makeT(useSettings.getState().lang, strings);
 
-/** Make a saved job a goal (the main goal when there is none yet) and open its page. */
+/** Start a route to a saved job (asks which route it replaces when all three are taken) and open its page. */
 export function makeGoalAndOpen(id: string): void {
   const j = jobById(getDoc(), id);
   if (!j) return;
-  update((d) => {
-    makeGoal(d, id);
-    if (j.occ != null && j.occ >= 0) setVote(d, j.occ, 1);
-  });
-  toast(t()("d_made", { x: j.title }));
+  if (j.occ != null && j.occ >= 0) update((d) => setVote(d, j.occ!, 1), { quiet: true });
+  startRoute(id);
   go("goals/job/" + id);
 }
 
-/** Make a goal the main goal: the board, the courses and the Plan follow it. */
+/** Go onto the route to a job: the board, the courses and the Plan follow it. */
 export function makeMain(id: string): void {
-  const j = jobById(getDoc(), id);
-  if (!j) return;
+  const r = routeForJob(getDoc(), id);
+  if (!r) return;
   closeSheet();
-  update((d) => void (d.mainGoal = id));
-  toast(t()("d_made", { x: j.title }));
+  goRoute(r.id);
 }
 
 /** Take a job off the list, with Undo, and go back to the overview in place of its page. */

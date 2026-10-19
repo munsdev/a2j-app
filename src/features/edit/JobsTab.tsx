@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useEscoReady } from "@/app/catalog";
 import { toastUndo } from "@/app/toast";
 import { update, useDoc } from "@/data/store";
-import { addJob, jobsIn, mainGoal, makeGoal, removeJob } from "@/data/doc";
+import { addJob, mainGoal, removeJob } from "@/data/doc";
+import { MAX_ROUTES, addRoute, switchToJob } from "@/data/routes";
 import type { Job, JobRole } from "@/data/types";
 import { occLabel } from "@/domain/catalog";
 import { useOccSearch } from "@/app/useCatalogSearch";
@@ -51,6 +52,7 @@ function JobRow({ job: j, main, focus }: { job: Job; main: boolean; focus: boole
   const t = useT(editStrings, profileFields);
   const E = useEscoReady();
   const hits = useOccSearch(E, j.title, 6);
+  const full = useDoc((d) => d.routes.length >= MAX_ROUTES);
   const sug = j.occ != null && j.occ >= 0 && !hits.includes(j.occ) ? [j.occ, ...hits] : hits;
   const edit = (fn: (x: Job) => void) =>
     update((d) => {
@@ -89,14 +91,14 @@ function JobRow({ job: j, main, focus }: { job: Job; main: boolean; focus: boole
                 update((d) => {
                   const x = d.jobs.find((y) => y.id === j.id);
                   if (!x) return;
-                  x.role = role;
-                  if (role === "goal") makeGoal(d, x.id);
-                  else if (d.mainGoal === x.id) d.mainGoal = jobsIn(d, "goal")[0]?.id ?? null;
+                  /* a goal is a job with a route: making one starts a route (while there is room) */
+                  if (role === "goal") addRoute(d, x.id);
+                  else x.role = role;
                 });
               }}
             >
               {ROLES.map((r) => (
-                <option key={r} value={r}>
+                <option key={r} value={r} disabled={r === "goal" && j.role !== "goal" && full}>
                   {t(`e_role_${r}`)}
                 </option>
               ))}
@@ -143,7 +145,7 @@ function JobRow({ job: j, main, focus }: { job: Job; main: boolean; focus: boole
             name="edit-main-goal"
             label={t("e_main")}
             checked={main}
-            onChange={() => update((d) => void (d.mainGoal = j.id))}
+            onChange={() => update((d) => void switchToJob(d, j.id))}
             className="min-h-11 py-2.5"
           />
         ) : (

@@ -38,10 +38,10 @@ describe("matchOf on the Holmes sample (the numbers in the approved mockup)", { 
     expect(m.withCourses).toBeNull();
   });
 
-  it("the main goal: low today, partial once the saved courses are done", () => {
+  it("route A: low today, partial once its course is done (only the IHK course counts)", () => {
     const m = matchOf(d, E, O, job("Fraud investigator").occ!, job("Fraud investigator"));
-    expect([m.interest, m.skills, m.have, m.course, m.total]).toEqual([36, 27, 4, 4, 15]);
-    expect([m.score, m.band, m.withCourses, m.withCoursesBand]).toEqual([31, 0, 45, 1]);
+    expect([m.interest, m.skills, m.have, m.course, m.total]).toEqual([36, 27, 4, 3, 15]);
+    expect([m.score, m.band, m.withCourses, m.withCoursesBand]).toEqual([31, 0, 41, 1]);
   });
 
   it("without interest answers the score is the skills alone", () => {

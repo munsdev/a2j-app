@@ -1,11 +1,13 @@
 import type { Course, Doc, Job, SkillRef } from "@/data/types";
 import { jobsIn, lc } from "@/data/doc";
+import { courseForJob } from "@/data/routes";
 import { type Esco, normTxt, searchOcc, searchSkillScored, skLabel } from "./catalog";
 
 /* =================== SKILLS, RATINGS, COVERAGE ===================
    Ratings (0 to 5) are the only record of what someone can do. Skills typed in plain words are kept as own
    skills and linked to a catalogue skill when the match is clear. A job's skills are shown as tiles:
-   have, a saved course covers it, still to learn. */
+   have, the route's course covers it, still to learn. Only the course of the job's route counts: courses
+   saved for other routes cover nothing here. */
 
 /** From this level on a skill counts as "have" (half on coverage below level 3). */
 export const LV_SOME = 1;
@@ -80,7 +82,10 @@ export interface Tile {
   key: string;
   name: string;
   state: TileState;
+  /** the course that covers it (also on a skill you have: it teaches it again) */
   course: Course | null;
+  /** you have it and the course teaches it again: the overlap */
+  also: boolean;
   level: number;
   /** a need outside the catalogue */
   extra: boolean;
@@ -99,20 +104,31 @@ export function coursesCovering(d: Doc, x: SkillRef, jobId?: string | null): Cou
 }
 
 const RANK: Record<TileState, number> = { have: 0, course: 1, learn: 2 };
-export function jobTiles(d: Doc, E: Esco | null, occ: number | null, job?: Job | null): Tile[] {
+/** A job's skills as tiles. course: the course to count (a route being compared or planned); left out, the
+ *  course of the job's route. */
+export function jobTiles(
+  d: Doc,
+  E: Esco | null,
+  occ: number | null,
+  job?: Job | null,
+  course?: Course | null,
+): Tile[] {
+  const via = course === undefined ? courseForJob(d, job?.id) : course;
+  const covered = new Set((via?.covers ?? []).map(skKey));
   const list: SkillRef[] = (occ != null && occ >= 0 && E ? E.g.e[occ] : []).slice();
   (job?.extra || []).forEach((n) => {
     if (!list.some((x) => skKey(x) === skKey(n))) list.push(n);
   });
   const tiles = list.map<Tile>((x) => {
     const have = (level(d, x) || 0) >= LV_SOME;
-    const c = coursesCovering(d, x, job?.id)[0];
+    const c = covered.has(skKey(x)) ? via : null;
     return {
       x,
       key: skKey(x),
       name: skName(E, x),
       state: have ? "have" : c ? "course" : "learn",
-      course: c || null,
+      course: c,
+      also: have && !!c,
       level: level(d, x) || 0,
       extra: typeof x === "string",
     };
@@ -125,8 +141,14 @@ export interface JobCount {
   total: number;
   tiles: Tile[];
 }
-export function jobCount(d: Doc, E: Esco | null, occ: number | null, job?: Job | null): JobCount {
-  const t = jobTiles(d, E, occ, job);
+export function jobCount(
+  d: Doc,
+  E: Esco | null,
+  occ: number | null,
+  job?: Job | null,
+  course?: Course | null,
+): JobCount {
+  const t = jobTiles(d, E, occ, job, course);
   return {
     have: t.filter((x) => x.state === "have").length,
     course: t.filter((x) => x.state === "course").length,

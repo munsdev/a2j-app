@@ -5,6 +5,7 @@ import { useEsco, useLoadCatalog } from "@/app/catalog";
 import { doInstall, isIOS, isStandalone, useInstall } from "@/app/install";
 import { useDoc } from "@/data/store";
 import { hasOwnData, jobsIn, mainGoal } from "@/data/doc";
+import { courseForJob } from "@/data/routes";
 import { partsDone } from "@/domain/assess";
 import { jobCount, type JobCount } from "@/domain/skills";
 import { useT } from "@/i18n";
@@ -22,7 +23,7 @@ import "./home.css";
    A new visitor: one sentence on what you get, the line as a picture, Start, and the three stages.
    A returning person (or a sample): their line. How far they are in words ("Four stops done. Eleven to …"),
    the five stops of the whole way (Start · Profile · Goals · Plan · Job) with "You are here", the next stops
-   on the main goal's line (the next skill and Find a course, then the two after it), and the three stages.
+   on the line of the route you are on (the next skill and Find a course, then the two after it), and the three stages.
    The full line of the goal is on Goals. */
 
 /** The entrance: blocks rise in one after the other (i = their place in the order). */
@@ -49,16 +50,9 @@ function useWay(d: Doc): Way {
   const g = mainGoal(d);
   const linked = !!g && ((g.occ ?? -1) >= 0 || !!(g.extra ?? []).length);
   const gc = useMemo(() => (g && linked && esco ? jobCount(d, esco, g.occ, g) : null), [d, esco, g, linked]);
-  const p = useMemo(
-    () =>
-      g && gc
-        ? boardPath(
-            gc.tiles,
-            d.courses.filter((c) => c.goals.includes(g.id)),
-          )
-        : null,
-    [d.courses, g, gc],
-  );
+  /* only the course of the route you are on counts */
+  const rc = g ? courseForJob(d, g.id) : null;
+  const p = useMemo(() => (g && gc ? boardPath(gc.tiles, rc ? [rc] : []) : null), [g, gc, rc]);
   return { g, gc, p, linked, here: lineStop(d, p?.next.kind === "done"), done: partsDone(d) };
 }
 

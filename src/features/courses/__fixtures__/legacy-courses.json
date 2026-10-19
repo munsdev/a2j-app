@@ -1,7 +1,23 @@
 {
   "extract": [
-    { "courses": [{ "name": "A", "azav": "yes" }] },
-    { "kurse": [{ "name": "B" }, { "name": "C" }] },
+    {
+      "courses": [
+        {
+          "name": "A",
+          "azav": "yes"
+        }
+      ]
+    },
+    {
+      "kurse": [
+        {
+          "name": "B"
+        },
+        {
+          "name": "C"
+        }
+      ]
+    },
     null,
     null
   ],
@@ -10,11 +26,11 @@
       "finder": [
         {
           "words": "\"Versicherungsdetektiv\" Weiterbildung Bildungsgutschein AZAV Munich",
-          "prompt": "I want to work as Insurance fraud investigator (German: Versicherungsdetektiv/Versicherungsdetektivin) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: German\n- Where: near Munich\n- Time: Any\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Good (B2)\nLanguages: English native, German B2, French B1\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Insurance law\n- Principles of insurance\n- Claims procedures\n- SQL and data tools\n- Analyse claim files\n- Review insurance process\n- Conduct financial audits\n- Actuarial science\n- Interview insurance claimants\n- Types of insurance\n- Working in a large team\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "I want to work as Insurance fraud investigator (German: Versicherungsdetektiv/Versicherungsdetektivin) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: German\n- Where: near Munich\n- Time: Any\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Good (B2)\nLanguages: English native, German B2, French B1\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Insurance law\n- Principles of insurance\n- Claims procedures\n- Analyse claim files\n- Review insurance process\n- Conduct financial audits\n- Actuarial science\n- Interview insurance claimants\n- Types of insurance\n- SQL and data tools\n- Working in a large team\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"Versicherungsdetektiv\" Weiterbildung Bildungsgutschein AZAV Munich",
-          "prompt": "I want to work as Insurance fraud investigator (German: Versicherungsdetektiv/Versicherungsdetektivin) and I am looking for training.\nRead this course page: https://example.org/kurs\nIf you cannot open it, say so in one sentence.\n\nMy wishes:\n- Course language: German\n- Where: near Munich\n- Time: Any\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Good (B2)\nLanguages: English native, German B2, French B1\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Insurance law\n- Principles of insurance\n- Claims procedures\n- SQL and data tools\n- Analyse claim files\n- Review insurance process\n- Conduct financial audits\n- Actuarial science\n- Interview insurance claimants\n- Types of insurance\n- Working in a large team\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "I want to work as Insurance fraud investigator (German: Versicherungsdetektiv/Versicherungsdetektivin) and I am looking for training.\nRead this course page: https://example.org/kurs\nIf you cannot open it, say so in one sentence.\n\nMy wishes:\n- Course language: German\n- Where: near Munich\n- Time: Any\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Good (B2)\nLanguages: English native, German B2, French B1\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Insurance law\n- Principles of insurance\n- Claims procedures\n- Analyse claim files\n- Review insurance process\n- Conduct financial audits\n- Actuarial science\n- Interview insurance claimants\n- Types of insurance\n- SQL and data tools\n- Working in a large team\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"Versicherungsdetektiv\" Stelle Munich",
@@ -30,7 +46,7 @@
         },
         {
           "words": "\"Versicherungsdetektiv\" Weiterbildung online berufsbegleitend abends Englisch English",
-          "prompt": "I want to work as Insurance fraud investigator (German: Versicherungsdetektiv/Versicherungsdetektivin) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: English\n- Where: Online\n- Time: Evenings\n- Start: Within 6 months\nMy German: Good (B2)\nLanguages: English native, German B2, French B1\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Insurance law\n- Principles of insurance\n- Claims procedures\n- SQL and data tools\n- Analyse claim files\n- Review insurance process\n- Conduct financial audits\n- Actuarial science\n- Interview insurance claimants\n- Types of insurance\n- Working in a large team\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "I want to work as Insurance fraud investigator (German: Versicherungsdetektiv/Versicherungsdetektivin) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: English\n- Where: Online\n- Time: Evenings\n- Start: Within 6 months\nMy German: Good (B2)\nLanguages: English native, German B2, French B1\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Insurance law\n- Principles of insurance\n- Claims procedures\n- Analyse claim files\n- Review insurance process\n- Conduct financial audits\n- Actuarial science\n- Interview insurance claimants\n- Types of insurance\n- SQL and data tools\n- Working in a large team\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         }
       ],
       "facts": {
@@ -39,9 +55,9 @@
         "values": "Deciding for myself, Seeing results, Recognition",
         "setting": "I would rather work: on my own, indoors, at a desk, lots of variety, flexible hours, little customer contact. Ruled out for me: a lot of phone calls, sales targets, the same task all day",
         "skills": "Develop investigation strategy, Handle case evidence, Mix chemicals, Identify suspicious behaviour, Examine crime scenes, Assist police investigations, Trace people, Check subjects, Test chemical samples, Chemistry, Microscopic techniques, Practice vigilance, Surveillance methods, Criminology, Perform laboratory tests, Check methods, Analyse legal evidence, Interview techniques, Present evidence, Document evidence, Disguise and role play, Violin, Boxing, Beekeeping, Writing short studies. I want to use more: Analyse legal evidence, Fraud detection, Examine crime scenes, Trace people, Detect financial crime. I want to use less: Mix chemicals, Maintain laboratory equipment, Work safely with chemicals",
-        "gaps": "Insurance law, Principles of insurance, Claims procedures, SQL and data tools, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, Working in a large team",
+        "gaps": "Insurance law, Principles of insurance, Claims procedures, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, SQL and data tools, Working in a large team",
         "jobs": "Private investigator (2005 to 2026); Chemistry lab assistant (2001 to 2005)",
-        "goals": "Fraud investigator",
+        "goals": "Fraud investigator, Data analyst",
         "place": "Munich",
         "german": "Good (B2). Computer use: Confident at work",
         "situation": "Looking for work",
@@ -61,15 +77,15 @@
           "contains": "Contains: your strongest aptitudes, your rated skills, your past jobs. Never your name or contact details."
         },
         "meeting": {
-          "text": "I have a meeting with my caseworker at the Agentur für Arbeit or Jobcenter. My goal is Fraud investigator. Help me prepare, briefly:\n\n1. Five short talking points that explain my goal and why it fits me.\n2. Four questions the caseworker may ask, with a short answer for each.\n3. A short list of what to bring (documents, job ads, course offers).\n\nJobs I am aiming for: Fraud investigator\nHow I work (self-assessment, strongest): Making sense of information, Solving problems, Working on your own initiative\nSkills I am missing for my goal: Insurance law, Principles of insurance, Claims procedures, SQL and data tools, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, Working in a large team\nMy situation: Looking for work\n\nWhat I have found so far:\n- Data analysis with SQL and Power BI | Example Bildungszentrum Munich | 16 weeks | 12 January 2027 | 6,800 euros | Bildungsgutschein possible, AZAV certified | Hybrid | https://example.org/courses/data-analysis-sql\n- Certified fraud investigator (IHK) | Example Akademie for Insurance | 10 weeks, part time | 1 March 2027 | 2,950 euros | Check Bildungsgutschein, otherwise employer | Online with two days on site | https://example.org/courses/fraud-investigator\n- Lab safety refresher | Example Chemie Schule | 2 days | Monthly | 390 euros | Self pay | On site | https://example.org/courses/lab-safety\n- Fraud analyst claims (m/f/d) | Example Versicherung AG | Munich, 2 days remote | Full time | 58,000 to 66,000 euros | https://example.org/jobs/fraud-analyst\n- Investigator for financial crime (m/f/d) | Example Bank Bayern | Munich | Full time | Not stated | https://example.org/jobs/financial-crime\n- Junior data analyst (m/f/d) | Example Logistik GmbH | Garching | Full time | 48,000 euros | https://example.org/jobs/junior-data-analyst",
+          "text": "I have a meeting with my caseworker at the Agentur für Arbeit or Jobcenter. My goal is Fraud investigator. Help me prepare, briefly:\n\n1. Five short talking points that explain my goal and why it fits me.\n2. Four questions the caseworker may ask, with a short answer for each.\n3. A short list of what to bring (documents, job ads, course offers).\n\nJobs I am aiming for: Fraud investigator, Data analyst\nHow I work (self-assessment, strongest): Making sense of information, Solving problems, Working on your own initiative\nSkills I am missing for my goal: Insurance law, Principles of insurance, Claims procedures, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, SQL and data tools, Working in a large team\nMy situation: Looking for work\n\nWhat I have found so far:\n- Data analysis with SQL and Power BI | Example Bildungszentrum Munich | 16 weeks | 12 January 2027 | 6,800 euros | Bildungsgutschein possible, AZAV certified | Hybrid | https://example.org/courses/data-analysis-sql\n- Certified fraud investigator (IHK) | Example Akademie for Insurance | 10 weeks, part time | 1 March 2027 | 2,950 euros | Check Bildungsgutschein, otherwise employer | Online with two days on site | https://example.org/courses/fraud-investigator\n- Lab safety refresher | Example Chemie Schule | 2 days | Monthly | 390 euros | Self pay | On site | https://example.org/courses/lab-safety\n- Fraud analyst claims (m/f/d) | Example Versicherung AG | Munich, 2 days remote | Full time | 58,000 to 66,000 euros | https://example.org/jobs/fraud-analyst\n- Investigator for financial crime (m/f/d) | Example Bank Bayern | Munich | Full time | Not stated | https://example.org/jobs/financial-crime\n- Junior data analyst (m/f/d) | Example Logistik GmbH | Garching | Full time | 48,000 euros | https://example.org/jobs/junior-data-analyst",
           "contains": "Contains: your goals, your strongest aptitudes, your missing skills, your saved courses and job ads, your situation. Never your name or contact details."
         },
         "compare": {
-          "text": "Compare the courses and job ads I saved, in one short table, then give me your top pick with two reasons. Point out anything important that is missing, such as price, dates or funding. Do not invent facts.\n\nWhat I saved:\n- Data analysis with SQL and Power BI | Example Bildungszentrum Munich | 16 weeks | 12 January 2027 | 6,800 euros | Bildungsgutschein possible, AZAV certified | Hybrid | https://example.org/courses/data-analysis-sql\n- Certified fraud investigator (IHK) | Example Akademie for Insurance | 10 weeks, part time | 1 March 2027 | 2,950 euros | Check Bildungsgutschein, otherwise employer | Online with two days on site | https://example.org/courses/fraud-investigator\n- Lab safety refresher | Example Chemie Schule | 2 days | Monthly | 390 euros | Self pay | On site | https://example.org/courses/lab-safety\n- Fraud analyst claims (m/f/d) | Example Versicherung AG | Munich, 2 days remote | Full time | 58,000 to 66,000 euros | https://example.org/jobs/fraud-analyst\n- Investigator for financial crime (m/f/d) | Example Bank Bayern | Munich | Full time | Not stated | https://example.org/jobs/financial-crime\n- Junior data analyst (m/f/d) | Example Logistik GmbH | Garching | Full time | 48,000 euros | https://example.org/jobs/junior-data-analyst\n\nJobs I am aiming for: Fraud investigator\nSkills I am missing for my goal: Insurance law, Principles of insurance, Claims procedures, SQL and data tools, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, Working in a large team\nWork setting: I would rather work: on my own, indoors, at a desk, lots of variety, flexible hours, little customer contact. Ruled out for me: a lot of phone calls, sales targets, the same task all day",
+          "text": "Compare the courses and job ads I saved, in one short table, then give me your top pick with two reasons. Point out anything important that is missing, such as price, dates or funding. Do not invent facts.\n\nWhat I saved:\n- Data analysis with SQL and Power BI | Example Bildungszentrum Munich | 16 weeks | 12 January 2027 | 6,800 euros | Bildungsgutschein possible, AZAV certified | Hybrid | https://example.org/courses/data-analysis-sql\n- Certified fraud investigator (IHK) | Example Akademie for Insurance | 10 weeks, part time | 1 March 2027 | 2,950 euros | Check Bildungsgutschein, otherwise employer | Online with two days on site | https://example.org/courses/fraud-investigator\n- Lab safety refresher | Example Chemie Schule | 2 days | Monthly | 390 euros | Self pay | On site | https://example.org/courses/lab-safety\n- Fraud analyst claims (m/f/d) | Example Versicherung AG | Munich, 2 days remote | Full time | 58,000 to 66,000 euros | https://example.org/jobs/fraud-analyst\n- Investigator for financial crime (m/f/d) | Example Bank Bayern | Munich | Full time | Not stated | https://example.org/jobs/financial-crime\n- Junior data analyst (m/f/d) | Example Logistik GmbH | Garching | Full time | 48,000 euros | https://example.org/jobs/junior-data-analyst\n\nJobs I am aiming for: Fraud investigator, Data analyst\nSkills I am missing for my goal: Insurance law, Principles of insurance, Claims procedures, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, SQL and data tools, Working in a large team\nWork setting: I would rather work: on my own, indoors, at a desk, lots of variety, flexible hours, little customer contact. Ruled out for me: a lot of phone calls, sales targets, the same task all day",
           "contains": "Contains: your saved courses and job ads, your missing skills, your work setting, your goals. Never your name or contact details."
         },
         "funding": {
-          "text": "I live in Germany and I am working with the Agentur für Arbeit or the Jobcenter. Which kinds of funding and support could fit my situation? For example training, coaching, trial work or help with applications.\n\nFor each option, give one line on what it is and one question I can ask my caseworker about it. Mark anything you are not sure is still current, because rules change.\nKeep it short.\n\nMy situation: Looking for work\nJobs I am aiming for: Fraud investigator\nMy German: Good (B2). Computer use: Confident at work",
+          "text": "I live in Germany and I am working with the Agentur für Arbeit or the Jobcenter. Which kinds of funding and support could fit my situation? For example training, coaching, trial work or help with applications.\n\nFor each option, give one line on what it is and one question I can ask my caseworker about it. Mark anything you are not sure is still current, because rules change.\nKeep it short.\n\nMy situation: Looking for work\nJobs I am aiming for: Fraud investigator, Data analyst\nMy German: Good (B2). Computer use: Confident at work",
           "contains": "Contains: your situation, your goals, your German level. Never your name or contact details."
         },
         "underrated": {
@@ -77,7 +93,7 @@
           "contains": "Contains: your past jobs, your hobbies and side projects, your strongest aptitudes. Never your name or contact details."
         },
         "patterns": {
-          "text": "Here is a short profile of me. Tell me briefly:\n\n1. Three patterns you see.\n2. Two things that might surprise me.\n3. Three questions I should think about before choosing my next job.\n\nBe honest and specific. Do not flatter me.\n\nMy situation: Looking for work\nPast and current jobs: Private investigator (2005 to 2026); Chemistry lab assistant (2001 to 2005)\nJobs I am aiming for: Fraud investigator\nHow I work (self-assessment, strongest): Making sense of information, Solving problems, Working on your own initiative\nWhat I enjoy (interest types): I Investigating, R Hands-on, A Creative\nWhat matters to me at work: Deciding for myself, Seeing results, Recognition\nWork setting: I would rather work: on my own, indoors, at a desk, lots of variety, flexible hours, little customer contact. Ruled out for me: a lot of phone calls, sales targets, the same task all day\nSkills I rated as solid or better: Develop investigation strategy, Handle case evidence, Mix chemicals, Identify suspicious behaviour, Examine crime scenes, Assist police investigations, Trace people, Check subjects, Test chemical samples, Chemistry, Microscopic techniques, Practice vigilance, Surveillance methods, Criminology, Perform laboratory tests, Check methods, Analyse legal evidence, Interview techniques, Present evidence, Document evidence, Disguise and role play, Violin, Boxing, Beekeeping, Writing short studies. I want to use more: Analyse legal evidence, Fraud detection, Examine crime scenes, Trace people, Detect financial crime. I want to use less: Mix chemicals, Maintain laboratory equipment, Work safely with chemicals\nSkills I am missing for my goal: Insurance law, Principles of insurance, Claims procedures, SQL and data tools, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, Working in a large team\nMy German: Good (B2). Computer use: Confident at work\nHobbies, volunteering and side projects: Violin, chemistry experiments at home, boxing, beekeeping on the roof; Wrote short studies on tobacco ash, tyre tracks and footprints",
+          "text": "Here is a short profile of me. Tell me briefly:\n\n1. Three patterns you see.\n2. Two things that might surprise me.\n3. Three questions I should think about before choosing my next job.\n\nBe honest and specific. Do not flatter me.\n\nMy situation: Looking for work\nPast and current jobs: Private investigator (2005 to 2026); Chemistry lab assistant (2001 to 2005)\nJobs I am aiming for: Fraud investigator, Data analyst\nHow I work (self-assessment, strongest): Making sense of information, Solving problems, Working on your own initiative\nWhat I enjoy (interest types): I Investigating, R Hands-on, A Creative\nWhat matters to me at work: Deciding for myself, Seeing results, Recognition\nWork setting: I would rather work: on my own, indoors, at a desk, lots of variety, flexible hours, little customer contact. Ruled out for me: a lot of phone calls, sales targets, the same task all day\nSkills I rated as solid or better: Develop investigation strategy, Handle case evidence, Mix chemicals, Identify suspicious behaviour, Examine crime scenes, Assist police investigations, Trace people, Check subjects, Test chemical samples, Chemistry, Microscopic techniques, Practice vigilance, Surveillance methods, Criminology, Perform laboratory tests, Check methods, Analyse legal evidence, Interview techniques, Present evidence, Document evidence, Disguise and role play, Violin, Boxing, Beekeeping, Writing short studies. I want to use more: Analyse legal evidence, Fraud detection, Examine crime scenes, Trace people, Detect financial crime. I want to use less: Mix chemicals, Maintain laboratory equipment, Work safely with chemicals\nSkills I am missing for my goal: Insurance law, Principles of insurance, Claims procedures, Analyse claim files, Review insurance process, Conduct financial audits, Actuarial science, Interview insurance claimants, Types of insurance, SQL and data tools, Working in a large team\nMy German: Good (B2). Computer use: Confident at work\nHobbies, volunteering and side projects: Violin, chemistry experiments at home, boxing, beekeeping on the roof; Wrote short studies on tobacco ash, tyre tracks and footprints",
           "contains": "Contains: your situation, your past jobs, your goals, your strongest aptitudes, your interests, what matters to you, your work setting, your rated skills, your missing skills, your German level, your hobbies and side projects. Never your name or contact details."
         },
         "newdirs": {
@@ -107,16 +123,46 @@
           "Violin"
         ],
         "gaps": [
-          { "name": "Insurance law", "via": "Certified fraud investigator (IHK)" },
-          { "name": "Principles of insurance", "via": "Certified fraud investigator (IHK)" },
-          { "name": "Claims procedures", "via": "Certified fraud investigator (IHK)" },
-          { "name": "SQL and data tools", "via": "Data analysis with SQL and Power BI" },
-          { "name": "Analyse claim files", "via": "" },
-          { "name": "Review insurance process", "via": "" },
-          { "name": "Conduct financial audits", "via": "" },
-          { "name": "Actuarial science", "via": "" },
-          { "name": "Interview insurance claimants", "via": "" },
-          { "name": "Types of insurance", "via": "" }
+          {
+            "name": "Insurance law",
+            "via": "Certified fraud investigator (IHK)"
+          },
+          {
+            "name": "Principles of insurance",
+            "via": "Certified fraud investigator (IHK)"
+          },
+          {
+            "name": "Claims procedures",
+            "via": "Certified fraud investigator (IHK)"
+          },
+          {
+            "name": "Analyse claim files",
+            "via": ""
+          },
+          {
+            "name": "Review insurance process",
+            "via": ""
+          },
+          {
+            "name": "Conduct financial audits",
+            "via": ""
+          },
+          {
+            "name": "Actuarial science",
+            "via": ""
+          },
+          {
+            "name": "Interview insurance claimants",
+            "via": ""
+          },
+          {
+            "name": "Types of insurance",
+            "via": ""
+          },
+          {
+            "name": "SQL and data tools",
+            "via": ""
+          }
         ],
         "others": ["Data analyst", "Forensic lab technician"],
         "wantMore": [
@@ -126,7 +172,7 @@
           "Trace people",
           "Detect financial crime"
         ],
-        "course": "c1",
+        "course": "c2",
         "suggest": "It matches my interests (Investigating, Hands-on, Creative). My strengths include Making sense of information, Solving problems, Working on your own initiative. I already have 4 of the 15 core skills."
       },
       "planOther": {
@@ -147,16 +193,46 @@
           "Violin"
         ],
         "gaps": [
-          { "name": "Versicherungsrecht", "via": "Certified fraud investigator (IHK)" },
-          { "name": "Versicherungsprinzipien", "via": "Certified fraud investigator (IHK)" },
-          { "name": "Schadenverfahren", "via": "Certified fraud investigator (IHK)" },
-          { "name": "SQL and data tools", "via": "Data analysis with SQL and Power BI" },
-          { "name": "Schadenakten analysieren", "via": "" },
-          { "name": "Versicherungsvorgang prüfen", "via": "" },
-          { "name": "Finanzprüfungen durchführen", "via": "" },
-          { "name": "Aktuarwissenschaft", "via": "" },
-          { "name": "Versicherte/Geschädigte befragen", "via": "" },
-          { "name": "Versicherungsarten", "via": "" }
+          {
+            "name": "Versicherungsrecht",
+            "via": "Certified fraud investigator (IHK)"
+          },
+          {
+            "name": "Versicherungsprinzipien",
+            "via": "Certified fraud investigator (IHK)"
+          },
+          {
+            "name": "Schadenverfahren",
+            "via": "Certified fraud investigator (IHK)"
+          },
+          {
+            "name": "Schadenakten analysieren",
+            "via": ""
+          },
+          {
+            "name": "Versicherungsvorgang prüfen",
+            "via": ""
+          },
+          {
+            "name": "Finanzprüfungen durchführen",
+            "via": ""
+          },
+          {
+            "name": "Aktuarwissenschaft",
+            "via": ""
+          },
+          {
+            "name": "Versicherte/Geschädigte befragen",
+            "via": ""
+          },
+          {
+            "name": "Versicherungsarten",
+            "via": ""
+          },
+          {
+            "name": "SQL and data tools",
+            "via": ""
+          }
         ],
         "suggest": "Es passt zu meinen Interessen (Untersuchend-forschend, Handwerklich-technisch, Künstlerisch-kreativ). Zu meinen Stärken gehören Informationen auswerten, Probleme lösen, Selbstständig arbeiten. Ich habe schon 4 der 15 Kernfähigkeiten."
       }
@@ -262,16 +338,46 @@
           "Cooking for large groups"
         ],
         "gaps": [
-          { "name": "Manage budgets", "via": "Fundraising manager certificate" },
-          { "name": "Financial management", "via": "Fundraising manager certificate" },
-          { "name": "Manage fundraising activities", "via": "Fundraising manager certificate" },
-          { "name": "Enforce financial policies", "via": "" },
-          { "name": "Analyse market financial trends", "via": "" },
-          { "name": "Strive for company growth", "via": "" },
-          { "name": "Manage staff", "via": "" },
-          { "name": "Funding methods", "via": "" },
-          { "name": "Recruit employees", "via": "" },
-          { "name": "Financial statements", "via": "" }
+          {
+            "name": "Manage budgets",
+            "via": "Fundraising manager certificate"
+          },
+          {
+            "name": "Financial management",
+            "via": "Fundraising manager certificate"
+          },
+          {
+            "name": "Manage fundraising activities",
+            "via": "Fundraising manager certificate"
+          },
+          {
+            "name": "Enforce financial policies",
+            "via": ""
+          },
+          {
+            "name": "Analyse market financial trends",
+            "via": ""
+          },
+          {
+            "name": "Strive for company growth",
+            "via": ""
+          },
+          {
+            "name": "Manage staff",
+            "via": ""
+          },
+          {
+            "name": "Funding methods",
+            "via": ""
+          },
+          {
+            "name": "Recruit employees",
+            "via": ""
+          },
+          {
+            "name": "Financial statements",
+            "via": ""
+          }
         ],
         "others": ["Procurement assistant", "Forest manager"],
         "wantMore": [
@@ -301,16 +407,46 @@
           "Cooking for large groups"
         ],
         "gaps": [
-          { "name": "Finanzmittel verwalten", "via": "Fundraising manager certificate" },
-          { "name": "Finanzmanagement", "via": "Fundraising manager certificate" },
-          { "name": "Mitteleinwerbung leiten", "via": "Fundraising manager certificate" },
-          { "name": "Finanzstrategien durchsetzen", "via": "" },
-          { "name": "Finanzmarkttrends analysieren", "via": "" },
-          { "name": "Wachstum des Unternehmens anstreben", "via": "" },
-          { "name": "Mitarbeiter führen", "via": "" },
-          { "name": "Methoden der Mittelbeschaffung", "via": "" },
-          { "name": "Mitarbeiter einstellen", "via": "" },
-          { "name": "Jahresabschluss", "via": "" }
+          {
+            "name": "Finanzmittel verwalten",
+            "via": "Fundraising manager certificate"
+          },
+          {
+            "name": "Finanzmanagement",
+            "via": "Fundraising manager certificate"
+          },
+          {
+            "name": "Mitteleinwerbung leiten",
+            "via": "Fundraising manager certificate"
+          },
+          {
+            "name": "Finanzstrategien durchsetzen",
+            "via": ""
+          },
+          {
+            "name": "Finanzmarkttrends analysieren",
+            "via": ""
+          },
+          {
+            "name": "Wachstum des Unternehmens anstreben",
+            "via": ""
+          },
+          {
+            "name": "Mitarbeiter führen",
+            "via": ""
+          },
+          {
+            "name": "Methoden der Mittelbeschaffung",
+            "via": ""
+          },
+          {
+            "name": "Mitarbeiter einstellen",
+            "via": ""
+          },
+          {
+            "name": "Jahresabschluss",
+            "via": ""
+          }
         ],
         "suggest": "Es passt zu meinen Interessen (Erziehend-pflegend, Führend-verkaufend, Handwerklich-technisch). Zu meinen Stärken gehören Ruhe unter Druck, Führen, Auf Menschen zugehen, Helfen und betreuen. Ich habe schon 3 der 26 Kernfähigkeiten."
       }
@@ -319,11 +455,11 @@
       "finder": [
         {
           "words": "\"CNC-Anwendungsfachkraft\" Weiterbildung Bildungsgutschein AZAV Nuremberg Vollzeit",
-          "prompt": "I want to work as Computer numerical control machine operator (German: CNC-Anwendungsfachkraft) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: Either\n- Where: near Nuremberg\n- Time: Full time\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Basic (A2)\nLanguages: Italian native, German A2\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Use CAM software\n- Program a CNC controller\n- Set up the controller of a machine\n- Computer basics\n- German for work (B1)\n- Statistical process control\n- Supply machine with appropriate tools\n- Remove inadequate workpieces\n- Remove processed workpiece\n- Manufacturing processes\n- Perform test run\n- Read standard blueprints\n- Ensure equipment availability\n- Monitor automated machines\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "I want to work as Computer numerical control machine operator (German: CNC-Anwendungsfachkraft) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: Either\n- Where: near Nuremberg\n- Time: Full time\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Basic (A2)\nLanguages: Italian native, German A2\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Use CAM software\n- Program a CNC controller\n- Set up the controller of a machine\n- Statistical process control\n- Supply machine with appropriate tools\n- Remove inadequate workpieces\n- Remove processed workpiece\n- Manufacturing processes\n- Perform test run\n- Read standard blueprints\n- Ensure equipment availability\n- Monitor automated machines\n- Use automatic programming\n- Perform machine maintenance\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"CNC-Anwendungsfachkraft\" Weiterbildung Bildungsgutschein AZAV Nuremberg Vollzeit",
-          "prompt": "I want to work as Computer numerical control machine operator (German: CNC-Anwendungsfachkraft) and I am looking for training.\nRead this course page: https://example.org/kurs\nIf you cannot open it, say so in one sentence.\n\nMy wishes:\n- Course language: Either\n- Where: near Nuremberg\n- Time: Full time\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Basic (A2)\nLanguages: Italian native, German A2\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Use CAM software\n- Program a CNC controller\n- Set up the controller of a machine\n- Computer basics\n- German for work (B1)\n- Statistical process control\n- Supply machine with appropriate tools\n- Remove inadequate workpieces\n- Remove processed workpiece\n- Manufacturing processes\n- Perform test run\n- Read standard blueprints\n- Ensure equipment availability\n- Monitor automated machines\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "I want to work as Computer numerical control machine operator (German: CNC-Anwendungsfachkraft) and I am looking for training.\nRead this course page: https://example.org/kurs\nIf you cannot open it, say so in one sentence.\n\nMy wishes:\n- Course language: Either\n- Where: near Nuremberg\n- Time: Full time\n- Start: Any time\n- Paid with a Bildungsgutschein: the course must be AZAV-certified.\nMy German: Basic (A2)\nLanguages: Italian native, German A2\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Use CAM software\n- Program a CNC controller\n- Set up the controller of a machine\n- Statistical process control\n- Supply machine with appropriate tools\n- Remove inadequate workpieces\n- Remove processed workpiece\n- Manufacturing processes\n- Perform test run\n- Read standard blueprints\n- Ensure equipment availability\n- Monitor automated machines\n- Use automatic programming\n- Perform machine maintenance\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"CNC-Anwendungsfachkraft\" Stelle Nuremberg",
@@ -339,7 +475,7 @@
         },
         {
           "words": "\"CNC-Anwendungsfachkraft\" Weiterbildung online berufsbegleitend abends Englisch English",
-          "prompt": "I want to work as Computer numerical control machine operator (German: CNC-Anwendungsfachkraft) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: English\n- Where: Online\n- Time: Evenings\n- Start: Within 6 months\nMy German: Basic (A2)\nLanguages: Italian native, German A2\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Use CAM software\n- Program a CNC controller\n- Set up the controller of a machine\n- Computer basics\n- German for work (B1)\n- Statistical process control\n- Supply machine with appropriate tools\n- Remove inadequate workpieces\n- Remove processed workpiece\n- Manufacturing processes\n- Perform test run\n- Read standard blueprints\n- Ensure equipment availability\n- Monitor automated machines\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "I want to work as Computer numerical control machine operator (German: CNC-Anwendungsfachkraft) and I am looking for training.\nSearch the web for 3 to 5 real courses that fit, for example on mein NOW (mein-now.de) or on provider pages. If you cannot search the web, say so in one sentence and do not invent any courses.\n\nMy wishes:\n- Course language: English\n- Where: Online\n- Time: Evenings\n- Start: Within 6 months\nMy German: Basic (A2)\nLanguages: Italian native, German A2\nMy situation: Looking for work\n\nSkills I am missing for this goal:\n- Use CAM software\n- Program a CNC controller\n- Set up the controller of a machine\n- Statistical process control\n- Supply machine with appropriate tools\n- Remove inadequate workpieces\n- Remove processed workpiece\n- Manufacturing processes\n- Perform test run\n- Read standard blueprints\n- Ensure equipment availability\n- Monitor automated machines\n- Use automatic programming\n- Perform machine maintenance\n\nKeep it short: one line per course on why it fits. Give the link for each course. For AZAV, only write what the page says. End your answer with exactly one JSON code block in this format. In \"covers\", use only names from my list above, written exactly the same. Take every fact only from the page and leave a field \"\" if the page does not say it:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         }
       ],
       "facts": {
@@ -348,7 +484,7 @@
         "values": "Seeing results, Security and good conditions, Good colleagues",
         "setting": "I would rather work: on my own, indoors, fixed hours, little customer contact. Ruled out for me: night shifts, early or late shifts, heavy lifting, sales targets",
         "skills": "Woodworking processes, Repair toys, Maintain edged hand tools, Join wood elements, Manipulate wood, Woodworking tools, Use wood carving knives, Perform toys finishing, Create smooth wood surface, Carve materials, Demonstrate functionality of toys and games, Sand wood, Assemble toys, Use tools for toy repair, Sanding techniques, Wood cuts, Create wood joints, Design objects to be crafted, Types of wood, Guarantee customer satisfaction, Puppetry, Clock repair, Storytelling for children. I want to use more: Turn wood, Operate precision measuring equipment, Carve materials, Interpret 3D plans, Create wood joints. I want to use less: Operate cash register, Arrange permit for market stall, Pack goods, Process payments",
-        "gaps": "Use CAM software, Program a CNC controller, Set up the controller of a machine, Computer basics, German for work (B1), Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming",
+        "gaps": "Use CAM software, Program a CNC controller, Set up the controller of a machine, Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming, Perform machine maintenance, Quality standards",
         "jobs": "Woodcarver and toymaker (1990 to 2026); Woodcarver (1985 to 1990); Carpenter's assistant (1982 to 1985); Market stall seller (Winters 2015 to 2025)",
         "goals": "CNC machine operator",
         "place": "Nuremberg",
@@ -370,11 +506,11 @@
           "contains": "Contains: your strongest aptitudes, your rated skills, your past jobs. Never your name or contact details."
         },
         "meeting": {
-          "text": "I have a meeting with my caseworker at the Agentur für Arbeit or Jobcenter. My goal is CNC machine operator. Help me prepare, briefly:\n\n1. Five short talking points that explain my goal and why it fits me.\n2. Four questions the caseworker may ask, with a short answer for each.\n3. A short list of what to bring (documents, job ads, course offers).\n\nJobs I am aiming for: CNC machine operator\nHow I work (self-assessment, strongest): Care and accuracy, Sticking with it, Working with hands and tools, Coming up with ideas\nSkills I am missing for my goal: Use CAM software, Program a CNC controller, Set up the controller of a machine, Computer basics, German for work (B1), Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming\nMy situation: Looking for work\n\nWhat I have found so far:\n- CNC basics for woodworking | Example Holzfachschule Franken | 12 weeks | 11 January 2027 | 5,400 euros | Bildungsgutschein possible, AZAV certified | On site in the training workshop | https://example.org/courses/cnc-wood\n- Computer basics for the workshop | Example VHS Nürnberg | 4 weeks | 16 November 2026 | Funded | Through the job centre | On site | https://example.org/courses/computer-basics\n- German for work B1 | Example Sprachschule | 6 months | Every month | Funded | BAMF job-related German course | On site | https://example.org/courses/german-b1-work\n- CNC operator woodworking (m/f/d) | Example Möbelwerkstätten | Schwabach | Full time, day shift | 17.50 euros an hour | https://example.org/jobs/cnc-operator-wood\n- Quality inspector toys (m/f/d) | Example Spielwaren GmbH | Fürth | Full time | By agreement | https://example.org/jobs/toy-quality",
+          "text": "I have a meeting with my caseworker at the Agentur für Arbeit or Jobcenter. My goal is CNC machine operator. Help me prepare, briefly:\n\n1. Five short talking points that explain my goal and why it fits me.\n2. Four questions the caseworker may ask, with a short answer for each.\n3. A short list of what to bring (documents, job ads, course offers).\n\nJobs I am aiming for: CNC machine operator\nHow I work (self-assessment, strongest): Care and accuracy, Sticking with it, Working with hands and tools, Coming up with ideas\nSkills I am missing for my goal: Use CAM software, Program a CNC controller, Set up the controller of a machine, Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming, Perform machine maintenance, Quality standards\nMy situation: Looking for work\n\nWhat I have found so far:\n- CNC basics for woodworking | Example Holzfachschule Franken | 12 weeks | 11 January 2027 | 5,400 euros | Bildungsgutschein possible, AZAV certified | On site in the training workshop | https://example.org/courses/cnc-wood\n- Computer basics for the workshop | Example VHS Nürnberg | 4 weeks | 16 November 2026 | Funded | Through the job centre | On site | https://example.org/courses/computer-basics\n- German for work B1 | Example Sprachschule | 6 months | Every month | Funded | BAMF job-related German course | On site | https://example.org/courses/german-b1-work\n- CNC operator woodworking (m/f/d) | Example Möbelwerkstätten | Schwabach | Full time, day shift | 17.50 euros an hour | https://example.org/jobs/cnc-operator-wood\n- Quality inspector toys (m/f/d) | Example Spielwaren GmbH | Fürth | Full time | By agreement | https://example.org/jobs/toy-quality",
           "contains": "Contains: your goals, your strongest aptitudes, your missing skills, your saved courses and job ads, your situation. Never your name or contact details."
         },
         "compare": {
-          "text": "Compare the courses and job ads I saved, in one short table, then give me your top pick with two reasons. Point out anything important that is missing, such as price, dates or funding. Do not invent facts.\n\nWhat I saved:\n- CNC basics for woodworking | Example Holzfachschule Franken | 12 weeks | 11 January 2027 | 5,400 euros | Bildungsgutschein possible, AZAV certified | On site in the training workshop | https://example.org/courses/cnc-wood\n- Computer basics for the workshop | Example VHS Nürnberg | 4 weeks | 16 November 2026 | Funded | Through the job centre | On site | https://example.org/courses/computer-basics\n- German for work B1 | Example Sprachschule | 6 months | Every month | Funded | BAMF job-related German course | On site | https://example.org/courses/german-b1-work\n- CNC operator woodworking (m/f/d) | Example Möbelwerkstätten | Schwabach | Full time, day shift | 17.50 euros an hour | https://example.org/jobs/cnc-operator-wood\n- Quality inspector toys (m/f/d) | Example Spielwaren GmbH | Fürth | Full time | By agreement | https://example.org/jobs/toy-quality\n\nJobs I am aiming for: CNC machine operator\nSkills I am missing for my goal: Use CAM software, Program a CNC controller, Set up the controller of a machine, Computer basics, German for work (B1), Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming\nWork setting: I would rather work: on my own, indoors, fixed hours, little customer contact. Ruled out for me: night shifts, early or late shifts, heavy lifting, sales targets",
+          "text": "Compare the courses and job ads I saved, in one short table, then give me your top pick with two reasons. Point out anything important that is missing, such as price, dates or funding. Do not invent facts.\n\nWhat I saved:\n- CNC basics for woodworking | Example Holzfachschule Franken | 12 weeks | 11 January 2027 | 5,400 euros | Bildungsgutschein possible, AZAV certified | On site in the training workshop | https://example.org/courses/cnc-wood\n- Computer basics for the workshop | Example VHS Nürnberg | 4 weeks | 16 November 2026 | Funded | Through the job centre | On site | https://example.org/courses/computer-basics\n- German for work B1 | Example Sprachschule | 6 months | Every month | Funded | BAMF job-related German course | On site | https://example.org/courses/german-b1-work\n- CNC operator woodworking (m/f/d) | Example Möbelwerkstätten | Schwabach | Full time, day shift | 17.50 euros an hour | https://example.org/jobs/cnc-operator-wood\n- Quality inspector toys (m/f/d) | Example Spielwaren GmbH | Fürth | Full time | By agreement | https://example.org/jobs/toy-quality\n\nJobs I am aiming for: CNC machine operator\nSkills I am missing for my goal: Use CAM software, Program a CNC controller, Set up the controller of a machine, Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming, Perform machine maintenance, Quality standards\nWork setting: I would rather work: on my own, indoors, fixed hours, little customer contact. Ruled out for me: night shifts, early or late shifts, heavy lifting, sales targets",
           "contains": "Contains: your saved courses and job ads, your missing skills, your work setting, your goals. Never your name or contact details."
         },
         "funding": {
@@ -386,7 +522,7 @@
           "contains": "Contains: your past jobs, your hobbies and side projects, your strongest aptitudes. Never your name or contact details."
         },
         "patterns": {
-          "text": "Here is a short profile of me. Tell me briefly:\n\n1. Three patterns you see.\n2. Two things that might surprise me.\n3. Three questions I should think about before choosing my next job.\n\nBe honest and specific. Do not flatter me.\n\nMy situation: Looking for work\nPast and current jobs: Woodcarver and toymaker (1990 to 2026); Woodcarver (1985 to 1990); Carpenter's assistant (1982 to 1985); Market stall seller (Winters 2015 to 2025)\nJobs I am aiming for: CNC machine operator\nHow I work (self-assessment, strongest): Care and accuracy, Sticking with it, Working with hands and tools, Coming up with ideas\nWhat I enjoy (interest types): R Hands-on, A Creative, S Helping\nWhat matters to me at work: Seeing results, Security and good conditions, Good colleagues\nWork setting: I would rather work: on my own, indoors, fixed hours, little customer contact. Ruled out for me: night shifts, early or late shifts, heavy lifting, sales targets\nSkills I rated as solid or better: Woodworking processes, Repair toys, Maintain edged hand tools, Join wood elements, Manipulate wood, Woodworking tools, Use wood carving knives, Perform toys finishing, Create smooth wood surface, Carve materials, Demonstrate functionality of toys and games, Sand wood, Assemble toys, Use tools for toy repair, Sanding techniques, Wood cuts, Create wood joints, Design objects to be crafted, Types of wood, Guarantee customer satisfaction, Puppetry, Clock repair, Storytelling for children. I want to use more: Turn wood, Operate precision measuring equipment, Carve materials, Interpret 3D plans, Create wood joints. I want to use less: Operate cash register, Arrange permit for market stall, Pack goods, Process payments\nSkills I am missing for my goal: Use CAM software, Program a CNC controller, Set up the controller of a machine, Computer basics, German for work (B1), Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming\nMy German: Basic (A2). Computer use: Hardly\nHobbies, volunteering and side projects: Puppetry, telling stories to the neighbourhood children, fixing old clocks; Puppet theatre for the neighbourhood, a collection of restored clocks",
+          "text": "Here is a short profile of me. Tell me briefly:\n\n1. Three patterns you see.\n2. Two things that might surprise me.\n3. Three questions I should think about before choosing my next job.\n\nBe honest and specific. Do not flatter me.\n\nMy situation: Looking for work\nPast and current jobs: Woodcarver and toymaker (1990 to 2026); Woodcarver (1985 to 1990); Carpenter's assistant (1982 to 1985); Market stall seller (Winters 2015 to 2025)\nJobs I am aiming for: CNC machine operator\nHow I work (self-assessment, strongest): Care and accuracy, Sticking with it, Working with hands and tools, Coming up with ideas\nWhat I enjoy (interest types): R Hands-on, A Creative, S Helping\nWhat matters to me at work: Seeing results, Security and good conditions, Good colleagues\nWork setting: I would rather work: on my own, indoors, fixed hours, little customer contact. Ruled out for me: night shifts, early or late shifts, heavy lifting, sales targets\nSkills I rated as solid or better: Woodworking processes, Repair toys, Maintain edged hand tools, Join wood elements, Manipulate wood, Woodworking tools, Use wood carving knives, Perform toys finishing, Create smooth wood surface, Carve materials, Demonstrate functionality of toys and games, Sand wood, Assemble toys, Use tools for toy repair, Sanding techniques, Wood cuts, Create wood joints, Design objects to be crafted, Types of wood, Guarantee customer satisfaction, Puppetry, Clock repair, Storytelling for children. I want to use more: Turn wood, Operate precision measuring equipment, Carve materials, Interpret 3D plans, Create wood joints. I want to use less: Operate cash register, Arrange permit for market stall, Pack goods, Process payments\nSkills I am missing for my goal: Use CAM software, Program a CNC controller, Set up the controller of a machine, Statistical process control, Supply machine with appropriate tools, Remove inadequate workpieces, Remove processed workpiece, Manufacturing processes, Perform test run, Read standard blueprints, Ensure equipment availability, Monitor automated machines, Use automatic programming, Perform machine maintenance, Quality standards\nMy German: Basic (A2). Computer use: Hardly\nHobbies, volunteering and side projects: Puppetry, telling stories to the neighbourhood children, fixing old clocks; Puppet theatre for the neighbourhood, a collection of restored clocks",
           "contains": "Contains: your situation, your past jobs, your goals, your strongest aptitudes, your interests, what matters to you, your work setting, your rated skills, your missing skills, your German level, your hobbies and side projects. Never your name or contact details."
         },
         "newdirs": {
@@ -421,16 +557,46 @@
           "Clock repair"
         ],
         "gaps": [
-          { "name": "Use CAM software", "via": "CNC basics for woodworking" },
-          { "name": "Program a CNC controller", "via": "CNC basics for woodworking" },
-          { "name": "Set up the controller of a machine", "via": "CNC basics for woodworking" },
-          { "name": "Computer basics", "via": "Computer basics for the workshop" },
-          { "name": "German for work (B1)", "via": "German for work B1" },
-          { "name": "Statistical process control", "via": "" },
-          { "name": "Supply machine with appropriate tools", "via": "" },
-          { "name": "Remove inadequate workpieces", "via": "" },
-          { "name": "Remove processed workpiece", "via": "" },
-          { "name": "Manufacturing processes", "via": "" }
+          {
+            "name": "Use CAM software",
+            "via": "CNC basics for woodworking"
+          },
+          {
+            "name": "Program a CNC controller",
+            "via": "CNC basics for woodworking"
+          },
+          {
+            "name": "Set up the controller of a machine",
+            "via": "CNC basics for woodworking"
+          },
+          {
+            "name": "Statistical process control",
+            "via": ""
+          },
+          {
+            "name": "Supply machine with appropriate tools",
+            "via": ""
+          },
+          {
+            "name": "Remove inadequate workpieces",
+            "via": ""
+          },
+          {
+            "name": "Remove processed workpiece",
+            "via": ""
+          },
+          {
+            "name": "Manufacturing processes",
+            "via": ""
+          },
+          {
+            "name": "Perform test run",
+            "via": ""
+          },
+          {
+            "name": "Read standard blueprints",
+            "via": ""
+          }
         ],
         "others": ["Quality inspector for toys", "Cabinet maker"],
         "wantMore": [
@@ -461,16 +627,46 @@
           "Clock repair"
         ],
         "gaps": [
-          { "name": "CAM-Software verwenden", "via": "CNC basics for woodworking" },
-          { "name": "CNC-Steuerung programmieren", "via": "CNC basics for woodworking" },
-          { "name": "Maschinensteuerung einstellen", "via": "CNC basics for woodworking" },
-          { "name": "Computer basics", "via": "Computer basics for the workshop" },
-          { "name": "German for work (B1)", "via": "German for work B1" },
-          { "name": "Statistische Prozessüberwachung", "via": "" },
-          { "name": "Maschine mit geeigneten Werkzeugen versorgen", "via": "" },
-          { "name": "Unangemessene Werkstücke entfernen", "via": "" },
-          { "name": "Bearbeitetes Werkstück entnehmen", "via": "" },
-          { "name": "Fertigungsverfahren", "via": "" }
+          {
+            "name": "CAM-Software verwenden",
+            "via": "CNC basics for woodworking"
+          },
+          {
+            "name": "CNC-Steuerung programmieren",
+            "via": "CNC basics for woodworking"
+          },
+          {
+            "name": "Maschinensteuerung einstellen",
+            "via": "CNC basics for woodworking"
+          },
+          {
+            "name": "Statistische Prozessüberwachung",
+            "via": ""
+          },
+          {
+            "name": "Maschine mit geeigneten Werkzeugen versorgen",
+            "via": ""
+          },
+          {
+            "name": "Unangemessene Werkstücke entfernen",
+            "via": ""
+          },
+          {
+            "name": "Bearbeitetes Werkstück entnehmen",
+            "via": ""
+          },
+          {
+            "name": "Fertigungsverfahren",
+            "via": ""
+          },
+          {
+            "name": "Testlauf durchführen",
+            "via": ""
+          },
+          {
+            "name": "Standardbaupläne lesen",
+            "via": ""
+          }
         ],
         "suggest": "Es passt zu meinen Interessen (Handwerklich-technisch, Künstlerisch-kreativ, Erziehend-pflegend). Zu meinen Stärken gehören Sorgfalt, Dranbleiben, Mit Händen und Werkzeug, Neue Ideen. Ich habe schon 2 der 21 Kernfähigkeiten."
       }
@@ -481,11 +677,11 @@
       "finder": [
         {
           "words": "\"Versicherungsdetektiv\" Weiterbildung Bildungsgutschein AZAV München",
-          "prompt": "Ich möchte als Versicherungsdetektiv/Versicherungsdetektivin arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Deutsch\n- Ort: in der Nähe von München\n- Zeit: Egal\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Gut (B2)\nSprachen: Englisch Muttersprache, Deutsch B2, Französisch B1\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- Versicherungsrecht\n- Versicherungsprinzipien\n- Schadenverfahren\n- SQL und Datenwerkzeuge\n- Schadenakten analysieren\n- Versicherungsvorgang prüfen\n- Finanzprüfungen durchführen\n- Aktuarwissenschaft\n- Versicherte/Geschädigte befragen\n- Versicherungsarten\n- Arbeiten in einem großen Team\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "Ich möchte als Versicherungsdetektiv/Versicherungsdetektivin arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Deutsch\n- Ort: in der Nähe von München\n- Zeit: Egal\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Gut (B2)\nSprachen: Englisch Muttersprache, Deutsch B2, Französisch B1\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- Versicherungsrecht\n- Versicherungsprinzipien\n- Schadenverfahren\n- Schadenakten analysieren\n- Versicherungsvorgang prüfen\n- Finanzprüfungen durchführen\n- Aktuarwissenschaft\n- Versicherte/Geschädigte befragen\n- Versicherungsarten\n- SQL und Datenwerkzeuge\n- Arbeiten in einem großen Team\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"Versicherungsdetektiv\" Weiterbildung Bildungsgutschein AZAV München",
-          "prompt": "Ich möchte als Versicherungsdetektiv/Versicherungsdetektivin arbeiten und suche eine Weiterbildung.\nLies diese Kursseite: https://example.org/kurs\nWenn du sie nicht öffnen kannst, sag das in einem Satz.\n\nMeine Wünsche:\n- Sprache des Kurses: Deutsch\n- Ort: in der Nähe von München\n- Zeit: Egal\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Gut (B2)\nSprachen: Englisch Muttersprache, Deutsch B2, Französisch B1\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- Versicherungsrecht\n- Versicherungsprinzipien\n- Schadenverfahren\n- SQL und Datenwerkzeuge\n- Schadenakten analysieren\n- Versicherungsvorgang prüfen\n- Finanzprüfungen durchführen\n- Aktuarwissenschaft\n- Versicherte/Geschädigte befragen\n- Versicherungsarten\n- Arbeiten in einem großen Team\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "Ich möchte als Versicherungsdetektiv/Versicherungsdetektivin arbeiten und suche eine Weiterbildung.\nLies diese Kursseite: https://example.org/kurs\nWenn du sie nicht öffnen kannst, sag das in einem Satz.\n\nMeine Wünsche:\n- Sprache des Kurses: Deutsch\n- Ort: in der Nähe von München\n- Zeit: Egal\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Gut (B2)\nSprachen: Englisch Muttersprache, Deutsch B2, Französisch B1\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- Versicherungsrecht\n- Versicherungsprinzipien\n- Schadenverfahren\n- Schadenakten analysieren\n- Versicherungsvorgang prüfen\n- Finanzprüfungen durchführen\n- Aktuarwissenschaft\n- Versicherte/Geschädigte befragen\n- Versicherungsarten\n- SQL und Datenwerkzeuge\n- Arbeiten in einem großen Team\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"Versicherungsdetektiv\" Stelle München",
@@ -501,7 +697,7 @@
         },
         {
           "words": "\"Versicherungsdetektiv\" Weiterbildung online berufsbegleitend abends Englisch English",
-          "prompt": "Ich möchte als Versicherungsdetektiv/Versicherungsdetektivin arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Englisch\n- Ort: Online\n- Zeit: Abends\n- Beginn: In den nächsten 6 Monaten\nMein Deutsch: Gut (B2)\nSprachen: Englisch Muttersprache, Deutsch B2, Französisch B1\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- Versicherungsrecht\n- Versicherungsprinzipien\n- Schadenverfahren\n- SQL und Datenwerkzeuge\n- Schadenakten analysieren\n- Versicherungsvorgang prüfen\n- Finanzprüfungen durchführen\n- Aktuarwissenschaft\n- Versicherte/Geschädigte befragen\n- Versicherungsarten\n- Arbeiten in einem großen Team\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "Ich möchte als Versicherungsdetektiv/Versicherungsdetektivin arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Englisch\n- Ort: Online\n- Zeit: Abends\n- Beginn: In den nächsten 6 Monaten\nMein Deutsch: Gut (B2)\nSprachen: Englisch Muttersprache, Deutsch B2, Französisch B1\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- Versicherungsrecht\n- Versicherungsprinzipien\n- Schadenverfahren\n- Schadenakten analysieren\n- Versicherungsvorgang prüfen\n- Finanzprüfungen durchführen\n- Aktuarwissenschaft\n- Versicherte/Geschädigte befragen\n- Versicherungsarten\n- SQL und Datenwerkzeuge\n- Arbeiten in einem großen Team\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         }
       ],
       "facts": {
@@ -510,9 +706,9 @@
         "values": "Selbst entscheiden, Erfolg sehen, Anerkennung",
         "setting": "Ich arbeite lieber: allein, drinnen, am schreibtisch, viel abwechslung, flexible zeiten, wenig kundenkontakt. Geht für mich nicht: Viel Telefonieren, Verkaufsziele, Den ganzen Tag dieselbe Aufgabe",
         "skills": "Strategie für die Ermittlungsarbeit entwickeln, Beweismittel handhaben, Chemikalien mischen, Verdächtiges Verhalten ermitteln, Tatorte untersuchen, Unterstützung bei polizeilichen Ermittlungen leisten, Personen aufspüren, Personen oder andere Untersuchungsgegenstände überprüfen, Chemische Proben untersuchen, Chemie, Mikroskopietechniken, Beobachtungs- und Meldepraktiken ausüben, Überwachungsmethoden, Kriminologie, Labortests durchführen, Kontrollmethoden, Gesetzlich zulässige Beweise analysieren, Interviewtechniken, Beweise vorstellen, Beweise dokumentieren, Verkleidung und Rollenspiel, Geige, Boxen, Imkerei, Kurze Fachtexte schreiben. Das möchte ich mehr nutzen: Gesetzlich zulässige Beweise analysieren, Betrugsaufdeckung, Tatorte untersuchen, Personen aufspüren, Wirtschaftskriminalität aufdecken. Das möchte ich weniger nutzen: Chemikalien mischen, Laborgeräte pflegen, Sicher mit Chemikalien arbeiten",
-        "gaps": "Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, SQL und Datenwerkzeuge, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, Arbeiten in einem großen Team",
+        "gaps": "Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, SQL und Datenwerkzeuge, Arbeiten in einem großen Team",
         "jobs": "Privatermittler (2005 bis 2026); Chemielaborant (2001 bis 2005)",
-        "goals": "Betrugsermittler",
+        "goals": "Betrugsermittler, Datenanalyst",
         "place": "München",
         "german": "Gut (B2). Computer: Sicher im Beruf",
         "situation": "Auf Arbeitssuche",
@@ -532,15 +728,15 @@
           "contains": "Enthält: Ihre stärksten Fähigkeiten, Ihre bewerteten Fähigkeiten, Ihre früheren Stellen. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "meeting": {
-          "text": "Ich habe einen Termin bei meiner Beratung in der Agentur für Arbeit oder im Jobcenter. Mein Ziel ist Betrugsermittler. Hilf mir kurz bei der Vorbereitung:\n\n1. Fünf kurze Gesprächspunkte, die mein Ziel erklären und warum es zu mir passt.\n2. Vier Fragen, die mir gestellt werden könnten, mit je einer kurzen Antwort.\n3. Eine kurze Liste, was ich mitbringen sollte (Unterlagen, Stellenanzeigen, Kursangebote).\n\nBerufe, die ich anstrebe: Betrugsermittler\nWie ich arbeite (Selbsteinschätzung, stärkste): Informationen auswerten, Probleme lösen, Selbstständig arbeiten\nFähigkeiten, die mir für mein Ziel fehlen: Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, SQL und Datenwerkzeuge, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, Arbeiten in einem großen Team\nMeine Situation: Auf Arbeitssuche\n\nWas ich bisher gefunden habe:\n- Datenanalyse mit SQL und Power BI | Beispiel Bildungszentrum München | 16 Wochen | 12. Januar 2027 | 6.800 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Hybrid | https://example.org/courses/data-analysis-sql\n- Zertifizierter Betrugsermittler (IHK) | Beispiel Akademie für Versicherungen | 10 Wochen, Teilzeit | 1. März 2027 | 2.950 Euro | Bildungsgutschein prüfen, sonst Arbeitgeber | Online mit zwei Präsenztagen | https://example.org/courses/fraud-investigator\n- Auffrischung Laborsicherheit | Beispiel Chemieschule | 2 Tage | Monatlich | 390 Euro | Selbstzahler | Vor Ort | https://example.org/courses/lab-safety\n- Betrugsanalyst Schaden (m/w/d) | Beispiel Versicherung AG | München, 2 Tage remote | Vollzeit | 58.000 bis 66.000 Euro | https://example.org/jobs/fraud-analyst\n- Ermittler Finanzkriminalität (m/w/d) | Beispiel Bank Bayern | München | Vollzeit | Nicht angegeben | https://example.org/jobs/financial-crime\n- Junior Datenanalyst (m/w/d) | Beispiel Logistik GmbH | Garching | Vollzeit | 48.000 Euro | https://example.org/jobs/junior-data-analyst",
+          "text": "Ich habe einen Termin bei meiner Beratung in der Agentur für Arbeit oder im Jobcenter. Mein Ziel ist Betrugsermittler. Hilf mir kurz bei der Vorbereitung:\n\n1. Fünf kurze Gesprächspunkte, die mein Ziel erklären und warum es zu mir passt.\n2. Vier Fragen, die mir gestellt werden könnten, mit je einer kurzen Antwort.\n3. Eine kurze Liste, was ich mitbringen sollte (Unterlagen, Stellenanzeigen, Kursangebote).\n\nBerufe, die ich anstrebe: Betrugsermittler, Datenanalyst\nWie ich arbeite (Selbsteinschätzung, stärkste): Informationen auswerten, Probleme lösen, Selbstständig arbeiten\nFähigkeiten, die mir für mein Ziel fehlen: Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, SQL und Datenwerkzeuge, Arbeiten in einem großen Team\nMeine Situation: Auf Arbeitssuche\n\nWas ich bisher gefunden habe:\n- Datenanalyse mit SQL und Power BI | Beispiel Bildungszentrum München | 16 Wochen | 12. Januar 2027 | 6.800 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Hybrid | https://example.org/courses/data-analysis-sql\n- Zertifizierter Betrugsermittler (IHK) | Beispiel Akademie für Versicherungen | 10 Wochen, Teilzeit | 1. März 2027 | 2.950 Euro | Bildungsgutschein prüfen, sonst Arbeitgeber | Online mit zwei Präsenztagen | https://example.org/courses/fraud-investigator\n- Auffrischung Laborsicherheit | Beispiel Chemieschule | 2 Tage | Monatlich | 390 Euro | Selbstzahler | Vor Ort | https://example.org/courses/lab-safety\n- Betrugsanalyst Schaden (m/w/d) | Beispiel Versicherung AG | München, 2 Tage remote | Vollzeit | 58.000 bis 66.000 Euro | https://example.org/jobs/fraud-analyst\n- Ermittler Finanzkriminalität (m/w/d) | Beispiel Bank Bayern | München | Vollzeit | Nicht angegeben | https://example.org/jobs/financial-crime\n- Junior Datenanalyst (m/w/d) | Beispiel Logistik GmbH | Garching | Vollzeit | 48.000 Euro | https://example.org/jobs/junior-data-analyst",
           "contains": "Enthält: Ihre Ziele, Ihre stärksten Fähigkeiten, Ihre fehlenden Fähigkeiten, Ihre gemerkten Kurse und Stellen, Ihre Situation. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "compare": {
-          "text": "Vergleiche die Kurse und Stellen, die ich mir gemerkt habe, in einer kurzen Tabelle. Nenne dann deinen Favoriten mit zwei Gründen. Weise darauf hin, wenn etwas Wichtiges fehlt, etwa Preis, Termine oder Förderung. Erfinde nichts.\n\nWas ich mir gemerkt habe:\n- Datenanalyse mit SQL und Power BI | Beispiel Bildungszentrum München | 16 Wochen | 12. Januar 2027 | 6.800 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Hybrid | https://example.org/courses/data-analysis-sql\n- Zertifizierter Betrugsermittler (IHK) | Beispiel Akademie für Versicherungen | 10 Wochen, Teilzeit | 1. März 2027 | 2.950 Euro | Bildungsgutschein prüfen, sonst Arbeitgeber | Online mit zwei Präsenztagen | https://example.org/courses/fraud-investigator\n- Auffrischung Laborsicherheit | Beispiel Chemieschule | 2 Tage | Monatlich | 390 Euro | Selbstzahler | Vor Ort | https://example.org/courses/lab-safety\n- Betrugsanalyst Schaden (m/w/d) | Beispiel Versicherung AG | München, 2 Tage remote | Vollzeit | 58.000 bis 66.000 Euro | https://example.org/jobs/fraud-analyst\n- Ermittler Finanzkriminalität (m/w/d) | Beispiel Bank Bayern | München | Vollzeit | Nicht angegeben | https://example.org/jobs/financial-crime\n- Junior Datenanalyst (m/w/d) | Beispiel Logistik GmbH | Garching | Vollzeit | 48.000 Euro | https://example.org/jobs/junior-data-analyst\n\nBerufe, die ich anstrebe: Betrugsermittler\nFähigkeiten, die mir für mein Ziel fehlen: Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, SQL und Datenwerkzeuge, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, Arbeiten in einem großen Team\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, am schreibtisch, viel abwechslung, flexible zeiten, wenig kundenkontakt. Geht für mich nicht: Viel Telefonieren, Verkaufsziele, Den ganzen Tag dieselbe Aufgabe",
+          "text": "Vergleiche die Kurse und Stellen, die ich mir gemerkt habe, in einer kurzen Tabelle. Nenne dann deinen Favoriten mit zwei Gründen. Weise darauf hin, wenn etwas Wichtiges fehlt, etwa Preis, Termine oder Förderung. Erfinde nichts.\n\nWas ich mir gemerkt habe:\n- Datenanalyse mit SQL und Power BI | Beispiel Bildungszentrum München | 16 Wochen | 12. Januar 2027 | 6.800 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Hybrid | https://example.org/courses/data-analysis-sql\n- Zertifizierter Betrugsermittler (IHK) | Beispiel Akademie für Versicherungen | 10 Wochen, Teilzeit | 1. März 2027 | 2.950 Euro | Bildungsgutschein prüfen, sonst Arbeitgeber | Online mit zwei Präsenztagen | https://example.org/courses/fraud-investigator\n- Auffrischung Laborsicherheit | Beispiel Chemieschule | 2 Tage | Monatlich | 390 Euro | Selbstzahler | Vor Ort | https://example.org/courses/lab-safety\n- Betrugsanalyst Schaden (m/w/d) | Beispiel Versicherung AG | München, 2 Tage remote | Vollzeit | 58.000 bis 66.000 Euro | https://example.org/jobs/fraud-analyst\n- Ermittler Finanzkriminalität (m/w/d) | Beispiel Bank Bayern | München | Vollzeit | Nicht angegeben | https://example.org/jobs/financial-crime\n- Junior Datenanalyst (m/w/d) | Beispiel Logistik GmbH | Garching | Vollzeit | 48.000 Euro | https://example.org/jobs/junior-data-analyst\n\nBerufe, die ich anstrebe: Betrugsermittler, Datenanalyst\nFähigkeiten, die mir für mein Ziel fehlen: Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, SQL und Datenwerkzeuge, Arbeiten in einem großen Team\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, am schreibtisch, viel abwechslung, flexible zeiten, wenig kundenkontakt. Geht für mich nicht: Viel Telefonieren, Verkaufsziele, Den ganzen Tag dieselbe Aufgabe",
           "contains": "Enthält: Ihre gemerkten Kurse und Stellen, Ihre fehlenden Fähigkeiten, Ihr Arbeitsumfeld, Ihre Ziele. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "funding": {
-          "text": "Ich bin bei der Agentur für Arbeit oder beim Jobcenter. Welche Förderung und Unterstützung könnte zu meiner Lage passen? Zum Beispiel Weiterbildung, Coaching, Probearbeit oder Hilfe bei Bewerbungen.\n\nGib zu jeder Möglichkeit eine Zeile, was sie ist, und eine Frage, die ich meiner Beratung dazu stellen kann. Markiere alles, bei dem du nicht sicher bist, ob es noch aktuell ist, weil sich Regeln ändern.\nHalte es kurz.\n\nMeine Situation: Auf Arbeitssuche\nBerufe, die ich anstrebe: Betrugsermittler\nMein Deutsch: Gut (B2). Computer: Sicher im Beruf",
+          "text": "Ich bin bei der Agentur für Arbeit oder beim Jobcenter. Welche Förderung und Unterstützung könnte zu meiner Lage passen? Zum Beispiel Weiterbildung, Coaching, Probearbeit oder Hilfe bei Bewerbungen.\n\nGib zu jeder Möglichkeit eine Zeile, was sie ist, und eine Frage, die ich meiner Beratung dazu stellen kann. Markiere alles, bei dem du nicht sicher bist, ob es noch aktuell ist, weil sich Regeln ändern.\nHalte es kurz.\n\nMeine Situation: Auf Arbeitssuche\nBerufe, die ich anstrebe: Betrugsermittler, Datenanalyst\nMein Deutsch: Gut (B2). Computer: Sicher im Beruf",
           "contains": "Enthält: Ihre Situation, Ihre Ziele, Ihre Deutschkenntnisse. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "underrated": {
@@ -548,7 +744,7 @@
           "contains": "Enthält: Ihre früheren Stellen, Ihre Hobbys und Projekte, Ihre stärksten Fähigkeiten. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "patterns": {
-          "text": "Hier ist ein kurzes Profil von mir. Sag mir knapp:\n\n1. Drei Muster, die du siehst.\n2. Zwei Dinge, die mich überraschen könnten.\n3. Drei Fragen, über die ich nachdenken sollte, bevor ich meine nächste Stelle wähle.\n\nSei ehrlich und konkret. Schmeichle mir nicht.\n\nMeine Situation: Auf Arbeitssuche\nFrühere und aktuelle Stellen: Privatermittler (2005 bis 2026); Chemielaborant (2001 bis 2005)\nBerufe, die ich anstrebe: Betrugsermittler\nWie ich arbeite (Selbsteinschätzung, stärkste): Informationen auswerten, Probleme lösen, Selbstständig arbeiten\nWas ich gern tue (Interessen): I Untersuchend-forschend, R Handwerklich-technisch, A Künstlerisch-kreativ\nWas mir bei der Arbeit wichtig ist: Selbst entscheiden, Erfolg sehen, Anerkennung\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, am schreibtisch, viel abwechslung, flexible zeiten, wenig kundenkontakt. Geht für mich nicht: Viel Telefonieren, Verkaufsziele, Den ganzen Tag dieselbe Aufgabe\nFähigkeiten, die ich mindestens solide beherrsche: Strategie für die Ermittlungsarbeit entwickeln, Beweismittel handhaben, Chemikalien mischen, Verdächtiges Verhalten ermitteln, Tatorte untersuchen, Unterstützung bei polizeilichen Ermittlungen leisten, Personen aufspüren, Personen oder andere Untersuchungsgegenstände überprüfen, Chemische Proben untersuchen, Chemie, Mikroskopietechniken, Beobachtungs- und Meldepraktiken ausüben, Überwachungsmethoden, Kriminologie, Labortests durchführen, Kontrollmethoden, Gesetzlich zulässige Beweise analysieren, Interviewtechniken, Beweise vorstellen, Beweise dokumentieren, Verkleidung und Rollenspiel, Geige, Boxen, Imkerei, Kurze Fachtexte schreiben. Das möchte ich mehr nutzen: Gesetzlich zulässige Beweise analysieren, Betrugsaufdeckung, Tatorte untersuchen, Personen aufspüren, Wirtschaftskriminalität aufdecken. Das möchte ich weniger nutzen: Chemikalien mischen, Laborgeräte pflegen, Sicher mit Chemikalien arbeiten\nFähigkeiten, die mir für mein Ziel fehlen: Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, SQL und Datenwerkzeuge, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, Arbeiten in einem großen Team\nMein Deutsch: Gut (B2). Computer: Sicher im Beruf\nHobbys, Ehrenamt und Projekte: Geige, Chemieversuche zu Hause, Boxen, Imkerei auf dem Dach; Kurze Studien über Tabakasche, Reifenspuren und Fußabdrücke geschrieben",
+          "text": "Hier ist ein kurzes Profil von mir. Sag mir knapp:\n\n1. Drei Muster, die du siehst.\n2. Zwei Dinge, die mich überraschen könnten.\n3. Drei Fragen, über die ich nachdenken sollte, bevor ich meine nächste Stelle wähle.\n\nSei ehrlich und konkret. Schmeichle mir nicht.\n\nMeine Situation: Auf Arbeitssuche\nFrühere und aktuelle Stellen: Privatermittler (2005 bis 2026); Chemielaborant (2001 bis 2005)\nBerufe, die ich anstrebe: Betrugsermittler, Datenanalyst\nWie ich arbeite (Selbsteinschätzung, stärkste): Informationen auswerten, Probleme lösen, Selbstständig arbeiten\nWas ich gern tue (Interessen): I Untersuchend-forschend, R Handwerklich-technisch, A Künstlerisch-kreativ\nWas mir bei der Arbeit wichtig ist: Selbst entscheiden, Erfolg sehen, Anerkennung\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, am schreibtisch, viel abwechslung, flexible zeiten, wenig kundenkontakt. Geht für mich nicht: Viel Telefonieren, Verkaufsziele, Den ganzen Tag dieselbe Aufgabe\nFähigkeiten, die ich mindestens solide beherrsche: Strategie für die Ermittlungsarbeit entwickeln, Beweismittel handhaben, Chemikalien mischen, Verdächtiges Verhalten ermitteln, Tatorte untersuchen, Unterstützung bei polizeilichen Ermittlungen leisten, Personen aufspüren, Personen oder andere Untersuchungsgegenstände überprüfen, Chemische Proben untersuchen, Chemie, Mikroskopietechniken, Beobachtungs- und Meldepraktiken ausüben, Überwachungsmethoden, Kriminologie, Labortests durchführen, Kontrollmethoden, Gesetzlich zulässige Beweise analysieren, Interviewtechniken, Beweise vorstellen, Beweise dokumentieren, Verkleidung und Rollenspiel, Geige, Boxen, Imkerei, Kurze Fachtexte schreiben. Das möchte ich mehr nutzen: Gesetzlich zulässige Beweise analysieren, Betrugsaufdeckung, Tatorte untersuchen, Personen aufspüren, Wirtschaftskriminalität aufdecken. Das möchte ich weniger nutzen: Chemikalien mischen, Laborgeräte pflegen, Sicher mit Chemikalien arbeiten\nFähigkeiten, die mir für mein Ziel fehlen: Versicherungsrecht, Versicherungsprinzipien, Schadenverfahren, Schadenakten analysieren, Versicherungsvorgang prüfen, Finanzprüfungen durchführen, Aktuarwissenschaft, Versicherte/Geschädigte befragen, Versicherungsarten, SQL und Datenwerkzeuge, Arbeiten in einem großen Team\nMein Deutsch: Gut (B2). Computer: Sicher im Beruf\nHobbys, Ehrenamt und Projekte: Geige, Chemieversuche zu Hause, Boxen, Imkerei auf dem Dach; Kurze Studien über Tabakasche, Reifenspuren und Fußabdrücke geschrieben",
           "contains": "Enthält: Ihre Situation, Ihre früheren Stellen, Ihre Ziele, Ihre stärksten Fähigkeiten, Ihre Interessen, was Ihnen wichtig ist, Ihr Arbeitsumfeld, Ihre bewerteten Fähigkeiten, Ihre fehlenden Fähigkeiten, Ihre Deutschkenntnisse, Ihre Hobbys und Projekte. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "newdirs": {
@@ -578,16 +774,46 @@
           "Geige"
         ],
         "gaps": [
-          { "name": "Versicherungsrecht", "via": "Zertifizierter Betrugsermittler (IHK)" },
-          { "name": "Versicherungsprinzipien", "via": "Zertifizierter Betrugsermittler (IHK)" },
-          { "name": "Schadenverfahren", "via": "Zertifizierter Betrugsermittler (IHK)" },
-          { "name": "SQL und Datenwerkzeuge", "via": "Datenanalyse mit SQL und Power BI" },
-          { "name": "Schadenakten analysieren", "via": "" },
-          { "name": "Versicherungsvorgang prüfen", "via": "" },
-          { "name": "Finanzprüfungen durchführen", "via": "" },
-          { "name": "Aktuarwissenschaft", "via": "" },
-          { "name": "Versicherte/Geschädigte befragen", "via": "" },
-          { "name": "Versicherungsarten", "via": "" }
+          {
+            "name": "Versicherungsrecht",
+            "via": "Zertifizierter Betrugsermittler (IHK)"
+          },
+          {
+            "name": "Versicherungsprinzipien",
+            "via": "Zertifizierter Betrugsermittler (IHK)"
+          },
+          {
+            "name": "Schadenverfahren",
+            "via": "Zertifizierter Betrugsermittler (IHK)"
+          },
+          {
+            "name": "Schadenakten analysieren",
+            "via": ""
+          },
+          {
+            "name": "Versicherungsvorgang prüfen",
+            "via": ""
+          },
+          {
+            "name": "Finanzprüfungen durchführen",
+            "via": ""
+          },
+          {
+            "name": "Aktuarwissenschaft",
+            "via": ""
+          },
+          {
+            "name": "Versicherte/Geschädigte befragen",
+            "via": ""
+          },
+          {
+            "name": "Versicherungsarten",
+            "via": ""
+          },
+          {
+            "name": "SQL und Datenwerkzeuge",
+            "via": ""
+          }
         ],
         "others": ["Datenanalyst", "Kriminaltechniker im Labor"],
         "wantMore": [
@@ -597,7 +823,7 @@
           "Personen aufspüren",
           "Wirtschaftskriminalität aufdecken"
         ],
-        "course": "c1",
+        "course": "c2",
         "suggest": "Es passt zu meinen Interessen (Untersuchend-forschend, Handwerklich-technisch, Künstlerisch-kreativ). Zu meinen Stärken gehören Informationen auswerten, Probleme lösen, Selbstständig arbeiten. Ich habe schon 4 der 15 Kernfähigkeiten."
       },
       "planOther": {
@@ -618,16 +844,46 @@
           "Geige"
         ],
         "gaps": [
-          { "name": "Insurance law", "via": "Zertifizierter Betrugsermittler (IHK)" },
-          { "name": "Principles of insurance", "via": "Zertifizierter Betrugsermittler (IHK)" },
-          { "name": "Claims procedures", "via": "Zertifizierter Betrugsermittler (IHK)" },
-          { "name": "SQL und Datenwerkzeuge", "via": "Datenanalyse mit SQL und Power BI" },
-          { "name": "Analyse claim files", "via": "" },
-          { "name": "Review insurance process", "via": "" },
-          { "name": "Conduct financial audits", "via": "" },
-          { "name": "Actuarial science", "via": "" },
-          { "name": "Interview insurance claimants", "via": "" },
-          { "name": "Types of insurance", "via": "" }
+          {
+            "name": "Insurance law",
+            "via": "Zertifizierter Betrugsermittler (IHK)"
+          },
+          {
+            "name": "Principles of insurance",
+            "via": "Zertifizierter Betrugsermittler (IHK)"
+          },
+          {
+            "name": "Claims procedures",
+            "via": "Zertifizierter Betrugsermittler (IHK)"
+          },
+          {
+            "name": "Analyse claim files",
+            "via": ""
+          },
+          {
+            "name": "Review insurance process",
+            "via": ""
+          },
+          {
+            "name": "Conduct financial audits",
+            "via": ""
+          },
+          {
+            "name": "Actuarial science",
+            "via": ""
+          },
+          {
+            "name": "Interview insurance claimants",
+            "via": ""
+          },
+          {
+            "name": "Types of insurance",
+            "via": ""
+          },
+          {
+            "name": "SQL und Datenwerkzeuge",
+            "via": ""
+          }
         ],
         "suggest": "It matches my interests (Investigating, Hands-on, Creative). My strengths include Making sense of information, Solving problems, Working on your own initiative. I already have 4 of the 15 core skills."
       }
@@ -733,16 +989,46 @@
           "Kochen für große Gruppen"
         ],
         "gaps": [
-          { "name": "Finanzmittel verwalten", "via": "Zertifikat Fundraising-Manager" },
-          { "name": "Finanzmanagement", "via": "Zertifikat Fundraising-Manager" },
-          { "name": "Mitteleinwerbung leiten", "via": "Zertifikat Fundraising-Manager" },
-          { "name": "Finanzstrategien durchsetzen", "via": "" },
-          { "name": "Finanzmarkttrends analysieren", "via": "" },
-          { "name": "Wachstum des Unternehmens anstreben", "via": "" },
-          { "name": "Mitarbeiter führen", "via": "" },
-          { "name": "Methoden der Mittelbeschaffung", "via": "" },
-          { "name": "Mitarbeiter einstellen", "via": "" },
-          { "name": "Jahresabschluss", "via": "" }
+          {
+            "name": "Finanzmittel verwalten",
+            "via": "Zertifikat Fundraising-Manager"
+          },
+          {
+            "name": "Finanzmanagement",
+            "via": "Zertifikat Fundraising-Manager"
+          },
+          {
+            "name": "Mitteleinwerbung leiten",
+            "via": "Zertifikat Fundraising-Manager"
+          },
+          {
+            "name": "Finanzstrategien durchsetzen",
+            "via": ""
+          },
+          {
+            "name": "Finanzmarkttrends analysieren",
+            "via": ""
+          },
+          {
+            "name": "Wachstum des Unternehmens anstreben",
+            "via": ""
+          },
+          {
+            "name": "Mitarbeiter führen",
+            "via": ""
+          },
+          {
+            "name": "Methoden der Mittelbeschaffung",
+            "via": ""
+          },
+          {
+            "name": "Mitarbeiter einstellen",
+            "via": ""
+          },
+          {
+            "name": "Jahresabschluss",
+            "via": ""
+          }
         ],
         "others": ["Einkaufsassistent", "Forstwirtschaftsmeister"],
         "wantMore": [
@@ -772,16 +1058,46 @@
           "Kochen für große Gruppen"
         ],
         "gaps": [
-          { "name": "Manage budgets", "via": "Zertifikat Fundraising-Manager" },
-          { "name": "Financial management", "via": "Zertifikat Fundraising-Manager" },
-          { "name": "Manage fundraising activities", "via": "Zertifikat Fundraising-Manager" },
-          { "name": "Enforce financial policies", "via": "" },
-          { "name": "Analyse market financial trends", "via": "" },
-          { "name": "Strive for company growth", "via": "" },
-          { "name": "Manage staff", "via": "" },
-          { "name": "Funding methods", "via": "" },
-          { "name": "Recruit employees", "via": "" },
-          { "name": "Financial statements", "via": "" }
+          {
+            "name": "Manage budgets",
+            "via": "Zertifikat Fundraising-Manager"
+          },
+          {
+            "name": "Financial management",
+            "via": "Zertifikat Fundraising-Manager"
+          },
+          {
+            "name": "Manage fundraising activities",
+            "via": "Zertifikat Fundraising-Manager"
+          },
+          {
+            "name": "Enforce financial policies",
+            "via": ""
+          },
+          {
+            "name": "Analyse market financial trends",
+            "via": ""
+          },
+          {
+            "name": "Strive for company growth",
+            "via": ""
+          },
+          {
+            "name": "Manage staff",
+            "via": ""
+          },
+          {
+            "name": "Funding methods",
+            "via": ""
+          },
+          {
+            "name": "Recruit employees",
+            "via": ""
+          },
+          {
+            "name": "Financial statements",
+            "via": ""
+          }
         ],
         "suggest": "It matches my interests (Helping, Leading and selling, Hands-on). My strengths include Staying calm under pressure, Leading, Meeting new people, Helping and caring. I already have 3 of the 26 core skills."
       }
@@ -790,11 +1106,11 @@
       "finder": [
         {
           "words": "\"CNC-Anwendungsfachkraft\" Weiterbildung Bildungsgutschein AZAV Nürnberg Vollzeit",
-          "prompt": "Ich möchte als CNC-Anwendungsfachkraft arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Egal\n- Ort: in der Nähe von Nürnberg\n- Zeit: Vollzeit\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Grundlagen (A2)\nSprachen: Italienisch Muttersprache, Deutsch A2\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- CAM-Software verwenden\n- CNC-Steuerung programmieren\n- Maschinensteuerung einstellen\n- Computergrundlagen\n- Deutsch für den Beruf (B1)\n- Statistische Prozessüberwachung\n- Maschine mit geeigneten Werkzeugen versorgen\n- Unangemessene Werkstücke entfernen\n- Bearbeitetes Werkstück entnehmen\n- Fertigungsverfahren\n- Testlauf durchführen\n- Standardbaupläne lesen\n- Verfügbarkeit von Geräten sicherstellen\n- Automatische Maschinen überwachen\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "Ich möchte als CNC-Anwendungsfachkraft arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Egal\n- Ort: in der Nähe von Nürnberg\n- Zeit: Vollzeit\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Grundlagen (A2)\nSprachen: Italienisch Muttersprache, Deutsch A2\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- CAM-Software verwenden\n- CNC-Steuerung programmieren\n- Maschinensteuerung einstellen\n- Statistische Prozessüberwachung\n- Maschine mit geeigneten Werkzeugen versorgen\n- Unangemessene Werkstücke entfernen\n- Bearbeitetes Werkstück entnehmen\n- Fertigungsverfahren\n- Testlauf durchführen\n- Standardbaupläne lesen\n- Verfügbarkeit von Geräten sicherstellen\n- Automatische Maschinen überwachen\n- Automatische Programmierung einsetzen\n- Maschinenwartungsarbeiten durchführen\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"CNC-Anwendungsfachkraft\" Weiterbildung Bildungsgutschein AZAV Nürnberg Vollzeit",
-          "prompt": "Ich möchte als CNC-Anwendungsfachkraft arbeiten und suche eine Weiterbildung.\nLies diese Kursseite: https://example.org/kurs\nWenn du sie nicht öffnen kannst, sag das in einem Satz.\n\nMeine Wünsche:\n- Sprache des Kurses: Egal\n- Ort: in der Nähe von Nürnberg\n- Zeit: Vollzeit\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Grundlagen (A2)\nSprachen: Italienisch Muttersprache, Deutsch A2\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- CAM-Software verwenden\n- CNC-Steuerung programmieren\n- Maschinensteuerung einstellen\n- Computergrundlagen\n- Deutsch für den Beruf (B1)\n- Statistische Prozessüberwachung\n- Maschine mit geeigneten Werkzeugen versorgen\n- Unangemessene Werkstücke entfernen\n- Bearbeitetes Werkstück entnehmen\n- Fertigungsverfahren\n- Testlauf durchführen\n- Standardbaupläne lesen\n- Verfügbarkeit von Geräten sicherstellen\n- Automatische Maschinen überwachen\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "Ich möchte als CNC-Anwendungsfachkraft arbeiten und suche eine Weiterbildung.\nLies diese Kursseite: https://example.org/kurs\nWenn du sie nicht öffnen kannst, sag das in einem Satz.\n\nMeine Wünsche:\n- Sprache des Kurses: Egal\n- Ort: in der Nähe von Nürnberg\n- Zeit: Vollzeit\n- Beginn: Egal\n- Bezahlt mit Bildungsgutschein: Der Kurs muss AZAV-zertifiziert sein.\nMein Deutsch: Grundlagen (A2)\nSprachen: Italienisch Muttersprache, Deutsch A2\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- CAM-Software verwenden\n- CNC-Steuerung programmieren\n- Maschinensteuerung einstellen\n- Statistische Prozessüberwachung\n- Maschine mit geeigneten Werkzeugen versorgen\n- Unangemessene Werkstücke entfernen\n- Bearbeitetes Werkstück entnehmen\n- Fertigungsverfahren\n- Testlauf durchführen\n- Standardbaupläne lesen\n- Verfügbarkeit von Geräten sicherstellen\n- Automatische Maschinen überwachen\n- Automatische Programmierung einsetzen\n- Maschinenwartungsarbeiten durchführen\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         },
         {
           "words": "\"CNC-Anwendungsfachkraft\" Stelle Nürnberg",
@@ -810,7 +1126,7 @@
         },
         {
           "words": "\"CNC-Anwendungsfachkraft\" Weiterbildung online berufsbegleitend abends Englisch English",
-          "prompt": "Ich möchte als CNC-Anwendungsfachkraft arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Englisch\n- Ort: Online\n- Zeit: Abends\n- Beginn: In den nächsten 6 Monaten\nMein Deutsch: Grundlagen (A2)\nSprachen: Italienisch Muttersprache, Deutsch A2\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- CAM-Software verwenden\n- CNC-Steuerung programmieren\n- Maschinensteuerung einstellen\n- Computergrundlagen\n- Deutsch für den Beruf (B1)\n- Statistische Prozessüberwachung\n- Maschine mit geeigneten Werkzeugen versorgen\n- Unangemessene Werkstücke entfernen\n- Bearbeitetes Werkstück entnehmen\n- Fertigungsverfahren\n- Testlauf durchführen\n- Standardbaupläne lesen\n- Verfügbarkeit von Geräten sicherstellen\n- Automatische Maschinen überwachen\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
+          "prompt": "Ich möchte als CNC-Anwendungsfachkraft arbeiten und suche eine Weiterbildung.\nSuche im Internet 3 bis 5 echte Kurse, die passen, zum Beispiel bei mein NOW (mein-now.de) oder auf Anbieterseiten. Wenn du nicht im Internet suchen kannst, sag das in einem Satz und erfinde keine Kurse.\n\nMeine Wünsche:\n- Sprache des Kurses: Englisch\n- Ort: Online\n- Zeit: Abends\n- Beginn: In den nächsten 6 Monaten\nMein Deutsch: Grundlagen (A2)\nSprachen: Italienisch Muttersprache, Deutsch A2\nMeine Situation: Auf Arbeitssuche\n\nFähigkeiten, die mir für das Ziel fehlen:\n- CAM-Software verwenden\n- CNC-Steuerung programmieren\n- Maschinensteuerung einstellen\n- Statistische Prozessüberwachung\n- Maschine mit geeigneten Werkzeugen versorgen\n- Unangemessene Werkstücke entfernen\n- Bearbeitetes Werkstück entnehmen\n- Fertigungsverfahren\n- Testlauf durchführen\n- Standardbaupläne lesen\n- Verfügbarkeit von Geräten sicherstellen\n- Automatische Maschinen überwachen\n- Automatische Programmierung einsetzen\n- Maschinenwartungsarbeiten durchführen\n\nAntworte kurz: zu jedem Kurs eine Zeile, warum er passt. Gib zu jedem Kurs den Link an. Bei AZAV schreib nur, was die Seite sagt. Ende deine Antwort mit genau einem JSON-Codeblock in diesem Format (Feldnamen auf Englisch, Inhalte auf Deutsch). In \"covers\" stehen nur Namen aus meiner Liste oben, genau so geschrieben. Nimm jede Angabe nur von der Seite und lass ein Feld leer (\"\"), wenn sie es nicht sagt:\n{\"courses\":[{\"name\":\"\",\"provider\":\"\",\"url\":\"\",\"start\":\"\",\"length\":\"\",\"schedule\":\"\",\"format\":\"\",\"language\":\"\",\"price\":\"\",\"funding\":\"\",\"azav\":\"yes, no or unknown\",\"covers\":[\"exact skill names from my list\"],\"note\":\"\"}]}"
         }
       ],
       "facts": {
@@ -819,7 +1135,7 @@
         "values": "Erfolg sehen, Sicherheit und gute Bedingungen, Gute Kolleginnen und Kollegen",
         "setting": "Ich arbeite lieber: allein, drinnen, feste zeiten, wenig kundenkontakt. Geht für mich nicht: Nachtschichten, Früh- oder Spätschichten, Schweres Heben, Verkaufsziele",
         "skills": "Verfahren der Holzbearbeitung, Spielzeug instand setzen, Schneidewerkzeuge instand halten, Holzelemente verbinden, Holz bearbeiten, Holzbearbeitungswerkzeuge, Schnitzmesser verwenden, Herstellung von Spielzeug abschließen, Glatte Holzoberfläche erzeugen, Objekte schnitzen, Merkmale und Funktionen von Spielzeugen und Spielen vorführen, Holz abschmirgeln, Spielzeuge zusammensetzen, Werkzeuge für Spielzeugreparaturen nutzen, Schleifverfahren, Holzschnitte, Holzverbindungen herstellen, Zu produzierende Objekte entwerfen, Holzarten, Kundenzufriedenheit gewährleisten, Puppenspiel, Uhrenreparatur, Geschichten für Kinder. Das möchte ich mehr nutzen: Holz drechseln, Präzisionsmessgeräte bedienen, Objekte schnitzen, 3D-Pläne lesen, Holzverbindungen herstellen. Das möchte ich weniger nutzen: Registrierkasse bedienen, Vorkehrungen für die Genehmigung eines Marktstands treffen, Waren verpacken, Zahlungen verarbeiten",
-        "gaps": "CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Computergrundlagen, Deutsch für den Beruf (B1), Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen",
+        "gaps": "CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen, Maschinenwartungsarbeiten durchführen, Qualitätsstandards",
         "jobs": "Holzschnitzer und Spielzeugmacher (1990 bis 2026); Holzbildhauer (1985 bis 1990); Zimmererhelfer (1982 bis 1985); Marktstandverkäufer (Winter 2015 bis 2025)",
         "goals": "CNC-Maschinenbediener",
         "place": "Nürnberg",
@@ -841,11 +1157,11 @@
           "contains": "Enthält: Ihre stärksten Fähigkeiten, Ihre bewerteten Fähigkeiten, Ihre früheren Stellen. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "meeting": {
-          "text": "Ich habe einen Termin bei meiner Beratung in der Agentur für Arbeit oder im Jobcenter. Mein Ziel ist CNC-Maschinenbediener. Hilf mir kurz bei der Vorbereitung:\n\n1. Fünf kurze Gesprächspunkte, die mein Ziel erklären und warum es zu mir passt.\n2. Vier Fragen, die mir gestellt werden könnten, mit je einer kurzen Antwort.\n3. Eine kurze Liste, was ich mitbringen sollte (Unterlagen, Stellenanzeigen, Kursangebote).\n\nBerufe, die ich anstrebe: CNC-Maschinenbediener\nWie ich arbeite (Selbsteinschätzung, stärkste): Sorgfalt, Dranbleiben, Mit Händen und Werkzeug, Neue Ideen\nFähigkeiten, die mir für mein Ziel fehlen: CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Computergrundlagen, Deutsch für den Beruf (B1), Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen\nMeine Situation: Auf Arbeitssuche\n\nWas ich bisher gefunden habe:\n- CNC-Grundlagen Holzbearbeitung | Beispiel Holzfachschule Franken | 12 Wochen | 11. Januar 2027 | 5.400 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Vor Ort in der Lehrwerkstatt | https://example.org/courses/cnc-wood\n- Computergrundlagen für die Werkstatt | Beispiel VHS Nürnberg | 4 Wochen | 16. November 2026 | Gefördert | Über das Jobcenter | Vor Ort | https://example.org/courses/computer-basics\n- Deutsch für den Beruf B1 | Beispiel Sprachschule | 6 Monate | Jeden Monat | Gefördert | BAMF Berufssprachkurs | Vor Ort | https://example.org/courses/german-b1-work\n- CNC-Bediener Holzbearbeitung (m/w/d) | Beispiel Möbelwerkstätten | Schwabach | Vollzeit, Tagschicht | 17,50 Euro pro Stunde | https://example.org/jobs/cnc-operator-wood\n- Qualitätsprüfer Spielwaren (m/w/d) | Beispiel Spielwaren GmbH | Fürth | Vollzeit | Nach Vereinbarung | https://example.org/jobs/toy-quality",
+          "text": "Ich habe einen Termin bei meiner Beratung in der Agentur für Arbeit oder im Jobcenter. Mein Ziel ist CNC-Maschinenbediener. Hilf mir kurz bei der Vorbereitung:\n\n1. Fünf kurze Gesprächspunkte, die mein Ziel erklären und warum es zu mir passt.\n2. Vier Fragen, die mir gestellt werden könnten, mit je einer kurzen Antwort.\n3. Eine kurze Liste, was ich mitbringen sollte (Unterlagen, Stellenanzeigen, Kursangebote).\n\nBerufe, die ich anstrebe: CNC-Maschinenbediener\nWie ich arbeite (Selbsteinschätzung, stärkste): Sorgfalt, Dranbleiben, Mit Händen und Werkzeug, Neue Ideen\nFähigkeiten, die mir für mein Ziel fehlen: CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen, Maschinenwartungsarbeiten durchführen, Qualitätsstandards\nMeine Situation: Auf Arbeitssuche\n\nWas ich bisher gefunden habe:\n- CNC-Grundlagen Holzbearbeitung | Beispiel Holzfachschule Franken | 12 Wochen | 11. Januar 2027 | 5.400 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Vor Ort in der Lehrwerkstatt | https://example.org/courses/cnc-wood\n- Computergrundlagen für die Werkstatt | Beispiel VHS Nürnberg | 4 Wochen | 16. November 2026 | Gefördert | Über das Jobcenter | Vor Ort | https://example.org/courses/computer-basics\n- Deutsch für den Beruf B1 | Beispiel Sprachschule | 6 Monate | Jeden Monat | Gefördert | BAMF Berufssprachkurs | Vor Ort | https://example.org/courses/german-b1-work\n- CNC-Bediener Holzbearbeitung (m/w/d) | Beispiel Möbelwerkstätten | Schwabach | Vollzeit, Tagschicht | 17,50 Euro pro Stunde | https://example.org/jobs/cnc-operator-wood\n- Qualitätsprüfer Spielwaren (m/w/d) | Beispiel Spielwaren GmbH | Fürth | Vollzeit | Nach Vereinbarung | https://example.org/jobs/toy-quality",
           "contains": "Enthält: Ihre Ziele, Ihre stärksten Fähigkeiten, Ihre fehlenden Fähigkeiten, Ihre gemerkten Kurse und Stellen, Ihre Situation. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "compare": {
-          "text": "Vergleiche die Kurse und Stellen, die ich mir gemerkt habe, in einer kurzen Tabelle. Nenne dann deinen Favoriten mit zwei Gründen. Weise darauf hin, wenn etwas Wichtiges fehlt, etwa Preis, Termine oder Förderung. Erfinde nichts.\n\nWas ich mir gemerkt habe:\n- CNC-Grundlagen Holzbearbeitung | Beispiel Holzfachschule Franken | 12 Wochen | 11. Januar 2027 | 5.400 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Vor Ort in der Lehrwerkstatt | https://example.org/courses/cnc-wood\n- Computergrundlagen für die Werkstatt | Beispiel VHS Nürnberg | 4 Wochen | 16. November 2026 | Gefördert | Über das Jobcenter | Vor Ort | https://example.org/courses/computer-basics\n- Deutsch für den Beruf B1 | Beispiel Sprachschule | 6 Monate | Jeden Monat | Gefördert | BAMF Berufssprachkurs | Vor Ort | https://example.org/courses/german-b1-work\n- CNC-Bediener Holzbearbeitung (m/w/d) | Beispiel Möbelwerkstätten | Schwabach | Vollzeit, Tagschicht | 17,50 Euro pro Stunde | https://example.org/jobs/cnc-operator-wood\n- Qualitätsprüfer Spielwaren (m/w/d) | Beispiel Spielwaren GmbH | Fürth | Vollzeit | Nach Vereinbarung | https://example.org/jobs/toy-quality\n\nBerufe, die ich anstrebe: CNC-Maschinenbediener\nFähigkeiten, die mir für mein Ziel fehlen: CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Computergrundlagen, Deutsch für den Beruf (B1), Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, feste zeiten, wenig kundenkontakt. Geht für mich nicht: Nachtschichten, Früh- oder Spätschichten, Schweres Heben, Verkaufsziele",
+          "text": "Vergleiche die Kurse und Stellen, die ich mir gemerkt habe, in einer kurzen Tabelle. Nenne dann deinen Favoriten mit zwei Gründen. Weise darauf hin, wenn etwas Wichtiges fehlt, etwa Preis, Termine oder Förderung. Erfinde nichts.\n\nWas ich mir gemerkt habe:\n- CNC-Grundlagen Holzbearbeitung | Beispiel Holzfachschule Franken | 12 Wochen | 11. Januar 2027 | 5.400 Euro | Bildungsgutschein möglich, AZAV-zertifiziert | Vor Ort in der Lehrwerkstatt | https://example.org/courses/cnc-wood\n- Computergrundlagen für die Werkstatt | Beispiel VHS Nürnberg | 4 Wochen | 16. November 2026 | Gefördert | Über das Jobcenter | Vor Ort | https://example.org/courses/computer-basics\n- Deutsch für den Beruf B1 | Beispiel Sprachschule | 6 Monate | Jeden Monat | Gefördert | BAMF Berufssprachkurs | Vor Ort | https://example.org/courses/german-b1-work\n- CNC-Bediener Holzbearbeitung (m/w/d) | Beispiel Möbelwerkstätten | Schwabach | Vollzeit, Tagschicht | 17,50 Euro pro Stunde | https://example.org/jobs/cnc-operator-wood\n- Qualitätsprüfer Spielwaren (m/w/d) | Beispiel Spielwaren GmbH | Fürth | Vollzeit | Nach Vereinbarung | https://example.org/jobs/toy-quality\n\nBerufe, die ich anstrebe: CNC-Maschinenbediener\nFähigkeiten, die mir für mein Ziel fehlen: CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen, Maschinenwartungsarbeiten durchführen, Qualitätsstandards\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, feste zeiten, wenig kundenkontakt. Geht für mich nicht: Nachtschichten, Früh- oder Spätschichten, Schweres Heben, Verkaufsziele",
           "contains": "Enthält: Ihre gemerkten Kurse und Stellen, Ihre fehlenden Fähigkeiten, Ihr Arbeitsumfeld, Ihre Ziele. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "funding": {
@@ -857,7 +1173,7 @@
           "contains": "Enthält: Ihre früheren Stellen, Ihre Hobbys und Projekte, Ihre stärksten Fähigkeiten. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "patterns": {
-          "text": "Hier ist ein kurzes Profil von mir. Sag mir knapp:\n\n1. Drei Muster, die du siehst.\n2. Zwei Dinge, die mich überraschen könnten.\n3. Drei Fragen, über die ich nachdenken sollte, bevor ich meine nächste Stelle wähle.\n\nSei ehrlich und konkret. Schmeichle mir nicht.\n\nMeine Situation: Auf Arbeitssuche\nFrühere und aktuelle Stellen: Holzschnitzer und Spielzeugmacher (1990 bis 2026); Holzbildhauer (1985 bis 1990); Zimmererhelfer (1982 bis 1985); Marktstandverkäufer (Winter 2015 bis 2025)\nBerufe, die ich anstrebe: CNC-Maschinenbediener\nWie ich arbeite (Selbsteinschätzung, stärkste): Sorgfalt, Dranbleiben, Mit Händen und Werkzeug, Neue Ideen\nWas ich gern tue (Interessen): R Handwerklich-technisch, A Künstlerisch-kreativ, S Erziehend-pflegend\nWas mir bei der Arbeit wichtig ist: Erfolg sehen, Sicherheit und gute Bedingungen, Gute Kolleginnen und Kollegen\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, feste zeiten, wenig kundenkontakt. Geht für mich nicht: Nachtschichten, Früh- oder Spätschichten, Schweres Heben, Verkaufsziele\nFähigkeiten, die ich mindestens solide beherrsche: Verfahren der Holzbearbeitung, Spielzeug instand setzen, Schneidewerkzeuge instand halten, Holzelemente verbinden, Holz bearbeiten, Holzbearbeitungswerkzeuge, Schnitzmesser verwenden, Herstellung von Spielzeug abschließen, Glatte Holzoberfläche erzeugen, Objekte schnitzen, Merkmale und Funktionen von Spielzeugen und Spielen vorführen, Holz abschmirgeln, Spielzeuge zusammensetzen, Werkzeuge für Spielzeugreparaturen nutzen, Schleifverfahren, Holzschnitte, Holzverbindungen herstellen, Zu produzierende Objekte entwerfen, Holzarten, Kundenzufriedenheit gewährleisten, Puppenspiel, Uhrenreparatur, Geschichten für Kinder. Das möchte ich mehr nutzen: Holz drechseln, Präzisionsmessgeräte bedienen, Objekte schnitzen, 3D-Pläne lesen, Holzverbindungen herstellen. Das möchte ich weniger nutzen: Registrierkasse bedienen, Vorkehrungen für die Genehmigung eines Marktstands treffen, Waren verpacken, Zahlungen verarbeiten\nFähigkeiten, die mir für mein Ziel fehlen: CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Computergrundlagen, Deutsch für den Beruf (B1), Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen\nMein Deutsch: Grundlagen (A2). Computer: Kaum\nHobbys, Ehrenamt und Projekte: Puppenspiel, Geschichten für die Kinder aus der Nachbarschaft, alte Uhren reparieren; Marionettentheater für die Nachbarschaft, eine Sammlung restaurierter Uhren",
+          "text": "Hier ist ein kurzes Profil von mir. Sag mir knapp:\n\n1. Drei Muster, die du siehst.\n2. Zwei Dinge, die mich überraschen könnten.\n3. Drei Fragen, über die ich nachdenken sollte, bevor ich meine nächste Stelle wähle.\n\nSei ehrlich und konkret. Schmeichle mir nicht.\n\nMeine Situation: Auf Arbeitssuche\nFrühere und aktuelle Stellen: Holzschnitzer und Spielzeugmacher (1990 bis 2026); Holzbildhauer (1985 bis 1990); Zimmererhelfer (1982 bis 1985); Marktstandverkäufer (Winter 2015 bis 2025)\nBerufe, die ich anstrebe: CNC-Maschinenbediener\nWie ich arbeite (Selbsteinschätzung, stärkste): Sorgfalt, Dranbleiben, Mit Händen und Werkzeug, Neue Ideen\nWas ich gern tue (Interessen): R Handwerklich-technisch, A Künstlerisch-kreativ, S Erziehend-pflegend\nWas mir bei der Arbeit wichtig ist: Erfolg sehen, Sicherheit und gute Bedingungen, Gute Kolleginnen und Kollegen\nArbeitsumfeld: Ich arbeite lieber: allein, drinnen, feste zeiten, wenig kundenkontakt. Geht für mich nicht: Nachtschichten, Früh- oder Spätschichten, Schweres Heben, Verkaufsziele\nFähigkeiten, die ich mindestens solide beherrsche: Verfahren der Holzbearbeitung, Spielzeug instand setzen, Schneidewerkzeuge instand halten, Holzelemente verbinden, Holz bearbeiten, Holzbearbeitungswerkzeuge, Schnitzmesser verwenden, Herstellung von Spielzeug abschließen, Glatte Holzoberfläche erzeugen, Objekte schnitzen, Merkmale und Funktionen von Spielzeugen und Spielen vorführen, Holz abschmirgeln, Spielzeuge zusammensetzen, Werkzeuge für Spielzeugreparaturen nutzen, Schleifverfahren, Holzschnitte, Holzverbindungen herstellen, Zu produzierende Objekte entwerfen, Holzarten, Kundenzufriedenheit gewährleisten, Puppenspiel, Uhrenreparatur, Geschichten für Kinder. Das möchte ich mehr nutzen: Holz drechseln, Präzisionsmessgeräte bedienen, Objekte schnitzen, 3D-Pläne lesen, Holzverbindungen herstellen. Das möchte ich weniger nutzen: Registrierkasse bedienen, Vorkehrungen für die Genehmigung eines Marktstands treffen, Waren verpacken, Zahlungen verarbeiten\nFähigkeiten, die mir für mein Ziel fehlen: CAM-Software verwenden, CNC-Steuerung programmieren, Maschinensteuerung einstellen, Statistische Prozessüberwachung, Maschine mit geeigneten Werkzeugen versorgen, Unangemessene Werkstücke entfernen, Bearbeitetes Werkstück entnehmen, Fertigungsverfahren, Testlauf durchführen, Standardbaupläne lesen, Verfügbarkeit von Geräten sicherstellen, Automatische Maschinen überwachen, Automatische Programmierung einsetzen, Maschinenwartungsarbeiten durchführen, Qualitätsstandards\nMein Deutsch: Grundlagen (A2). Computer: Kaum\nHobbys, Ehrenamt und Projekte: Puppenspiel, Geschichten für die Kinder aus der Nachbarschaft, alte Uhren reparieren; Marionettentheater für die Nachbarschaft, eine Sammlung restaurierter Uhren",
           "contains": "Enthält: Ihre Situation, Ihre früheren Stellen, Ihre Ziele, Ihre stärksten Fähigkeiten, Ihre Interessen, was Ihnen wichtig ist, Ihr Arbeitsumfeld, Ihre bewerteten Fähigkeiten, Ihre fehlenden Fähigkeiten, Ihre Deutschkenntnisse, Ihre Hobbys und Projekte. Nie Ihren Namen oder Ihre Kontaktdaten."
         },
         "newdirs": {
@@ -887,16 +1203,46 @@
           "Uhrenreparatur"
         ],
         "gaps": [
-          { "name": "CAM-Software verwenden", "via": "CNC-Grundlagen Holzbearbeitung" },
-          { "name": "CNC-Steuerung programmieren", "via": "CNC-Grundlagen Holzbearbeitung" },
-          { "name": "Maschinensteuerung einstellen", "via": "CNC-Grundlagen Holzbearbeitung" },
-          { "name": "Computergrundlagen", "via": "Computergrundlagen für die Werkstatt" },
-          { "name": "Deutsch für den Beruf (B1)", "via": "Deutsch für den Beruf B1" },
-          { "name": "Statistische Prozessüberwachung", "via": "" },
-          { "name": "Maschine mit geeigneten Werkzeugen versorgen", "via": "" },
-          { "name": "Unangemessene Werkstücke entfernen", "via": "" },
-          { "name": "Bearbeitetes Werkstück entnehmen", "via": "" },
-          { "name": "Fertigungsverfahren", "via": "" }
+          {
+            "name": "CAM-Software verwenden",
+            "via": "CNC-Grundlagen Holzbearbeitung"
+          },
+          {
+            "name": "CNC-Steuerung programmieren",
+            "via": "CNC-Grundlagen Holzbearbeitung"
+          },
+          {
+            "name": "Maschinensteuerung einstellen",
+            "via": "CNC-Grundlagen Holzbearbeitung"
+          },
+          {
+            "name": "Statistische Prozessüberwachung",
+            "via": ""
+          },
+          {
+            "name": "Maschine mit geeigneten Werkzeugen versorgen",
+            "via": ""
+          },
+          {
+            "name": "Unangemessene Werkstücke entfernen",
+            "via": ""
+          },
+          {
+            "name": "Bearbeitetes Werkstück entnehmen",
+            "via": ""
+          },
+          {
+            "name": "Fertigungsverfahren",
+            "via": ""
+          },
+          {
+            "name": "Testlauf durchführen",
+            "via": ""
+          },
+          {
+            "name": "Standardbaupläne lesen",
+            "via": ""
+          }
         ],
         "others": ["Qualitätsprüfer für Spielzeug", "Tischler"],
         "wantMore": [
@@ -927,16 +1273,46 @@
           "Uhrenreparatur"
         ],
         "gaps": [
-          { "name": "Use CAM software", "via": "CNC-Grundlagen Holzbearbeitung" },
-          { "name": "Program a CNC controller", "via": "CNC-Grundlagen Holzbearbeitung" },
-          { "name": "Set up the controller of a machine", "via": "CNC-Grundlagen Holzbearbeitung" },
-          { "name": "Computergrundlagen", "via": "Computergrundlagen für die Werkstatt" },
-          { "name": "Deutsch für den Beruf (B1)", "via": "Deutsch für den Beruf B1" },
-          { "name": "Statistical process control", "via": "" },
-          { "name": "Supply machine with appropriate tools", "via": "" },
-          { "name": "Remove inadequate workpieces", "via": "" },
-          { "name": "Remove processed workpiece", "via": "" },
-          { "name": "Manufacturing processes", "via": "" }
+          {
+            "name": "Use CAM software",
+            "via": "CNC-Grundlagen Holzbearbeitung"
+          },
+          {
+            "name": "Program a CNC controller",
+            "via": "CNC-Grundlagen Holzbearbeitung"
+          },
+          {
+            "name": "Set up the controller of a machine",
+            "via": "CNC-Grundlagen Holzbearbeitung"
+          },
+          {
+            "name": "Statistical process control",
+            "via": ""
+          },
+          {
+            "name": "Supply machine with appropriate tools",
+            "via": ""
+          },
+          {
+            "name": "Remove inadequate workpieces",
+            "via": ""
+          },
+          {
+            "name": "Remove processed workpiece",
+            "via": ""
+          },
+          {
+            "name": "Manufacturing processes",
+            "via": ""
+          },
+          {
+            "name": "Perform test run",
+            "via": ""
+          },
+          {
+            "name": "Read standard blueprints",
+            "via": ""
+          }
         ],
         "suggest": "It matches my interests (Hands-on, Creative, Helping). My strengths include Care and accuracy, Sticking with it, Working with hands and tools, Coming up with ideas. I already have 2 of the 21 core skills."
       }

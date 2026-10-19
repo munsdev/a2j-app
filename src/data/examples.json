@@ -69,7 +69,7 @@
             "id": "j4",
             "title": "Data analyst",
             "occ": 2579,
-            "role": "maybe",
+            "role": "goal",
             "org": "",
             "when": "",
             "current": false,
@@ -86,6 +86,24 @@
           }
         ],
         "mainGoal": "j3",
+        "routes": [
+          {
+            "id": "A",
+            "job": "j3",
+            "course": "c2"
+          },
+          {
+            "id": "B",
+            "job": "j3",
+            "course": "c1"
+          },
+          {
+            "id": "C",
+            "job": "j4",
+            "course": "c1"
+          }
+        ],
+        "route": "A",
         "esco": {
           "rated": {
             "177": 4,
@@ -135,11 +153,26 @@
             "13904": 5
           },
           "own": [
-            { "name": "Disguise and role play", "level": 5 },
-            { "name": "Violin", "level": 4 },
-            { "name": "Boxing", "level": 4 },
-            { "name": "Beekeeping", "level": 3 },
-            { "name": "Writing short studies", "level": 3 }
+            {
+              "name": "Disguise and role play",
+              "level": 5
+            },
+            {
+              "name": "Violin",
+              "level": 4
+            },
+            {
+              "name": "Boxing",
+              "level": 4
+            },
+            {
+              "name": "Beekeeping",
+              "level": 3
+            },
+            {
+              "name": "Writing short studies",
+              "level": 3
+            }
           ],
           "want": {
             "2661": -1,
@@ -161,7 +194,12 @@
               ],
               "ctx": [["phone", -1]]
             },
-            { "o": 5, "d": -1, "sk": [[1990, -1]], "ctx": [["routine", -1]] },
+            {
+              "o": 5,
+              "d": -1,
+              "sk": [[1990, -1]],
+              "ctx": [["routine", -1]]
+            },
             {
               "o": 769,
               "d": 1,
@@ -243,7 +281,14 @@
             "C_3": 1
           },
           "adjusted": {},
-          "setting": { "people": 1, "outdoors": 2, "physical": 2, "variety": 5, "hours": 5, "customers": 2 },
+          "setting": {
+            "people": 1,
+            "outdoors": 2,
+            "physical": 2,
+            "variety": 5,
+            "hours": 5,
+            "customers": 2
+          },
           "ruledOut": ["phone", "sales", "samework"],
           "values": ["independence", "achievement", "recognition"],
           "done": {
@@ -433,7 +478,7 @@
             "id": "j4",
             "title": "Datenanalyst",
             "occ": 2579,
-            "role": "maybe",
+            "role": "goal",
             "org": "",
             "when": "",
             "current": false,
@@ -450,6 +495,24 @@
           }
         ],
         "mainGoal": "j3",
+        "routes": [
+          {
+            "id": "A",
+            "job": "j3",
+            "course": "c2"
+          },
+          {
+            "id": "B",
+            "job": "j3",
+            "course": "c1"
+          },
+          {
+            "id": "C",
+            "job": "j4",
+            "course": "c1"
+          }
+        ],
+        "route": "A",
         "esco": {
           "rated": {
             "177": 4,
@@ -499,11 +562,26 @@
             "13904": 5
           },
           "own": [
-            { "name": "Verkleidung und Rollenspiel", "level": 5 },
-            { "name": "Geige", "level": 4 },
-            { "name": "Boxen", "level": 4 },
-            { "name": "Imkerei", "level": 3 },
-            { "name": "Kurze Fachtexte schreiben", "level": 3 }
+            {
+              "name": "Verkleidung und Rollenspiel",
+              "level": 5
+            },
+            {
+              "name": "Geige",
+              "level": 4
+            },
+            {
+              "name": "Boxen",
+              "level": 4
+            },
+            {
+              "name": "Imkerei",
+              "level": 3
+            },
+            {
+              "name": "Kurze Fachtexte schreiben",
+              "level": 3
+            }
           ],
           "want": {
             "2661": -1,
@@ -525,7 +603,12 @@
               ],
               "ctx": [["phone", -1]]
             },
-            { "o": 5, "d": -1, "sk": [[1990, -1]], "ctx": [["routine", -1]] },
+            {
+              "o": 5,
+              "d": -1,
+              "sk": [[1990, -1]],
+              "ctx": [["routine", -1]]
+            },
             {
               "o": 769,
               "d": 1,
@@ -607,7 +690,14 @@
             "C_3": 1
           },
           "adjusted": {},
-          "setting": { "people": 1, "outdoors": 2, "physical": 2, "variety": 5, "hours": 5, "customers": 2 },
+          "setting": {
+            "people": 1,
+            "outdoors": 2,
+            "physical": 2,
+            "variety": 5,
+            "hours": 5,
+            "customers": 2
+          },
           "ruledOut": ["phone", "sales", "samework"],
           "values": ["independence", "achievement", "recognition"],
           "done": {
@@ -897,12 +987,32 @@
             "13897": 4
           },
           "own": [
-            { "name": "Traditional archery", "level": 5 },
-            { "name": "Cooking for large groups", "level": 4 },
-            { "name": "Organising charity events", "level": 4 },
-            { "name": "Persuading people", "level": 5 }
+            {
+              "name": "Traditional archery",
+              "level": 5
+            },
+            {
+              "name": "Cooking for large groups",
+              "level": 4
+            },
+            {
+              "name": "Organising charity events",
+              "level": 4
+            },
+            {
+              "name": "Persuading people",
+              "level": 5
+            }
           ],
-          "want": { "1784": 1, "2239": -1, "2880": -1, "2992": 1, "4522": 1, "10141": 1, "11144": -1 },
+          "want": {
+            "1784": 1,
+            "2239": -1,
+            "2880": -1,
+            "2992": 1,
+            "4522": 1,
+            "10141": 1,
+            "11144": -1
+          },
           "votes": [
             {
               "o": 778,
@@ -913,7 +1023,12 @@
               ],
               "ctx": []
             },
-            { "o": 128, "d": -1, "sk": [[4360, -1]], "ctx": [] },
+            {
+              "o": 128,
+              "d": -1,
+              "sk": [[4360, -1]],
+              "ctx": []
+            },
             {
               "o": 2203,
               "d": -1,
@@ -995,7 +1110,14 @@
             "C_3": 1
           },
           "adjusted": {},
-          "setting": { "people": 5, "outdoors": 4, "physical": 4, "variety": 5, "hours": 3, "customers": 4 },
+          "setting": {
+            "people": 5,
+            "outdoors": 4,
+            "physical": 4,
+            "variety": 5,
+            "hours": 3,
+            "customers": 4
+          },
           "ruledOut": ["nights", "screen", "samework"],
           "values": ["support", "relationships", "achievement"],
           "done": {
@@ -1280,12 +1402,32 @@
             "13897": 4
           },
           "own": [
-            { "name": "Traditionelles Bogenschießen", "level": 5 },
-            { "name": "Kochen für große Gruppen", "level": 4 },
-            { "name": "Benefizveranstaltungen organisieren", "level": 4 },
-            { "name": "Menschen überzeugen", "level": 5 }
+            {
+              "name": "Traditionelles Bogenschießen",
+              "level": 5
+            },
+            {
+              "name": "Kochen für große Gruppen",
+              "level": 4
+            },
+            {
+              "name": "Benefizveranstaltungen organisieren",
+              "level": 4
+            },
+            {
+              "name": "Menschen überzeugen",
+              "level": 5
+            }
           ],
-          "want": { "1784": 1, "2239": -1, "2880": -1, "2992": 1, "4522": 1, "10141": 1, "11144": -1 },
+          "want": {
+            "1784": 1,
+            "2239": -1,
+            "2880": -1,
+            "2992": 1,
+            "4522": 1,
+            "10141": 1,
+            "11144": -1
+          },
           "votes": [
             {
               "o": 778,
@@ -1296,7 +1438,12 @@
               ],
               "ctx": []
             },
-            { "o": 128, "d": -1, "sk": [[4360, -1]], "ctx": [] },
+            {
+              "o": 128,
+              "d": -1,
+              "sk": [[4360, -1]],
+              "ctx": []
+            },
             {
               "o": 2203,
               "d": -1,
@@ -1378,7 +1525,14 @@
             "C_3": 1
           },
           "adjusted": {},
-          "setting": { "people": 5, "outdoors": 4, "physical": 4, "variety": 5, "hours": 3, "customers": 4 },
+          "setting": {
+            "people": 5,
+            "outdoors": 4,
+            "physical": 4,
+            "variety": 5,
+            "hours": 3,
+            "customers": 4
+          },
           "ruledOut": ["nights", "screen", "samework"],
           "values": ["support", "relationships", "achievement"],
           "done": {
@@ -1687,9 +1841,18 @@
             "13771": 4
           },
           "own": [
-            { "name": "Puppetry", "level": 5 },
-            { "name": "Clock repair", "level": 4 },
-            { "name": "Storytelling for children", "level": 5 }
+            {
+              "name": "Puppetry",
+              "level": 5
+            },
+            {
+              "name": "Clock repair",
+              "level": 4
+            },
+            {
+              "name": "Storytelling for children",
+              "level": 5
+            }
           ],
           "want": {
             "676": -1,
@@ -1712,8 +1875,18 @@
               ],
               "ctx": []
             },
-            { "o": 1665, "d": -1, "sk": [[3749, 1]], "ctx": [["routine", -1]] },
-            { "o": 2620, "d": 1, "sk": [], "ctx": [] }
+            {
+              "o": 1665,
+              "d": -1,
+              "sk": [[3749, 1]],
+              "ctx": [["routine", -1]]
+            },
+            {
+              "o": 2620,
+              "d": 1,
+              "sk": [],
+              "ctx": []
+            }
           ],
           "hidden": [],
           "more": true
@@ -1786,7 +1959,14 @@
             "C_3": 2
           },
           "adjusted": {},
-          "setting": { "people": 2, "outdoors": 1, "physical": 3, "variety": 3, "hours": 2, "customers": 2 },
+          "setting": {
+            "people": 2,
+            "outdoors": 1,
+            "physical": 3,
+            "variety": 3,
+            "hours": 2,
+            "customers": 2
+          },
           "ruledOut": ["nights", "earlylate", "lifting", "sales"],
           "values": ["achievement", "conditions", "relationships"],
           "done": {
@@ -2081,9 +2261,18 @@
             "13771": 4
           },
           "own": [
-            { "name": "Puppenspiel", "level": 5 },
-            { "name": "Uhrenreparatur", "level": 4 },
-            { "name": "Geschichten für Kinder", "level": 5 }
+            {
+              "name": "Puppenspiel",
+              "level": 5
+            },
+            {
+              "name": "Uhrenreparatur",
+              "level": 4
+            },
+            {
+              "name": "Geschichten für Kinder",
+              "level": 5
+            }
           ],
           "want": {
             "676": -1,
@@ -2106,8 +2295,18 @@
               ],
               "ctx": []
             },
-            { "o": 1665, "d": -1, "sk": [[3749, 1]], "ctx": [["routine", -1]] },
-            { "o": 2620, "d": 1, "sk": [], "ctx": [] }
+            {
+              "o": 1665,
+              "d": -1,
+              "sk": [[3749, 1]],
+              "ctx": [["routine", -1]]
+            },
+            {
+              "o": 2620,
+              "d": 1,
+              "sk": [],
+              "ctx": []
+            }
           ],
           "hidden": [],
           "more": true
@@ -2180,7 +2379,14 @@
             "C_3": 2
           },
           "adjusted": {},
-          "setting": { "people": 2, "outdoors": 1, "physical": 3, "variety": 3, "hours": 2, "customers": 2 },
+          "setting": {
+            "people": 2,
+            "outdoors": 1,
+            "physical": 3,
+            "variety": 3,
+            "hours": 2,
+            "customers": 2
+          },
           "ruledOut": ["nights", "earlylate", "lifting", "sales"],
           "values": ["achievement", "conditions", "relationships"],
           "done": {

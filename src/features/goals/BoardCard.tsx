@@ -1,5 +1,9 @@
 import { useId, useMemo } from "react";
 import { mainGoal } from "@/data/doc";
+import { courseForJob, currentRoute } from "@/data/routes";
+import { openFinder, openItem } from "@/features/courses/api";
+import { strings as routeStrings } from "@/features/routes/strings";
+import { LinkButton } from "@/ui";
 import { useDoc } from "@/data/store";
 import { useEsco, useLoadCatalog } from "@/app/catalog";
 import { go } from "@/app/router";
@@ -25,6 +29,9 @@ export function BoardCard({ actions = true }: { actions?: boolean }) {
   const custom = !!g && (g.occ ?? -1) < 0 && !(g.extra ?? []).length;
   const c = useMemo(() => (g && (E || custom) ? jobCount(d, E, g.occ, g) : null), [d, E, g, custom]);
   useLoadCatalog(!!g); // outside <NeedCatalog>: fetch it for the stops
+  const tr = useT(routeStrings);
+  const route = currentRoute(d);
+  const rc = g ? courseForJob(d, g.id) : null;
   const shell = "flex flex-col gap-4 rounded-panel bg-surface p-[18px] shadow-card sm:px-6 sm:pb-6";
   if (!g) {
     return (
@@ -37,7 +44,7 @@ export function BoardCard({ actions = true }: { actions?: boolean }) {
     <section className={shell} aria-labelledby={headId} aria-busy={!c || undefined}>
       <div className="flex items-end justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <Eyebrow>{t("g_way")}</Eyebrow>
+          <Eyebrow>{route ? `${tr("r_route", { x: route.id })} · ${t("g_way")}` : t("g_way")}</Eyebrow>
           <h2 id={headId} className="text-heading">
             <a
               href={"#goals/job/" + g.id}
@@ -50,6 +57,20 @@ export function BoardCard({ actions = true }: { actions?: boolean }) {
               <Title text={g.title} split />
             </a>
           </h2>
+          {/* the route's one course, or a way to find it */}
+          {rc ? (
+            <LinkButton
+              className="min-h-11 gap-1.5 self-start text-small text-course-ink [&_svg]:size-4"
+              onClick={() => openItem("course", rc.id, g.id)}
+            >
+              <Icon name="book" />
+              {rc.name}
+            </LinkButton>
+          ) : (
+            <LinkButton className="min-h-11 self-start text-small" onClick={() => openFinder("course", g.id)}>
+              {tr("r_no_course")} · {tr("r_find")}
+            </LinkButton>
+          )}
         </div>
         {c ? (
           c.total > 0 && (

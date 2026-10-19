@@ -84,6 +84,12 @@
 .lr-dot-have {
   @apply bg-have text-on-accent;
 }
+/* you have it and the route's course teaches it again: a blue ring around the filled stop */
+.lr-dot-also {
+  box-shadow:
+    0 0 0 2px var(--surface),
+    0 0 0 4px var(--course);
+}
 /* a course covers it: tinted inside a thick blue ring */
 .lr-dot-course {
   @apply bg-course-bg;

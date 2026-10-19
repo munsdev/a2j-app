@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { Lang } from "@/data/types";
 import { commit, update, useDoc } from "@/data/store";
 import { jobsIn } from "@/data/doc";
+import { currentRoute, sortedRoutes, switchRoute } from "@/data/routes";
+import { routeWords } from "@/features/routes/model";
 import { NeedCatalog } from "@/app/NeedCatalog";
 import { useEscoReady } from "@/app/catalog";
 import { go } from "@/app/router";
@@ -157,17 +159,15 @@ function Plan() {
           <Controls
             s={s}
             why={why}
-            courses={d.courses}
-            goals={jobsIn(d, "goal")}
+            routes={sortedRoutes(d).map((r) => {
+              const w = routeWords(d, r);
+              return { id: r.id, label: [r.id, w.job, w.course?.name].filter(Boolean).join(" · ") };
+            })}
+            route={currentRoute(d)?.id ?? null}
+            course={x.course}
             onInc={(k, v) => patchPlan(appLang, { inc: { ...stored.inc, [k]: v } })}
             onLang={(l) => patchPlan(appLang, { lang: l })}
-            onGoal={(id) =>
-              update((dd) => {
-                dd.mainGoal = id;
-                dd.summary = { ...planState(dd, appLang) };
-              })
-            }
-            onCourse={(id) => patchPlan(appLang, { course: id })}
+            onRoute={(id) => update((dd) => switchRoute(dd, id))}
             onType={type}
             onBlur={flush}
             onSuggest={() => {

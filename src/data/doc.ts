@@ -1,5 +1,6 @@
 import type { Doc, Job, JobRole, Profile } from "./types";
 import { PROFILE_KEYS } from "./types";
+import { fixRoutes } from "./routes";
 
 /* Pure helpers on the document. Functions that change it take an Immer draft (see store.ts). */
 
@@ -17,6 +18,8 @@ export function emptyDoc(): Doc {
     profile: emptyProfile(),
     jobs: [],
     mainGoal: null,
+    routes: [],
+    route: null,
     esco: { rated: {}, own: [], want: {}, votes: [], hidden: [], more: false },
     assess: {},
     courses: [],
@@ -73,6 +76,12 @@ export function shape(input: unknown): Doc {
   });
   if (out.mainGoal && !out.jobs.some((j) => j.id === out.mainGoal && j.role === "goal")) out.mainGoal = null;
   if (out.mainGoal === undefined) out.mainGoal = null;
+  /* routes came later: a document without them gets one per goal (the main goal's is A) */
+  out.routes = Array.isArray(d.routes)
+    ? d.routes.filter(isObj).map((r) => ({ ...r }) as Doc["routes"][number])
+    : [];
+  if (out.route === undefined) out.route = null;
+  fixRoutes(out);
   /* older answers: "Shift work" became night shifts plus early or late shifts */
   const ro = out.assess.ruledOut;
   if (Array.isArray(ro) && ro.includes("shifts"))

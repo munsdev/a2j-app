@@ -1,4 +1,4 @@
-import type { Doc, Job } from "@/data/types";
+import type { Course, Doc, Job } from "@/data/types";
 import type { Esco, Onet } from "./catalog";
 import { interestCode, userInterests } from "./assess";
 import { interestFit, occTop, quality } from "./rank";
@@ -12,7 +12,7 @@ import type { InterestId } from "./items";
      0.4 → 0, 0.9 → 100. Without enough interest answers (part 2) there is no interest score.
    - skills: the share of the job's core skills the person has (level 1 or more).
    The score is their average, or the skills alone when interests are missing. withCourses is the score once the
-   person's saved courses for this job are done (only when a course covers something). Bands: 75+ strong,
+   course of the job's route is done (only when a course covers something). Bands: 75+ strong,
    55+ good, 35+ partial, below that low. This only describes; ranking job ideas keeps its own formula. */
 
 export type MatchBand = 0 | 1 | 2 | 3;
@@ -42,8 +42,16 @@ export const interestScore = (fit: number): number => Math.round(interestRaw(fit
 export const matchBand = (score: number): MatchBand =>
   score >= 75 ? 3 : score >= 55 ? 2 : score >= 35 ? 1 : 0;
 
-export function matchOf(d: Doc, E: Esco, O: Onet | null, occ: number, job?: Job | null): Match {
-  const c = jobCount(d, E, occ, job);
+/** course: the course to count (a route being compared); left out, the course of the job's route. */
+export function matchOf(
+  d: Doc,
+  E: Esco,
+  O: Onet | null,
+  occ: number,
+  job?: Job | null,
+  course?: Course | null,
+): Match {
+  const c = jobCount(d, E, occ, job, course);
   const total = c.total || 1;
   /* average the unrounded halves, round once: 28.9 and 100 give 64, not 65 */
   const skillsRaw = (c.have / total) * 100;

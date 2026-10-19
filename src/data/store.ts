@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { produce, type Draft } from "immer";
 import type { Doc } from "./types";
 import { emptyDoc, shape } from "./doc";
+import { fixRoutes } from "./routes";
 import { storage } from "@/lib/storage";
 
 /* =================== THE DOCUMENT STORE ===================
@@ -82,7 +83,12 @@ function bumpMeta(state: DocState): Meta {
 /** Change the document. The recipe gets an Immer draft: mutate it freely. */
 export function update(recipe: (d: Draft<Doc>) => void, opts: { quiet?: boolean } = {}): void {
   const state = useDocStore.getState();
-  const next = produce(state.doc, recipe);
+  /* routes and goals stay in step whatever the recipe changed (a whole new document was shaped already) */
+  const next = produce(state.doc, (d) => {
+    const out = recipe(d) as Doc | undefined;
+    if (out === undefined) fixRoutes(d as Doc);
+    return out;
+  });
   if (next === state.doc && !opts.quiet) return commit();
   const s = JSON.stringify(next);
   if (opts.quiet) {

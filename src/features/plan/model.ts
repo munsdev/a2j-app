@@ -1,5 +1,6 @@
 import type { Course, Doc, Job, JobAd, Lang, PlanSection, Profile } from "@/data/types";
 import { jobById, mainGoal } from "@/data/doc";
+import { currentRoute } from "@/data/routes";
 import { interestCode, assessOf, strongest } from "@/domain/assess";
 import { skIn, type Esco } from "@/domain/catalog";
 import { VALUES } from "@/domain/items";
@@ -41,19 +42,18 @@ export interface PlanState {
   next: string;
 }
 
-/** The plan settings as they apply now. The page follows the rest of the app: it is about the main goal, in
- *  the app's language. A course or page language picked here holds until the goal or the app language changes. */
+/** The plan settings as they apply now. The page follows the rest of the app: it is about the route you are on
+ *  (its job and its course), in the app's language. A page language picked here holds until the app language
+ *  changes. */
 export function planState(d: Doc, appLang: Lang): PlanState {
   const s = d.summary || {};
   const inc = {} as Record<PlanSection, boolean>;
   SECTIONS.forEach((k) => (inc[k] = s.inc?.[k] ?? true));
   const fresh = !s.lang || s.langFor !== appLang;
   const goal = mainGoal(d)?.id || "";
-  let course = s.course || "";
-  if (course === NO_COURSE) {
-    if (s.courseFor !== goal) course = "";
-  } else if (course && (s.courseFor !== goal || !d.courses.some((c) => c.id === course))) course = "";
-  if (!course) course = d.courses.find((c) => c.goals.includes(goal))?.id || "";
+  /* the plan is about the route you are on: its job and its one course */
+  const r = currentRoute(d);
+  const course = (r && r.job === goal && r.course) || "";
   return {
     lang: fresh ? appLang : s.lang!,
     langFor: appLang,

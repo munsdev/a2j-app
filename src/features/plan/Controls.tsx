@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
-import type { Course, Job, Lang, PlanSection } from "@/data/types";
+import type { Course, Lang, PlanSection, RouteId } from "@/data/types";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Button, Checkbox, Field, Icon, Panel, Select, Textarea } from "@/ui";
-import { NO_COURSE, type PlanState } from "./model";
+import type { PlanState } from "./model";
 import { strings } from "./strings";
 
 export type TextKey = "why" | "other" | "next";
@@ -13,35 +13,33 @@ export type TextKey = "why" | "other" | "next";
 export function Controls({
   s,
   why,
-  goals,
-  courses,
+  routes,
+  route,
+  course,
   className,
   onInc,
   onLang,
-  onGoal,
-  onCourse,
+  onRoute,
   onType,
   onBlur,
   onSuggest,
 }: {
   s: PlanState;
   why: string;
-  goals: Job[];
-  courses: Course[];
+  /** the routes, as words for the picker */
+  routes: { id: RouteId; label: string }[];
+  route: RouteId | null;
+  /** the course of the route, or null */
+  course: Course | null;
   className?: string;
   onInc: (k: PlanSection, v: boolean) => void;
   onLang: (l: Lang) => void;
-  onGoal: (id: string) => void;
-  onCourse: (id: string) => void;
+  onRoute: (id: RouteId) => void;
   onType: (k: TextKey, v: string) => void;
   onBlur: (k: TextKey) => void;
   onSuggest: () => void;
 }) {
   const t = useT(strings);
-  /* the goal's courses first */
-  const cs = courses
-    .filter((c) => c.goals.includes(s.goal))
-    .concat(courses.filter((c) => !c.goals.includes(s.goal)));
   const check = (k: PlanSection) => (
     <Checkbox label={t(`sm_s_${k}`)} checked={s.inc[k]} onChange={(e) => onInc(k, e.target.checked)} />
   );
@@ -73,12 +71,17 @@ export function Controls({
       <Group>
         {check("goal")}
         <Nested>
-          <Field label={t("sm_goal_pick")}>
+          <Field label={t("sm_route_pick")} hint={t("sm_route_hint")}>
             {(p) => (
-              <Select id={p.id} value={s.goal} onChange={(e) => onGoal(e.target.value)}>
-                {goals.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.title}
+              <Select
+                id={p.id}
+                aria-describedby={p.hintId}
+                value={route ?? ""}
+                onChange={(e) => onRoute(e.target.value as RouteId)}
+              >
+                {routes.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.label}
                   </option>
                 ))}
               </Select>
@@ -99,22 +102,9 @@ export function Controls({
       <Group>
         {check("course")}
         <Nested>
-          <Field label={t("sm_course_pick")}>
-            {(p) => (
-              <Select
-                id={p.id}
-                value={s.course === NO_COURSE ? "" : s.course}
-                onChange={(e) => onCourse(e.target.value || NO_COURSE)}
-              >
-                <option value="">{t("sm_none")}</option>
-                {cs.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </Select>
-            )}
-          </Field>
+          <p className="text-small text-ink-2">
+            <b className="text-ink">{t("sm_course_pick")}:</b> {course ? course.name : t("sm_none")}
+          </p>
         </Nested>
       </Group>
       <Group>{check("evidence")}</Group>

@@ -7,7 +7,7 @@ import { shape } from "@/data/doc";
 import type { Doc } from "@/data/types";
 import { loadCatalog, type Esco } from "@/domain/catalog";
 import { keepFound } from "@/features/courses/found";
-import { NO_COURSE, pageModel, pageText, planData, planState, suggestWhy, whyNow } from "./model";
+import { pageModel, pageText, planData, planState, suggestWhy, whyNow } from "./model";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const EX = (examples as unknown as { examples: Record<string, Record<string, unknown>> }).examples;
@@ -31,15 +31,16 @@ describe("the plan", () => {
     expect(planState(d, "en").lang).toBe("en");
   });
 
-  it("picks the goal's first course, keeps None for this goal, and forgets a course of another goal", () => {
-    const d = doc();
+  it("is about the route you are on: its job and its one course", () => {
+    const d = doc("holmes");
     const s = planState(d, "en");
-    expect(s.course).toBe(d.courses.find((c) => c.goals.includes(s.goal))!.id);
-    d.summary = { ...s, course: NO_COURSE };
-    expect(planState(d, "en").course).toBe(NO_COURSE);
+    const r = d.routes.find((x) => x.id === d.route)!;
+    expect([s.goal, s.course]).toEqual([r.job, r.course]);
+    d.route = "B";
+    const b = d.routes.find((x) => x.id === "B")!;
+    expect([planState(d, "en").course]).toEqual([b.course]);
+    d.routes = d.routes.map((x) => (x.id === "B" ? { ...x, course: null } : x));
     expect(planData(d, E, planState(d, "en")).course).toBeNull();
-    d.summary = { ...s, course: NO_COURSE, courseFor: "elsewhere" };
-    expect(planState(d, "en").course).toBe(s.course);
   });
 
   it("an untouched suggested start keeps up; an edited one stays", () => {

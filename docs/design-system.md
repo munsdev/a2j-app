@@ -58,6 +58,8 @@ Dark theme: pine-black surfaces (`#131a18`, `#1b2421`), a lighter brick (`#e0714
 
 The three skill states are the product's core visual language and stay distinguishable without colour:
 **have** is a solid fill with a check, **course** a ring or tint with a book, **learn** a dashed or open ring.
+A skill you have that the route's course teaches again (the overlap) is **have** with a blue ring around it:
+never a book, which would read as "the course covers it".
 
 ## Type
 

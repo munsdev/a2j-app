@@ -41,6 +41,9 @@ const L = legacy as unknown as {
   search: Record<Lang, Record<string, number[]>>;
 };
 
+/** Every saved course as one, the way the previous app counted coverage. */
+const anyCourse = (d: Doc) => ({ ...d.courses[0], covers: d.courses.flatMap((c) => c.covers) });
+
 const EX = (examples as unknown as { examples: Record<string, Record<Lang, unknown>> }).examples;
 
 describe.each(["en", "de"] as const)("parity with the previous app (%s)", { timeout: 30000 }, (lang) => {
@@ -59,7 +62,8 @@ describe.each(["en", "de"] as const)("parity with the previous app (%s)", { time
       const jobs = d.jobs.filter((x) => x.occ != null && x.occ >= 0);
       expect(jobs.length).toBe(theirs.jobs.length);
       jobs.forEach((j, k) => {
-        const a = jobCount(d, E, j.occ, j);
+        /* the previous app let every saved course count for every job; routes count one course */
+        const a = jobCount(d, E, j.occ, j, anyCourse(d));
         expect([a.have, a.course, a.total]).toEqual(theirs.jobs[k]);
       });
       expect(strongest(d, lang).map((r) => r.id)).toEqual(theirs.strongest);

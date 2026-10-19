@@ -89,7 +89,7 @@ test("the match score with courses, and rating skills on a liked idea", async ({
   await page.goto("#goals/job/j3");
   const front = page.locator(".card3d .front").first();
   await expect(front.getByText("31", { exact: true })).toBeVisible({ timeout: 30000 });
-  await expect(front.getByText(/^Rises to 45/)).toBeVisible();
+  await expect(front.getByText(/^Rises to 41/)).toBeVisible();
 
   await page.goto("#goals/ideas");
   await page.getByRole("button", { name: "I like it" }).first().click();

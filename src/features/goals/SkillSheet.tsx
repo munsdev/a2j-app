@@ -1,7 +1,10 @@
 import { update, useDoc } from "@/data/store";
 import { jobById, jobForOcc } from "@/data/doc";
 import type { SkillRef } from "@/data/types";
-import { coursesCovering, level, setLevel, skName, skillSources } from "@/domain/skills";
+import { coursesCovering, level, setLevel, skKey, skName, skillSources } from "@/domain/skills";
+import { courseForJob } from "@/data/routes";
+import { coversThis } from "@/features/routes/actions";
+import { strings as routeStrings } from "@/features/routes/strings";
 import { isKnowledge } from "@/domain/catalog";
 import { useEscoReady } from "@/app/catalog";
 import { openFinder, openItem } from "@/features/courses/api";
@@ -12,6 +15,7 @@ import { strings } from "./strings";
 /* A skill: where it comes from, how well you can do it, what covers it. Opened from tiles and board squares. */
 export function SkillSheet({ x, occ, jobId }: { x: SkillRef; occ: number | null; jobId: string | null }) {
   const t = useT(strings);
+  const tr = useT(routeStrings);
   const E = useEscoReady();
   const d = useDoc();
   const isNum = typeof x === "number";
@@ -22,6 +26,9 @@ export function SkillSheet({ x, occ, jobId }: { x: SkillRef; occ: number | null;
   const cs = coursesCovering(d, x, jobId);
   const job = jobId ? jobById(d, jobId) : occ != null && occ >= 0 ? jobForOcc(d, occ) : null;
   const knowledge = isNum && isKnowledge(E, x);
+  /* the course of the job's route, when it does not cover this yet: say it does */
+  const rc = job ? courseForJob(d, job.id) : null;
+  const missed = !!rc && !rc.covers.some((v) => skKey(v) === skKey(x));
   return (
     <>
       <SheetHead
@@ -64,6 +71,12 @@ export function SkillSheet({ x, occ, jobId }: { x: SkillRef; occ: number | null;
             <Icon name="search" />
             {t("k_find")}
           </Button>
+          {missed && (
+            <Button onClick={() => coversThis(rc.id, x, name)}>
+              <Icon name="book" />
+              {tr("r_covers_this", { c: rc.name })}
+            </Button>
+          )}
         </div>
       )}
     </>

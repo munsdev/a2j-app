@@ -8,6 +8,7 @@ import { closeSheet } from "@/app/sheet";
 import { toast, toastUndo } from "@/app/toast";
 import { normTxt } from "@/domain/catalog";
 import { jobTiles, skKey, skName } from "@/domain/skills";
+import { fillRouteCourse } from "@/data/routes";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import {
@@ -158,7 +159,12 @@ export function ItemForm({
         const list = d.courses;
         const i = list.findIndex((y) => y.id === id);
         if (i >= 0) list[i] = buildCourse(draft, { id: list[i].id, source: list[i].source, goals });
-        else list.push(buildCourse(draft, { id: uid("c", list), source: "hand", goals }));
+        else {
+          const c = buildCourse(draft, { id: uid("c", list), source: "hand", goals });
+          list.push(c);
+          /* a route to one of its jobs without a course takes it */
+          goals.forEach((g) => fillRouteCourse(d, c.id, g));
+        }
       } else {
         const list = d.jobads;
         const i = list.findIndex((y) => y.id === id);

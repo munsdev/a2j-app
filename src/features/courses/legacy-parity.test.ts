@@ -1,5 +1,7 @@
 // The fixtures were recorded from the previous app before its code was removed, so they are the reference answers.
-// One deliberate change since: the interest types carry their new names (Hands-on; the Arbeitsagentur's German names).
+// Deliberate changes since: the interest types carry their new names (Hands-on; the Arbeitsagentur's German names).
+// And routes: only the course of a job's route counts for it (not every saved course), and the Holmes sample has a
+// second route, to Data analyst. The Holmes and Geppetto answers were recorded again for that.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it, vi } from "vitest";
