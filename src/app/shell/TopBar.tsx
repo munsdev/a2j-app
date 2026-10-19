@@ -34,8 +34,8 @@ export function TopBar() {
           className="col-start-1 row-start-1 flex items-center gap-2 text-[1.125rem] no-underline md:text-[1.25rem]"
         >
           {/* the name comes from the visible words (the mark is decorative), so voice control users can say
-              what they see; under 400px the words are only read out, the mark carries the brand */}
-          <Wordmark className="max-[399px]:[&>span:last-child]:sr-only" />
+              what they see; under 390px the words are only read out, the mark carries the brand */}
+          <Wordmark className="max-[389px]:[&>span:last-child]:sr-only" />
           <span className="sr-only">, {t("nav_home")}</span>
         </a>
         <nav
