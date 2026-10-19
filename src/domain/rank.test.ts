@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { emptyDoc } from "@/data/doc";
 import type { Doc } from "@/data/types";
 import type { ContextKey, Onet } from "./catalog";
-import { warnings } from "./rank";
+import { physicalOf, warnings } from "./rank";
 
 /* One occupation with the given O*NET measures. */
 function onet(c: Partial<Record<ContextKey, number>>): Onet {
@@ -36,5 +36,13 @@ describe("warnings from physical measures", () => {
   });
   it("no data, no warning", () => {
     expect(warnings(doc(["lifting", "heights", "noise"]), onet({}), 0)).toEqual([]);
+  });
+});
+
+describe("physicalOf", () => {
+  it("is the mean of standing, bending and strength", () => {
+    expect(physicalOf(onet({ standing: 90, hands: 60, strength: 30 }), 0)).toBeCloseTo(0.6);
+    expect(physicalOf(onet({ standing: 40 }), 0)).toBeCloseTo(0.4);
+    expect(physicalOf(onet({}), 0)).toBeNull();
   });
 });

@@ -11,6 +11,7 @@ import { INTERESTS, type Interest } from "./items";
      (O*NET data joined through the official ESCO to O*NET crosswalk)
    - skills: share of the occupation's essential skills the person rated
    - reactions: thumbs on jobs and on single skills, and skills they want more or less of
+   - the body: how physical the job is against the person's wish, and physical things they ruled out
    Work context gives warnings. Without the O*NET file, ideas use skills only. */
 
 export type WarningKey =
@@ -336,6 +337,32 @@ function wantAdjust(E: Esco, r: Idea, WU: number[], WD: number[]) {
   r.score += Math.min(0.4, up) - Math.min(0.6, dn);
 }
 
+/* the body: the "at a desk ↔ on my feet" scale against how physical the job is (standing, bending and
+   kneeling, static strength from O*NET), and a step down for each physical thing the person ruled out that the
+   job has (the same limits as the warnings) */
+const BODY_OUT: [string, ContextKey, number][] = [
+  ["lifting", "strength", 40],
+  ["bending", "hands", 70],
+  ["standing", "standing", 65],
+  ["heights", "heights", 50],
+  ["noise", "noise", 75],
+  ["weather", "outdoors", 60],
+];
+/** How physical a job is, 0..1: the mean of standing, bending and kneeling, and strength. Null without data. */
+export function physicalOf(O: Onet | null, i: number): number | null {
+  const v = (["standing", "hands", "strength"] as const).map((k) => ctx(O, i, k)).filter((x) => x != null);
+  return v.length ? v.reduce((a, b) => a + b, 0) / v.length / 100 : null;
+}
+function bodyAdjust(O: Onet | null, r: Idea, want: number | undefined, out: Set<string>) {
+  const p = physicalOf(O, r.i);
+  if (want && want !== 3 && p != null)
+    r.score -= 0.3 * Math.abs((want - 1) / 4 - p) * (Math.abs(want - 3) / 2);
+  BODY_OUT.forEach(([id, k, t]) => {
+    const c = ctx(O, r.i, k);
+    if (out.has(id) && c != null && c >= t) r.score -= 0.6;
+  });
+}
+
 const hasRatings = (d: Doc) => Object.values(d.esco.rated).some((l) => l > 0);
 /** Ideas need interests (part 2) or rated skills (part 6). */
 export const canRank = (d: Doc): boolean => !!userInterests(d) || hasRatings(d);
@@ -355,6 +382,8 @@ export function rankAll(d: Doc, E: Esco, O: Onet | null, zone?: Zone | 0): Idea[
   const WD = Object.keys(want)
     .filter((x) => want[x] === -1)
     .map(Number);
+  const a = assessOf(d);
+  const out = new Set(a.ruledOut);
   const rows: Idea[] = [];
   let maxCov = 0;
   const goalSk = new Set<number>();
@@ -385,6 +414,7 @@ export function rankAll(d: Doc, E: Esco, O: Onet | null, zone?: Zone | 0): Idea[
       r.near = e.filter((x) => goalSk.has(x)).length / e.length;
       r.score += r.near * 0.2;
     }
+    bodyAdjust(O, r, a.setting.physical, out);
     voteAdjust(E, O, r, V);
     wantAdjust(E, r, WU, WD);
   });

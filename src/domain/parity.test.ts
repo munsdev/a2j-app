@@ -8,7 +8,7 @@ import type { Doc, Lang } from "@/data/types";
 import { loadCatalog, loadOnet, searchOcc, type Esco, type Onet } from "./catalog";
 import { jobCount, buildDeck } from "./skills";
 import { interestCode, strongest } from "./assess";
-import { rankAll, warnings, fitOf } from "./rank";
+import { rankAll, warnings, fitOf, physicalOf } from "./rank";
 import legacy from "./__fixtures__/legacy-domain.json";
 
 /* Parity with the previous app: compare the ported domain modules on the three sample profiles with the answers
@@ -45,6 +45,7 @@ const L = legacy as unknown as {
 const anyCourse = (d: Doc) => ({ ...d.courses[0], covers: d.courses.flatMap((c) => c.covers) });
 
 const NEW_WARNINGS: string[] = ["w_lifting", "w_heights", "w_noise"];
+const BODY = ["lifting", "bending", "standing", "heights", "noise", "weather"];
 
 const EX = (examples as unknown as { examples: Record<string, Record<Lang, unknown>> }).examples;
 
@@ -71,7 +72,12 @@ describe.each(["en", "de"] as const)("parity with the previous app (%s)", { time
       expect(strongest(d, lang).map((r) => r.id)).toEqual(theirs.strongest);
       expect(interestCode(d, lang).map((r) => r.id)).toEqual(theirs.interestCode);
       expect(E.lab.lang).toBe(lang);
-      const mine = rankAll(d, E, O, 0).slice(0, 60);
+      /* the previous app did not rank on the body (the physical scale, physical things ruled out): leave those
+         out of the ranking for the comparison */
+      const p: Doc = structuredClone(d);
+      delete p.assess.setting?.physical;
+      p.assess.ruledOut = (p.assess.ruledOut || []).filter((x) => !BODY.includes(x));
+      const mine = rankAll(p, E, O, 0).slice(0, 60);
       expect(mine.length).toBe(60);
       expect(mine.map((r) => r.i)).toEqual(theirs.rank.map((r) => r[0]));
       mine.forEach((r, k) => expect(r.score).toBeCloseTo(theirs.rank[k][1], 10));
@@ -82,7 +88,7 @@ describe.each(["en", "de"] as const)("parity with the previous app (%s)", { time
       });
       for (const z of [1, 2, 3, 4] as const)
         expect(
-          rankAll(d, E, O, z)
+          rankAll(p, E, O, z)
             .slice(0, 20)
             .map((r) => r.i),
         ).toEqual(theirs.byZone[z]);
@@ -90,6 +96,23 @@ describe.each(["en", "de"] as const)("parity with the previous app (%s)", { time
       expect(buildDeck(d, E).cards).toEqual(theirs.deck);
     });
   }
+
+  it("the body moves the ranking: fewer jobs with what was ruled out, closer to the physical wish", () => {
+    for (const id of ["holmes", "robin", "geppetto"]) {
+      const d: Doc = shape(structuredClone(EX[id][lang]));
+      const p: Doc = structuredClone(d);
+      delete p.assess.setting?.physical;
+      p.assess.ruledOut = [];
+      const top = (x: Doc) => rankAll(x, E, O, 0).slice(0, 20);
+      const clash = (x: Doc) => top(x).filter((r) => warnings(d, O, r.i).includes("w_lifting")).length;
+      const far = (x: Doc) => {
+        const want = ((d.assess.setting?.physical ?? 3) - 1) / 4;
+        return top(x).reduce((s, r) => s + Math.abs(want - (physicalOf(O, r.i) ?? want)), 0);
+      };
+      expect(clash(d)).toBeLessThanOrEqual(clash(p));
+      expect(far(d)).toBeLessThanOrEqual(far(p));
+    }
+  });
 
   it("search finds the same occupations", () => {
     for (const q of [
