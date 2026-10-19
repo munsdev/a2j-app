@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build public/esco/onet.json: interest profile, preparation level and a few
-work context measures for every ESCO occupation, from O*NET data.
+work context and physical measures for every ESCO occupation, from O*NET data.
 
 Usage:
   python3 tools/build_onet.py CROSSWALK.csv ONET_TEXT_DIR public/esco/en.json public/esco/onet.json
@@ -8,6 +8,9 @@ Usage:
 CROSSWALK.csv  the ESCO to O*NET crosswalk from the ESCO portal
                (esco.ec.europa.eu, "Other crosswalks", ONET_(Occupations)_0_updated.csv)
 ONET_TEXT_DIR  the unzipped O*NET database, text version (onetcenter.org, db_31_0_text.zip)
+
+Also reads data/german-level.csv: the German level a job needs, only where an open
+source (a law or regulation) states it. See data/README.md.
 
 ESCO occupations are matched to crosswalk rows by their English preferred label,
 because the ESCO files shipped with the app carry no URIs. Each ESCO occupation
@@ -34,7 +37,14 @@ CONTEXT = {
     "phone": ["4.C.1.a.2.f"],
     "vehicle": ["4.C.2.a.1.f", "4.C.2.a.1.e"],
     "routine": ["4.C.3.b.7"],            # importance of repeating same tasks
+    "heights": ["4.C.2.c.1.c"],          # exposed to high places
+    "noise": ["4.C.2.b.1.a", "4.C.2.b.1.d"],  # distracting or uncomfortable noise; contaminants
 }
+# app key -> O*NET ability id, level scale (LV, 0 to 7), rescaled to 0..100
+ABILITY = {
+    "strength": "1.A.3.a.1",             # static strength: 4 = pull a 40-pound sack, 6 = lift 75-pound bags
+}
+LEVELS = os.path.join(os.path.dirname(__file__), "..", "data", "german-level.csv")
 SCHEDULE = "4.C.3.d.4"                    # work schedules: share answering "irregular" (category 2)
 
 
@@ -88,6 +98,10 @@ def main(cw_path, onet_dir, en_path, out_path):
             ctx[code][k] = max(ctx[code].get(k, 0), v)
         elif el == SCHEDULE and sc == "CTP" and r["Category"] == "2":
             ctx[code]["irregular"] = float(r["Data Value"])
+    want = {e: k for k, e in ABILITY.items()}
+    for r in read_tsv(os.path.join(onet_dir, "Abilities.txt")):
+        if r["Scale ID"] == "LV" and r["Element ID"] in want:
+            ctx[r["O*NET-SOC Code"]][want[r["Element ID"]]] = float(r["Data Value"]) / 7 * 100
 
     def data_for(code):
         """O*NET detail codes without data fall back to their .00 parent."""
@@ -97,7 +111,7 @@ def main(cw_path, onet_dir, en_path, out_path):
         return None
 
     out = {"v": "31.0", "r": [None] * n_esco, "z": [None] * n_esco, "q": [None] * n_esco,
-           "c": {k: [None] * n_esco for k in list(CONTEXT) + ["irregular"]}}
+           "c": {k: [None] * n_esco for k in list(CONTEXT) + ["irregular"] + list(ABILITY)}}
     for i, ls in links.items():
         use = [(data_for(c), w, t) for c, w, t in ls]
         use = [(c, w, t) for c, w, t in use if c]
@@ -113,6 +127,17 @@ def main(cw_path, onet_dir, en_path, out_path):
             vs = [(ctx[c][k], w) for c, w, _ in use if k in ctx[c]]
             if vs:
                 out["c"][k][i] = round(sum(v * w for v, w in vs) / sum(w for _, w in vs))
+
+    # German level, only where a cited rule states it (never borrowed or averaged)
+    out["lv"] = {}
+    with open(LEVELS, encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            i = esco_idx.get(norm(row["esco_occupation"]))
+            if i is None:
+                sys.exit(f"german-level.csv: no ESCO occupation {row['esco_occupation']!r}")
+            if row["level"] not in ("A1", "A2", "B1", "B2", "C1", "C2") or not row["rule"] or not row["url"]:
+                sys.exit(f"german-level.csv: {row['esco_occupation']!r} needs a CEFR level, a rule and a url")
+            out["lv"][str(i)] = row["level"]
 
     # occupations without a crosswalk link borrow from the linked occupation that
     # shares the most essential skills (Jaccard 0.3 or more), marked as a rough match

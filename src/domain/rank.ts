@@ -26,7 +26,10 @@ export type WarningKey =
   | "w_irregular"
   | "w_vehicle"
   | "w_routine"
-  | "w_licence";
+  | "w_licence"
+  | "w_lifting"
+  | "w_heights"
+  | "w_noise";
 export type Zone = 1 | 2 | 3 | 4;
 export type FitBand = 0 | 1 | 2 | 3;
 
@@ -110,6 +113,11 @@ export function warnings(d: Doc, O: Onet | null, i: number): WarningKey[] {
   if (out.has("nolicence") && hi("vehicle", 75)) w.push("w_licence");
   if (out.has("samework") && hi("routine", 75)) w.push("w_routine");
   if (ge("variety", 4) && hi("routine", 75) && !w.includes("w_routine")) w.push("w_routine");
+  /* from O*NET's static strength (40 = between pushing a cart and pulling a 40-pound sack), high places
+     (50 = about once a month) and noise or contaminants (75 = about once a week) */
+  if ((le("physical", 1) || out.has("lifting")) && hi("strength", 40)) w.push("w_lifting");
+  if (out.has("heights") && hi("heights", 50)) w.push("w_heights");
+  if (out.has("noise") && hi("noise", 75)) w.push("w_noise");
   return w;
 }
 export const zoneOf = (O: Onet | null, i: number): Zone | null => (O?.z?.[i] as Zone) || null;

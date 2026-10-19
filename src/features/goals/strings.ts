@@ -176,6 +176,9 @@ export const strings = defineStrings(
     w_vehicle: "A lot of driving",
     w_routine: "Very routine",
     w_licence: "Often needs a driving licence",
+    w_lifting: "Heavy lifting",
+    w_heights: "Work at heights",
+    w_noise: "Noise, dirt or chemicals",
   },
   {
     g_title: "Ihre Ziele",
@@ -351,5 +354,8 @@ export const strings = defineStrings(
     w_vehicle: "Viel Fahren",
     w_routine: "Sehr gleichförmig",
     w_licence: "Oft mit Führerschein",
+    w_lifting: "Schweres Heben",
+    w_heights: "Arbeit in der Höhe",
+    w_noise: "Lärm, Schmutz oder Chemikalien",
   },
 );

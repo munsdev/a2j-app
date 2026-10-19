@@ -1,6 +1,6 @@
 /* Data sources, fonts and software licences. Licence attributions are required content: change them only on
    purpose and keep both languages in step. Updated October 2026 for the rebuilt app (fonts and software
-   notices now in licenses.txt, generated on every build). */
+   notices now in licenses.txt, generated on every build); O*NET heights, noise and strength added. */
 
 export function CreditsDe() {
   return (
@@ -46,7 +46,8 @@ export function CreditsDe() {
           Verwendet werden: Interessenprofile (Career Interest Types, OI-Skala), Job Zones (als vier
           Vorbereitungsstufen dargestellt) und einige Angaben zum Arbeitsumfeld (Kontakt mit anderen,
           Kundschaft, draußen, Stehen, Sitzen, Bücken und Knien, Telefon, Fahrzeuge, wiederkehrende Aufgaben,
-          unregelmäßige Arbeitszeiten), umgerechnet auf 0 bis 100.
+          unregelmäßige Arbeitszeiten, Arbeit in der Höhe, Lärm und Schadstoffe) sowie die Fähigkeit
+          Körperkraft (Static Strength, Level-Skala), umgerechnet auf 0 bis 100.
         </li>
         <li>
           Das Skript dafür ist <code>tools/build_onet.py</code> im Quellcode.
@@ -123,8 +124,8 @@ export function CreditsEn() {
         <li>
           Used: interest profiles (Career Interest Types, OI scale), Job Zones (shown as four preparation
           levels), and a few Work Context measures (contact with others, customers, outdoors, standing,
-          sitting, bending and kneeling, telephone, vehicles, repetitive tasks, irregular schedules), rescaled
-          to 0 to 100.
+          sitting, bending and kneeling, telephone, vehicles, repetitive tasks, irregular schedules, high
+          places, noise and contaminants) and the ability Static Strength (level scale), rescaled to 0 to 100.
         </li>
         <li>
           The build script is <code>tools/build_onet.py</code> in the source code.

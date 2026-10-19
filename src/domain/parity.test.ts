@@ -44,6 +44,8 @@ const L = legacy as unknown as {
 /** Every saved course as one, the way the previous app counted coverage. */
 const anyCourse = (d: Doc) => ({ ...d.courses[0], covers: d.courses.flatMap((c) => c.covers) });
 
+const NEW_WARNINGS: string[] = ["w_lifting", "w_heights", "w_noise"];
+
 const EX = (examples as unknown as { examples: Record<string, Record<Lang, unknown>> }).examples;
 
 describe.each(["en", "de"] as const)("parity with the previous app (%s)", { timeout: 30000 }, (lang) => {
@@ -74,7 +76,8 @@ describe.each(["en", "de"] as const)("parity with the previous app (%s)", { time
       expect(mine.map((r) => r.i)).toEqual(theirs.rank.map((r) => r[0]));
       mine.forEach((r, k) => expect(r.score).toBeCloseTo(theirs.rank[k][1], 10));
       mine.slice(0, 20).forEach((r, k) => {
-        expect(warnings(d, O, r.i)).toEqual(theirs.warnings[k]);
+        /* warnings added after the previous app (heavy lifting, heights, noise) are left out of the comparison */
+        expect(warnings(d, O, r.i).filter((w) => !NEW_WARNINGS.includes(w))).toEqual(theirs.warnings[k]);
         expect(fitOf(d, E, O, r.i)).toEqual(theirs.fit[k]);
       });
       for (const z of [1, 2, 3, 4] as const)

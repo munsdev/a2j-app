@@ -35,7 +35,10 @@ export type ContextKey =
   | "phone"
   | "vehicle"
   | "routine"
-  | "irregular";
+  | "irregular"
+  | "heights"
+  | "noise"
+  | "strength";
 export interface Onet {
   v: string;
   /** RIASEC profile ×10, in R I A S E C order */
@@ -44,8 +47,10 @@ export interface Onet {
   z: (number | null)[];
   /** 1 = direct crosswalk match, 0 = rough (from a similar job) */
   q: (0 | 1 | null)[];
-  /** work context measures 0..100 */
+  /** work context measures and static strength, 0..100 */
   c: Record<ContextKey, (number | null)[]>;
+  /** German level (CEFR) by occupation index, only where a law or regulation states one (data/german-level.csv) */
+  lv?: Record<string, string>;
 }
 export interface Esco {
   lang: Lang;
