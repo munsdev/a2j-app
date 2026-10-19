@@ -1,5 +1,8 @@
 import type { Doc } from "@/data/types";
-import { mainGoal } from "@/data/doc";
+import { jobsIn, mainGoal } from "@/data/doc";
+import { currentRoute, routeCourse } from "@/data/routes";
+import { dupePairs } from "@/data/dupes";
+import { canRank } from "@/domain/rank";
 import { nextPart, partsDone } from "@/domain/assess";
 
 /* Pure helpers for Home. */
@@ -23,6 +26,41 @@ export function nextStep(d: Doc): NextStep {
   if (!g) return { to: "goals", label: "nav_goals" };
   if (done < 4) return part();
   return planStarted(d) ? { to: "goals", label: "nav_goals" } : { to: "plan", label: "nav_plan" };
+}
+
+/* ---------- the next steps in the app ----------
+   Not the next skill to learn (the board shows that): the next thing to do here, in the order the app is
+   meant to be used. Each is checked against the document, so a step drops off once it is done. */
+export type StepId =
+  | "profile_start"
+  | "ideas_unlock"
+  | "ideas"
+  | "route"
+  | "profile"
+  | "course"
+  | "dupes"
+  | "route2"
+  | "ads"
+  | "plan"
+  | "plan_print";
+
+/** The steps still open, first the one to do now. */
+export function appSteps(d: Doc): StepId[] {
+  const done = partsDone(d);
+  const r = currentRoute(d);
+  const liked = jobsIn(d, "maybe").length + jobsIn(d, "goal").length > 0;
+  const out: StepId[] = [];
+  if (done === 0) out.push("profile_start");
+  if (!liked && canRank(d)) out.push("ideas");
+  else if (!liked && done > 0) out.push("ideas_unlock");
+  else if (liked && !r) out.push("route");
+  if (done > 0 && done < 6) out.push("profile");
+  if (r && !routeCourse(d, r)) out.push("course");
+  if (dupePairs(d).length) out.push("dupes");
+  if (r && d.routes.length < 2) out.push("route2");
+  if (r && !d.jobads.some((a) => a.goals.includes(r.job))) out.push("ads");
+  if (r) out.push(planStarted(d) ? "plan_print" : "plan");
+  return out;
 }
 
 /** The first word of a name, for the welcome. */

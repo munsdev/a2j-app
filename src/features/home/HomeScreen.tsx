@@ -10,12 +10,24 @@ import { partsDone } from "@/domain/assess";
 import { jobCount, type JobCount } from "@/domain/skills";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { Button, Eyebrow, Icon, LinkButton, Page } from "@/ui";
+import { Button, Eyebrow, Icon, LinkButton, Page, type IconName } from "@/ui";
 import { boardPath, titleForms, type BoardPath } from "@/features/goals/layout";
-import { openFinder, openItem } from "@/features/courses/api";
+import { openFinder } from "@/features/courses/api";
 import { openSamplePicker } from "@/features/backup/sheets";
 import { HeroArt } from "./HeroArt";
-import { countWord, firstName, LINE_STOPS, lineStop, nextStep, planStarted, type LineStop } from "./model";
+import {
+  appSteps,
+  countWord,
+  firstName,
+  LINE_STOPS,
+  lineStop,
+  planStarted,
+  type LineStop,
+  type StepId,
+} from "./model";
+import { currentRoute } from "@/data/routes";
+import { nextPart } from "@/domain/assess";
+import { openRouteSheet } from "@/features/routes/actions";
 import { homeStrings } from "./strings";
 import "./home.css";
 
@@ -264,104 +276,88 @@ function OverviewLine({ way, initial }: { way: Way; initial: string }) {
   );
 }
 
-/* ---------- the next stops on the goal's line ---------- */
+/* ---------- the next steps in the app ---------- */
+const STEP_ICON: Record<StepId, IconName> = {
+  profile_start: "arrow",
+  ideas_unlock: "arrow",
+  ideas: "cards",
+  route: "flag",
+  profile: "arrow",
+  course: "search",
+  dupes: "copy",
+  route2: "plus",
+  ads: "bag",
+  plan: "doc",
+  plan_print: "print",
+};
+
 function NextStops({ way }: { way: Way }) {
   const t = useT(homeStrings);
   const d = useDoc();
   const headId = useId();
-  const { g, p, linked, gc } = way;
-  const nx = nextStep(d);
-  const n = p?.next;
-  const loading = !!g && linked && !gc;
-
-  let now: ReactNode;
-  let then: string[] = [];
-  if (loading)
-    now = (
-      <span className="flex flex-col gap-3" aria-hidden="true">
-        <span className="h-6 w-3/4 animate-pulse rounded-tile bg-canvas/15 dark:bg-surface-2" />
-        <span className="h-12 w-40 animate-pulse rounded-control bg-canvas/15 dark:bg-surface-2" />
-      </span>
-    );
-  else if (g && n?.kind === "skill") {
-    now = (
-      <Now
-        title={n.tile.name}
-        action={
-          <NowButton onClick={() => openFinder("course", g.id, n.tile.x)}>
-            <Icon name="search" />
-            {t("n_find")}
-          </NowButton>
-        }
-      />
-    );
-    then = p!.learn.slice(1, 3).map((x) => x.name);
-  } else if (g && n?.kind === "course")
-    now = (
-      <Now
-        eyebrow={t("n_course")}
-        title={n.course.name}
-        action={
-          <NowButton onClick={() => openItem("course", n.course.id, g.id)}>
-            <Icon name="book" />
-            {t("n_open")}
-          </NowButton>
-        }
-      />
-    );
-  else if (g && n?.kind === "done")
-    now = (
-      <Now
-        title={t("n_all")}
-        action={
-          <NowButton onClick={() => openFinder("jobad", g.id)}>
-            <Icon name="bag" />
-            {t("n_ads")}
-          </NowButton>
-        }
-      />
-    );
-  else
-    now = (
-      <Now
-        title={t(nx.label === "nav_profile" ? "h_s1" : nx.label === "nav_goals" ? "h_s2" : "h_s3")}
-        action={
-          <NowButton onClick={() => go(nx.to)}>
-            {t("h_cont", { x: t(nx.label) })}
-            <Icon name="arrow" />
-          </NowButton>
-        }
-      />
-    );
+  const { g } = way;
+  const steps = appSteps(d);
+  const r = currentRoute(d);
+  const x = g ? short(g.title) : "";
+  const run = (id: StepId) => {
+    if (id === "profile_start" || id === "profile") go("profile/" + (nextPart(d) ?? ""));
+    else if (id === "ideas_unlock") go("profile/int");
+    else if (id === "ideas") go("goals/ideas");
+    else if (id === "route") go("goals");
+    else if (id === "course" && r) openFinder("course", r.job);
+    else if (id === "ads" && r) openFinder("jobad", r.job);
+    else if (id === "dupes") go("edit");
+    else if (id === "route2") openRouteSheet(null);
+    else go("plan");
+  };
+  const now = steps[0];
+  const then = steps.slice(1, 3);
+  const vars = { x, n: partsDone(d) };
 
   return (
     <section
       aria-labelledby={headId}
-      aria-busy={loading || undefined}
       className="flex flex-col rounded-panel bg-ink p-4 text-canvas sm:p-5 dark:bg-sunk dark:text-ink dark:shadow-card"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-b border-canvas/20 pb-2.5 dark:border-line">
         <h2 id={headId} className="font-display text-label font-extrabold tracking-[.06em] uppercase">
           {t("n_title")}
         </h2>
-        {g && (
+        {g && r && (
           <span className="min-w-0 text-small text-canvas/75 dark:text-ink-3">
-            {t("n_to", { x: short(g.title) })}
+            {t("n_to", { x: `${r.id} · ${x}` })}
           </span>
         )}
       </div>
-      <div className={cn("flex flex-col gap-2.5 pt-3.5", then.length ? "pb-3" : "pb-1")}>
-        <span className="text-caption font-bold tracking-[.06em] text-have-bg uppercase dark:text-have-ink">
-          {t("n_now")}
-        </span>
-        {now}
-      </div>
+      {now && (
+        <div className={cn("flex flex-col gap-2.5 pt-3.5", then.length ? "pb-3" : "pb-1")}>
+          <span className="text-caption font-bold tracking-[.06em] text-have-bg uppercase dark:text-have-ink">
+            {t("n_now")}
+          </span>
+          <Now
+            title={t(`n_s_${now}`, vars)}
+            sub={t(`n_p_${now}`, vars)}
+            action={
+              <NowButton onClick={() => run(now)}>
+                <Icon name={STEP_ICON[now]} />
+                {t(`n_b_${now}`)}
+              </NowButton>
+            }
+          />
+        </div>
+      )}
       {then.length > 0 && (
         <ul className="border-t border-canvas/20 pt-1.5 dark:border-line">
-          {then.map((x, i) => (
-            <li key={i} className="flex items-baseline justify-between gap-3 py-1.5 text-label">
-              <span className="min-w-0">{x}</span>
-              <span className="flex-none text-small text-canvas/75 dark:text-ink-3">{t("n_then")}</span>
+          {then.map((id) => (
+            <li key={id}>
+              <button
+                type="button"
+                onClick={() => run(id)}
+                className="flex w-full items-baseline justify-between gap-3 py-2 text-left text-label hover:underline"
+              >
+                <span className="min-w-0">{t(`n_s_${id}`, vars)}</span>
+                <span className="flex-none text-small text-canvas/75 dark:text-ink-3">{t("n_then")}</span>
+              </button>
             </li>
           ))}
         </ul>
@@ -370,11 +366,11 @@ function NextStops({ way }: { way: Way }) {
   );
 }
 
-function Now({ eyebrow, title, action }: { eyebrow?: string; title: string; action: ReactNode }) {
+function Now({ title, sub, action }: { title: string; sub?: string; action: ReactNode }) {
   return (
     <>
-      {eyebrow && <span className="-mt-1.5 text-small text-canvas/75 dark:text-ink-3">{eyebrow}</span>}
       <b className="font-display text-heading leading-tight font-extrabold">{title}</b>
+      {sub && <span className="-mt-1 text-small text-canvas/80 dark:text-ink-2">{sub}</span>}
       <div className="mt-0.5">{action}</div>
     </>
   );

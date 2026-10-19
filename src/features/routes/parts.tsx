@@ -3,7 +3,7 @@ import type { Tile } from "@/domain/skills";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/ui";
-import { cellKey, cellOf, type Cell } from "./model";
+import { bar, cellKey, cellOf, type Cell, type Part, type QuiltCell } from "./model";
 import { strings } from "./strings";
 
 /* Small pieces every route screen shares: the letter, the score, a skill as a chip, a square of the quilt. */
@@ -101,23 +101,39 @@ export function Patch({ cell, small, className }: { cell: Cell; small?: boolean;
   );
 }
 
-/** A skill as a chip, in its state on the route. */
-export function SkillChip({ tile }: { tile: Tile }) {
+/** A skill as a chip, in its state on the route. With onToggle it is a button that says whether the course
+ *  covers it. */
+export function SkillChip({ tile, onToggle }: { tile: Tile; onToggle?: () => void }) {
   const t = useT(strings);
   const c = cellOf(tile);
-  return (
-    <li
-      className={cn(
-        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 text-small leading-tight font-bold [&_svg]:size-3.5 [&_svg]:flex-none [&_svg]:stroke-[2.8]",
-        LOOK[c],
-        c === "also" && "mx-1",
-      )}
-    >
+  const look = cn(
+    "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 text-left text-small leading-tight font-bold [&_svg]:size-3.5 [&_svg]:flex-none [&_svg]:stroke-[2.8]",
+    LOOK[c],
+    c === "also" && "mx-1",
+  );
+  const body = (
+    <>
       <span aria-hidden="true" className="flex">
         {MARK(c)}
       </span>
       <span className="min-w-0 break-words hyphens-auto">{tile.name}</span>
       <span className="sr-only">, {t(cellKey(c))}</span>
+    </>
+  );
+  return (
+    <li className={onToggle ? undefined : look}>
+      {onToggle ? (
+        <button
+          type="button"
+          aria-pressed={c === "course" || c === "also"}
+          onClick={onToggle}
+          className={cn(look, "transition-transform active:scale-[.97]")}
+        >
+          {body}
+        </button>
+      ) : (
+        body
+      )}
     </li>
   );
 }
@@ -134,6 +150,71 @@ export function QuiltKey({ cells, className }: { cells: readonly Cell[]; classNa
         <li key={c} className="flex items-center gap-2">
           <Patch cell={c} small />
           {t(cellKey(c))}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const PART: Record<Part, string> = {
+  have: "bg-have",
+  course: "bg-course",
+  learn: "border-[1.5px] border-dashed border-learn",
+  room: "bg-sunk",
+};
+
+/** A square of the quilt as five parts, like the skill ratings: your level in brick, what the course adds in
+ *  blue, the rest dashed (to learn) or plain (room to grow). A dot when the job does not need it. The words
+ *  are for screen readers. */
+export function Bar({ cell, className }: { cell: QuiltCell; className?: string }) {
+  const t = useT(strings);
+  const sr =
+    cell.c === "none"
+      ? t("q_k_none")
+      : [
+          cell.level ? t("q_you", { n: cell.level }) : t("q_k_learn"),
+          cell.c === "course" || cell.c === "also" ? t("q_k_course") : "",
+        ]
+          .filter(Boolean)
+          .join(", ");
+  return (
+    <span className={cn("flex h-8 w-full items-center", className)}>
+      {cell.c === "none" ? (
+        <i aria-hidden="true" className="mx-auto size-1.5 rounded-full bg-line-2" />
+      ) : (
+        <span aria-hidden="true" className="flex h-6 w-full gap-[3px]">
+          {bar(cell).map((p, i) => (
+            <span key={i} className={cn("flex-1 rounded-[3px]", PART[p])} />
+          ))}
+        </span>
+      )}
+      <span className="sr-only">{sr}</span>
+    </span>
+  );
+}
+
+/** The key under the quilt: the parts of a bar. */
+export function BarKey({ className }: { className?: string }) {
+  const t = useT(strings);
+  const items: [Part | "none", string][] = [
+    ["have", t("q_b_have")],
+    ["course", t("q_b_course")],
+    ["learn", t("q_k_learn")],
+    ["none", t("q_k_none")],
+  ];
+  return (
+    <ul
+      aria-hidden="true"
+      className={cn("flex flex-wrap gap-x-4 gap-y-2 text-caption text-ink-2", className)}
+    >
+      {items.map(([p, label]) => (
+        <li key={p} className="flex items-center gap-2">
+          {p === "none" ? (
+            <i className="mx-1.5 size-1.5 rounded-full bg-line-2" />
+          ) : (
+            <span className={cn("h-4 w-3 rounded-[3px]", PART[p])} />
+          )}
+          {label}
         </li>
       ))}
     </ul>

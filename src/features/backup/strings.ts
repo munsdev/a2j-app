@@ -9,6 +9,10 @@ export const backupStrings = defineStrings(
     bk_lede:
       "Your data lives only in this browser. A backup file keeps it safe and moves it to another device.",
     bk_save_h: "Save a backup",
+    bk_need_data: "Nothing to back up yet. Start your profile first.",
+    bk_need_name: "Add your name first. It goes into the file name, so you can find your backup later.",
+    bk_name: "Your name",
+    bk_name_save: "Save name",
     bk_dl: "Download backup file",
     bk_copy: "Copy as text",
     bk_restore_h: "Restore a backup",
@@ -51,6 +55,11 @@ export const backupStrings = defineStrings(
     bk_lede:
       "Ihre Daten liegen nur in diesem Browser. Eine Sicherungsdatei bewahrt sie auf und bringt sie auf ein anderes Gerät.",
     bk_save_h: "Sicherung speichern",
+    bk_need_data: "Noch nichts zu sichern. Beginnen Sie zuerst Ihr Profil.",
+    bk_need_name:
+      "Tragen Sie zuerst Ihren Namen ein. Er kommt in den Dateinamen, damit Sie Ihre Sicherung später finden.",
+    bk_name: "Ihr Name",
+    bk_name_save: "Namen speichern",
     bk_dl: "Sicherungsdatei herunterladen",
     bk_copy: "Als Text kopieren",
     bk_restore_h: "Sicherung wiederherstellen",

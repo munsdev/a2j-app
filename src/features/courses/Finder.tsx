@@ -36,6 +36,7 @@ import {
   searchWords,
 } from "./text";
 import { alsoCandidates, keepFound, readFound, type FoundItem } from "./found";
+import { FoundQueue } from "@/features/merge/sheets";
 import { FoundList } from "./FoundList";
 import { AlsoSheet } from "./AlsoSheet";
 import { openItem } from "./api";
@@ -252,26 +253,38 @@ function PasteBack({ spec }: { spec: FinderSpec }) {
   const save = () => {
     if (!found) return;
     const chosen = found.filter((_, i) => keep[i]);
-    let ids: string[] = [];
-    update((d) => void (ids = keepFound(d, spec, chosen)));
+    let res: ReturnType<typeof keepFound> = { ids: [], matches: [] };
+    update((d) => void (res = keepFound(d, spec, chosen)));
+    const { ids, matches } = res;
     const d = getDoc();
     const list = spec.kind === "course" ? d.courses : d.jobads;
-    toast(
-      t("t_added", {
-        x: list
-          .filter((x) => ids.includes(x.id))
-          .map((x) => x.name)
-          .join(", "),
-      }),
-    );
-    if (spec.kind === "course") {
-      const others = alsoCandidates(d, E, ids);
-      if (others.length) {
-        openSheet(<AlsoSheet courseIds={ids} jobIds={others.map((j) => j.id)} />, { label: t("f_also") });
-        return;
+    if (ids.length)
+      toast(
+        t("t_added", {
+          x: list
+            .filter((x) => ids.includes(x.id))
+            .map((x) => x.name)
+            .join(", "),
+        }),
+      );
+    /* then: is a new course for other goals too? */
+    const after = () => {
+      if (spec.kind === "course") {
+        const all = [...ids, ...matches.map((m) => m.savedId)];
+        const others = alsoCandidates(getDoc(), E, all);
+        if (others.length) {
+          openSheet(<AlsoSheet courseIds={all} jobIds={others.map((j) => j.id)} />, { label: t("f_also") });
+          return;
+        }
       }
-    }
-    closeSheet();
+      closeSheet();
+    };
+    /* found items that match saved ones are compared first, one at a time */
+    if (matches.length)
+      openSheet(<FoundQueue spec={spec} matches={matches} done={after} />, {
+        label: t(spec.kind === "course" ? "f_title_course" : "f_title_jobad"),
+      });
+    else after();
   };
   return (
     <div className="mt-1 flex flex-col gap-3 border-t border-dashed border-line-2 pt-4">

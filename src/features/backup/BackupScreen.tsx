@@ -2,14 +2,26 @@ import { useEffect, useId, useRef, useState } from "react";
 import { go, useRoute } from "@/app/router";
 import { profileReplaced } from "@/app/samples";
 import { toastUndo } from "@/app/toast";
-import { markExported, replaceDoc, resetChanges, useDoc, useDocStore } from "@/data/store";
+import { markExported, replaceDoc, resetChanges, update, useDoc, useDocStore } from "@/data/store";
 import { hasOwnData, shape } from "@/data/doc";
 import { useLang, useT } from "@/i18n";
 import { copyText } from "@/lib/clipboard";
 import { cn } from "@/lib/cn";
-import { Button, ButtonRow, Field, Icon, Page, PageHeader, Panel, PanelTitle, Textarea } from "@/ui";
+import {
+  Button,
+  ButtonRow,
+  Field,
+  Hint,
+  Icon,
+  Input,
+  Page,
+  PageHeader,
+  Panel,
+  PanelTitle,
+  Textarea,
+} from "@/ui";
 import { downloadBackup } from "./io";
-import { checkBackup, docCounts, exportDoc, type BackupCheck } from "./model";
+import { backupBlock, checkBackup, docCounts, exportDoc, type BackupCheck } from "./model";
 import { backupStrings } from "./strings";
 
 /* =================== BACKUP ===================
@@ -68,18 +80,48 @@ function Status() {
 function SavePanel() {
   const t = useT(backupStrings);
   const fallback = useRef<HTMLTextAreaElement>(null);
+  const block = useDoc(backupBlock);
+  const [name, setName] = useState("");
   return (
     <Panel aria-labelledby="bk-save-h">
       <PanelTitle id="bk-save-h">
         <Icon name="download" />
         {t("bk_save_h")}
       </PanelTitle>
+      {block === "empty" && <Hint>{t("bk_need_data")}</Hint>}
+      {/* the file is named after the person: ask for the name right here */}
+      {block === "name" && (
+        <form
+          className="flex flex-col gap-2.5 sm:flex-row sm:items-end"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const v = name.trim();
+            if (v) update((d) => void (d.profile.name = v));
+          }}
+        >
+          <Field label={t("bk_name")} hint={t("bk_need_name")} className="flex-1">
+            {(p) => (
+              <Input
+                id={p.id}
+                aria-describedby={p.hintId}
+                autoComplete="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            )}
+          </Field>
+          <Button type="submit" disabled={!name.trim()}>
+            {t("bk_name_save")}
+          </Button>
+        </form>
+      )}
       <ButtonRow>
-        <Button variant="primary" onClick={downloadBackup}>
+        <Button variant="primary" disabled={!!block} onClick={downloadBackup}>
           <Icon name="doc" />
           {t("bk_dl")}
         </Button>
         <Button
+          disabled={!!block}
           onClick={async () => {
             if (await copyText(exportDoc(useDocStore.getState().doc), fallback.current)) markExported();
           }}

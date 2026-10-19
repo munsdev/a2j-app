@@ -12,6 +12,8 @@ import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Button, Hint, Icon, Page, PageHeader, Panel, PanelTitle, SuggestInput, Tag } from "@/ui";
 import { BoardCard } from "./BoardCard";
+import { jobMatch } from "@/data/dupes";
+import { strings as mergeStrings } from "@/features/merge/strings";
 import { OtherRoutes } from "@/features/routes/OtherRoutes";
 import { FitBadge } from "./Fit";
 import { useFitText, useMatch } from "./useFit";
@@ -150,6 +152,7 @@ function MiniCard({ job, inPanel }: { job: Job; inPanel?: boolean }) {
 /** "Have a job in mind?": a catalogue job you saved opens; anything else goes on the shortlist. */
 function AddJob() {
   const t = useT(strings);
+  const tm = useT(mergeStrings);
   const E = useEscoReady();
   const [text, setText] = useState("");
   const occHits = useOccSearch(E, text, 8);
@@ -166,6 +169,13 @@ function AddJob() {
       return;
     }
     const title = occ >= 0 && normTxt(occLabel(E, occ)) === normTxt(v) ? occLabel(E, occ) : v;
+    /* the same title saved already (a job outside the catalogue): open it instead of a second one */
+    const same = jobMatch(getDoc(), { title, occ });
+    if (same) {
+      toast(tm("k_saved_job", { x: same.title }));
+      go("goals/job/" + same.id);
+      return;
+    }
     update((dr) => {
       addJob(dr, { title, occ, role: "maybe" });
       if (occ >= 0) setVote(dr, occ, 1);

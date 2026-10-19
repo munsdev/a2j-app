@@ -1,9 +1,10 @@
 import type { Draft } from "immer";
 import type { Course, Doc, Job, JobAd, SkillRef } from "@/data/types";
-import { lc, safeUrl, splitList, uid } from "@/data/doc";
+import { safeUrl, splitList, uid } from "@/data/doc";
 import { normTxt, type Esco } from "@/domain/catalog";
 import { jobTiles, skKey } from "@/domain/skills";
 import { fillRouteCourse } from "@/data/routes";
+import { itemMatch } from "@/data/dupes";
 import { extractJSON, str, type Json } from "./parse";
 import { finderCtx } from "./text";
 import type { FinderSpec, ItemKind } from "./types";
@@ -93,60 +94,58 @@ export function readFound(d: Doc, E: Esco, F: FinderSpec, text: string): FoundIt
     });
 }
 
-/** Save the chosen items, merging with saved ones of the same name and link. Returns their ids. */
-export function keepFound(d: Draft<Doc>, F: FinderSpec, items: readonly FoundItem[]): string[] {
+/** One found item that matches a saved one: compared by the person before anything changes. */
+export interface FoundMatch {
+  savedId: string;
+  item: FoundItem;
+}
+
+/** Save the chosen items. Those that match a saved one (the same link, or the same name and provider; see
+ *  data/dupes.ts) are not saved: they come back as matches, for the person to compare. Returns the new ids. */
+export function keepFound(
+  d: Draft<Doc>,
+  F: FinderSpec,
+  items: readonly FoundItem[],
+): { ids: string[]; matches: FoundMatch[] } {
   const ids: string[] = [];
+  const matches: FoundMatch[] = [];
+  items.forEach((x) => {
+    const list = F.kind === "course" ? d.courses : d.jobads;
+    const ex = itemMatch(F.kind, list, { name: x.name, ...x.fields });
+    if (ex) matches.push({ savedId: ex.id, item: x });
+    else ids.push(addFound(d, F, x));
+  });
+  return { ids, matches };
+}
+
+/** Save one found item as a new course or job ad (also "Keep both" after comparing). Returns its id. */
+export function addFound(d: Draft<Doc>, F: FinderSpec, x: FoundItem): string {
   if (F.kind === "course") {
-    const list = d.courses;
-    items.forEach((x) => {
-      const url = x.fields.url || "";
-      const ex = list.find((y) => lc(y.name) === lc(x.name) && lc(y.url || "") === lc(url));
-      if (ex) {
-        if (F.job && !ex.goals.includes(F.job)) ex.goals.push(F.job);
-        x.covers.forEach((v) => {
-          if (!ex.covers.some((w) => skKey(w) === skKey(v))) ex.covers.push(v);
-        });
-        ids.push(ex.id);
-        return;
-      }
-      const c: Course = {
-        id: uid("c", list),
-        name: x.name,
-        ...(x.fields as Partial<Record<CourseField, string>>),
-        azav: x.azav,
-        covers: [...x.covers],
-        goals: F.job ? [F.job] : [],
-        status: "interested",
-        source: "ai",
-      };
-      list.push(c);
-      ids.push(c.id);
-    });
+    const c: Course = {
+      id: uid("c", d.courses),
+      name: x.name,
+      ...(x.fields as Partial<Record<CourseField, string>>),
+      azav: x.azav,
+      covers: [...x.covers],
+      goals: F.job ? [F.job] : [],
+      status: "interested",
+      source: "ai",
+    };
+    d.courses.push(c);
     /* a route to this job without a course takes the first one saved */
-    if (F.job) ids.forEach((id) => fillRouteCourse(d, id, F.job!));
-  } else {
-    const list = d.jobads;
-    items.forEach((x) => {
-      const url = x.fields.url || "";
-      const ex = list.find((y) => lc(y.name) === lc(x.name) && lc(y.url || "") === lc(url));
-      if (ex) {
-        if (F.job && !ex.goals.includes(F.job)) ex.goals.push(F.job);
-        ids.push(ex.id);
-        return;
-      }
-      const a: JobAd = {
-        id: uid("a", list),
-        name: x.name,
-        ...(x.fields as Partial<Record<JobadField, string>>),
-        goals: F.job ? [F.job] : [],
-        status: "interested",
-        source: "ai",
-      };
-      list.push(a);
-      ids.push(a.id);
-    });
+    if (F.job) fillRouteCourse(d, c.id, F.job);
+    return c.id;
   }
-  return ids;
+  const a: JobAd = {
+    id: uid("a", d.jobads),
+    name: x.name,
+    ...(x.fields as Partial<Record<JobadField, string>>),
+    goals: F.job ? [F.job] : [],
+    status: "interested",
+    source: "ai",
+  };
+  d.jobads.push(a);
+  return a.id;
 }
 
 /** Other jobs (not done) that need a skill these courses cover and that not all of them count for yet. */

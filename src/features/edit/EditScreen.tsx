@@ -9,6 +9,7 @@ import { JobsTab } from "./JobsTab";
 import { SkillsTab } from "./SkillsTab";
 import { ItemsTab } from "./ItemsTab";
 import { editStrings } from "./strings";
+import { DupeCheck } from "@/features/merge/DupeCheck";
 
 /* =================== EDIT MY DATA ===================
    Everything in one place, for changing many things at once. Most changes are also possible where the data
@@ -64,6 +65,7 @@ export default function EditScreen() {
   return (
     <Page>
       <PageHeader title={t("e_title")} lede={t("e_lede")} />
+      <DupeCheck />
       <div
         ref={row}
         className={cn(

@@ -12,7 +12,14 @@ import { openFinder } from "@/features/courses/api";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Button, Choice, Field, Hint, Icon, RowButton, Select, SheetHead } from "@/ui";
-import { goRoute, openRouteSheet, removeRouteWithUndo, replaceRoute, saveRoute } from "./actions";
+import {
+  goRoute,
+  openRouteSheet,
+  removeRouteWithUndo,
+  replaceRoute,
+  saveRoute,
+  toggleCovers,
+} from "./actions";
 import { QuiltKey, RouteDisc, Score, SkillChip } from "./parts";
 import { routeWords } from "./model";
 import { strings } from "./strings";
@@ -216,11 +223,16 @@ export function RouteSheet({ id, jobId }: { id: RouteId | null; jobId: string | 
               </div>
               <ul className="flex flex-wrap gap-2">
                 {tiles.map((x) => (
-                  <SkillChip key={x.key} tile={x} />
+                  <SkillChip
+                    key={x.key}
+                    tile={x}
+                    onToggle={c ? () => toggleCovers(c.id, x.x, x.name) : undefined}
+                  />
                 ))}
               </ul>
               <QuiltKey cells={["have", "also", "course", "learn"]} />
               <Hint>{t("r_gives_p")}</Hint>
+              {c && <Hint>{t("r_tap")}</Hint>}
             </section>
           )}
           <div className="flex flex-wrap items-center justify-between gap-2">

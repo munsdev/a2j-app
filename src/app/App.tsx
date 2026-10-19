@@ -106,7 +106,8 @@ export function App() {
       <SampleBar />
       <RouteBar />
       <StorageWarning />
-      <main id="main" tabIndex={-1} className="flex-1 outline-none" data-view={route.view}>
+      {/* isolate: the 3D-turned cards stay under the toasts and sheets, which sit outside */}
+      <main id="main" tabIndex={-1} className="isolate flex-1 outline-none" data-view={route.view}>
         <ErrorBoundary resetKey={route.path}>
           <Suspense fallback={<ScreenLoading />}>{route.unknown ? <NotFound /> : <Screen />}</Suspense>
         </ErrorBoundary>

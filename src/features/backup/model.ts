@@ -1,6 +1,7 @@
 import type { Doc } from "@/data/types";
 import { PARTS } from "@/domain/assess";
 import { normTxt } from "@/domain/catalog";
+import { hasOwnData } from "@/data/doc";
 
 /* Pure helpers for backups: what goes into the file, what is in a file, and whether a text is one. */
 
@@ -12,11 +13,21 @@ export function exportDoc(d: Doc, now: Date = new Date()): string {
   return JSON.stringify(out, null, 2);
 }
 
-/** The file name for a backup: a2j-<name>.json, the name in plain lower-case letters. */
-export function backupName(name: string): string {
+/** The file name for a backup: a2j-<name>-<date>-<time>.json, the name in plain lower-case letters and the
+ *  local time it was saved, so several backups sort by date and none overwrites another. */
+export function backupName(name: string, now: Date = new Date()): string {
   /* the catalogue's search folding: lower case, no accents, ß as ss, words split on anything else */
   const slug = normTxt(name).replace(/ /g, "-");
-  return `a2j-${slug || "profile"}.json`;
+  const p = (n: number) => String(n).padStart(2, "0");
+  const stamp = `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}-${p(now.getHours())}${p(now.getMinutes())}`;
+  return `a2j-${slug || "profile"}-${stamp}.json`;
+}
+
+/** Whether there is a backup to make: something entered (or a sample open), and a name for the file. */
+export type BackupBlock = "empty" | "name" | null;
+export function backupBlock(d: Doc): BackupBlock {
+  if (!(hasOwnData(d) || d.example)) return "empty";
+  return normTxt(d.profile.name) ? null : "name";
 }
 
 export type CountKey = "bk_n_parts" | "bk_n_jobs" | "bk_n_skills" | "bk_n_courses" | "bk_n_ads";

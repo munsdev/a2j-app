@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import examples from "@/data/examples.json";
 import { emptyDoc, shape } from "@/data/doc";
 import type { Doc } from "@/data/types";
-import { backupName, checkBackup, docCounts, exportDoc } from "./model";
+import { backupBlock, backupName, checkBackup, docCounts, exportDoc } from "./model";
 
 const holmes = (): Doc => ({ ...shape(structuredClone(examples.examples.holmes.en)), example: "holmes" });
 
@@ -30,11 +30,19 @@ describe("exportDoc", () => {
 });
 
 describe("backupName", () => {
-  it("makes a plain file name", () => {
-    expect(backupName("Sherlock Holmes")).toBe("a2j-sherlock-holmes.json");
-    expect(backupName("Jürgen Groß")).toBe("a2j-jurgen-gross.json");
-    expect(backupName("")).toBe("a2j-profile.json");
-    expect(backupName("  --  ")).toBe("a2j-profile.json");
+  const at = new Date(2026, 9, 19, 9, 5);
+  it("names the file after the person and the time it was saved", () => {
+    expect(backupName("Sherlock Holmes", at)).toBe("a2j-sherlock-holmes-2026-10-19-0905.json");
+    expect(backupName("Jürgen Groß", at)).toBe("a2j-jurgen-gross-2026-10-19-0905.json");
+    expect(backupName("  --  ", at)).toBe("a2j-profile-2026-10-19-0905.json");
+  });
+  it("needs something entered and a name", () => {
+    const d = emptyDoc();
+    expect(backupBlock(d)).toBe("empty");
+    d.jobs = [{ id: "j1", title: "Baker", occ: null, role: "done", org: "", when: "" }];
+    expect(backupBlock(d)).toBe("name");
+    d.profile.name = "Ada";
+    expect(backupBlock(d)).toBeNull();
   });
 });
 

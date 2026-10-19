@@ -1,6 +1,10 @@
 import { useId, useState, type FormEvent, type ReactNode } from "react";
 import type { Course, ItemStatus, JobAd, SkillRef } from "@/data/types";
-import { update, useDoc } from "@/data/store";
+import { getDoc, update, useDoc } from "@/data/store";
+import { itemMatch } from "@/data/dupes";
+import { MergeView } from "@/features/merge/MergeView";
+import { mergeInto } from "@/features/merge/actions";
+import { strings as mergeStrings } from "@/features/merge/strings";
 import { jobById, safeUrl, uid } from "@/data/doc";
 import { NeedCatalog } from "@/app/NeedCatalog";
 import { useEscoReady } from "@/app/catalog";
@@ -30,7 +34,8 @@ import {
   useSheetFocus,
 } from "@/ui";
 import { strings } from "./strings";
-import { COURSE_F, JOBAD_F, type TextField } from "./found";
+import { COURSE_F, JOBAD_F, fieldsOf, type TextField } from "./found";
+import { labelKey } from "./labels";
 import type { ItemKind } from "./types";
 
 /* =================== THE SHORT FORM FOR A COURSE OR A JOB AD ===================
@@ -58,13 +63,6 @@ const MORE: Record<ItemKind, readonly TextField[]> = {
 const LONG: readonly TextField[] = ["notes", "reqs"];
 /** Show a filter over the skills from this many on. */
 const FILTER_FROM = 12;
-
-/** The label key of a field. */
-function labelKey(kind: ItemKind, k: TextField): keyof typeof strings.en {
-  if (k === "name") return kind === "course" ? "ce_name" : "ae_name";
-  if (k === "url" || k === "notes") return `ce_${k}`;
-  return (kind === "course" ? `ce_${k}` : `ae_${k}`) as keyof typeof strings.en;
-}
 
 /** The given text fields that hold words, trimmed. */
 function filled<K extends TextField>(
@@ -129,6 +127,7 @@ export function ItemForm({
   skill?: SkillRef | null;
 }) {
   const t = useT(strings);
+  const tm = useT(mergeStrings);
   const course = kind === "course";
   const P = course ? "ce_" : "ae_";
   const saved = useDoc((d) => (course ? d.courses : d.jobads).find((x) => x.id === id));
@@ -145,6 +144,8 @@ export function ItemForm({
   const toggle = <T,>(list: T[], v: T, key: (x: T) => string = String) =>
     list.some((x) => key(x) === key(v)) ? list.filter((x) => key(x) !== key(v)) : [...list, v];
 
+  /* a new one that matches a saved one: compare first (Back returns to the form, nothing lost) */
+  const [dupe, setDupe] = useState<string | null>(null);
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!(draft.fields.name || "").trim()) {
@@ -153,6 +154,14 @@ export function ItemForm({
       nameRef.current?.focus();
       return;
     }
+    if (isNew) {
+      const d = getDoc();
+      const m = itemMatch(kind, course ? d.courses : d.jobads, filled(fieldsOf(kind), draft.fields));
+      if (m) return setDupe(m.id);
+    }
+    save();
+  };
+  const save = () => {
     update((d) => {
       const goals = draft.goals.filter((g) => d.jobs.some((j) => j.id === g));
       if (course) {
@@ -244,6 +253,25 @@ export function ItemForm({
   };
 
   const pool = jobs.filter((j) => j.role !== "done");
+
+  const match = dupe ? (course ? getDoc().courses : getDoc().jobads).find((x) => x.id === dupe) : undefined;
+  if (match)
+    return (
+      <MergeView
+        kind={kind}
+        mode="new"
+        saved={match as unknown as Record<string, unknown>}
+        other={{ ...draft.fields, azav: draft.azav, covers: draft.covers }}
+        onMerge={(c) => {
+          mergeInto(kind, match.id, c, draft.goals);
+          toast(tm("m_merged", { x: match.name }));
+          closeSheet();
+        }}
+        onBoth={save}
+        onCancel={() => setDupe(null)}
+        cancelLabel={tm("m_back")}
+      />
+    );
 
   return (
     <>

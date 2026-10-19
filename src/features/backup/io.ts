@@ -3,7 +3,7 @@ import { session, storage } from "@/lib/storage";
 import { useSettings } from "@/app/settings";
 import { toast } from "@/app/toast";
 import { makeT } from "@/i18n";
-import { backupName, exportDoc } from "./model";
+import { backupBlock, backupName, exportDoc } from "./model";
 import { backupStrings } from "./strings";
 
 /* Saving a backup and deleting everything. Used by the Backup screen and the Delete all data sheet. */
@@ -12,6 +12,12 @@ const t = () => makeT(useSettings.getState().lang, backupStrings);
 
 export function downloadBackup(): void {
   const d = getDoc();
+  /* nothing entered, or no name for the file: the Backup screen says what is missing */
+  const block = backupBlock(d);
+  if (block) {
+    toast(t()(block === "empty" ? "bk_need_data" : "bk_need_name"), { bad: true });
+    return;
+  }
   try {
     const url = URL.createObjectURL(new Blob([exportDoc(d)], { type: "application/json" }));
     const a = document.createElement("a");

@@ -3,7 +3,7 @@ import examples from "@/data/examples.json";
 import { emptyDoc, shape } from "@/data/doc";
 import type { Doc, PartKey } from "@/data/types";
 import { PARTS } from "@/domain/assess";
-import { countWord, firstName, lineStop, nextStep, planStarted } from "./model";
+import { appSteps, countWord, firstName, lineStop, nextStep, planStarted } from "./model";
 
 const holmes = (): Doc => ({ ...shape(structuredClone(examples.examples.holmes.en)), example: "holmes" });
 const withDone = (d: Doc, parts: readonly PartKey[]): Doc => ({
@@ -76,5 +76,22 @@ describe("countWord", () => {
     expect(countWord(4, en, true)).toBe("Four");
     expect(countWord(11, en)).toBe("eleven");
     expect(countWord(13, en, true)).toBe("13");
+  });
+});
+
+describe("appSteps: the next thing to do in the app, not the next skill", () => {
+  it("starts with the profile", () => {
+    expect(appSteps(emptyDoc())).toEqual(["profile_start"]);
+  });
+  it("then a job to aim for, a course for its route, a second route, ads and the plan", () => {
+    const d = shape(withGoal(withDone(emptyDoc(), PARTS)));
+    expect(appSteps(d)).toEqual(["course", "route2", "ads", "plan"]);
+    expect(appSteps({ ...d, summary: { why: "x" } }).at(-1)).toBe("plan_print");
+  });
+  it("Holmes, with three routes and courses: no course or route steps left", () => {
+    const s = appSteps(holmes());
+    expect(s).not.toContain("course");
+    expect(s).not.toContain("route2");
+    expect(["plan", "plan_print"]).toContain(s.at(-1));
   });
 });

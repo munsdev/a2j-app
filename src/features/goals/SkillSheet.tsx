@@ -3,7 +3,7 @@ import { jobById, jobForOcc } from "@/data/doc";
 import type { SkillRef } from "@/data/types";
 import { coursesCovering, level, setLevel, skKey, skName, skillSources } from "@/domain/skills";
 import { courseForJob } from "@/data/routes";
-import { coversThis } from "@/features/routes/actions";
+import { toggleCovers } from "@/features/routes/actions";
 import { strings as routeStrings } from "@/features/routes/strings";
 import { isKnowledge } from "@/domain/catalog";
 import { useEscoReady } from "@/app/catalog";
@@ -65,18 +65,21 @@ export function SkillSheet({ x, occ, jobId }: { x: SkillRef; occ: number | null;
           </ul>
         </div>
       )}
+      {/* the route's course: say it covers this after all, or that it does not */}
+      {rc && (
+        <div className="flex flex-wrap gap-2.5">
+          <Button variant={missed ? "soft" : "ghost"} onClick={() => toggleCovers(rc.id, x, name)}>
+            <Icon name="book" />
+            {tr(missed ? "r_covers_this" : "r_covers_not", { c: rc.name })}
+          </Button>
+        </div>
+      )}
       {l < 1 && job && (
         <div className="flex flex-wrap gap-2.5">
           <Button variant="primary" onClick={() => openFinder("course", job.id, x)}>
             <Icon name="search" />
             {t("k_find")}
           </Button>
-          {missed && (
-            <Button onClick={() => coversThis(rc.id, x, name)}>
-              <Icon name="book" />
-              {tr("r_covers_this", { c: rc.name })}
-            </Button>
-          )}
         </div>
       )}
     </>

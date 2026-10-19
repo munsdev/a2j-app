@@ -57,13 +57,15 @@ const BACKUP_MOVED = [
 const EDIT_ADDED = ["e_filter", "e_filter_none"];
 /* reworded on purpose: the main goal became the route you are on */
 const EDIT_CHANGED = ["e_main"];
-const BACKUP_ADDED = ["bk_choose", "bk_nofile"];
+const BACKUP_ADDED = ["bk_choose", "bk_nofile", "bk_need_data", "bk_need_name", "bk_name", "bk_name_save"];
 /* Home of a returning person: the line (l_), the next stops (n_), the stages (s_) */
 const HOME_ADDED = Object.keys(homeStrings.en).filter((k) => /^[lns]_/.test(k));
+/* reworded on purpose: "device", not "phone", since it installs on computers too */
+const HOME_CHANGED = ["inst_h", "inst_p"];
 
 describe("copy taken over from the previous app", () => {
   it("home: every string of home.js, word for word", () => {
-    expectCopied(homeStrings, ["home.js"], HOME_ADDED);
+    expectCopied(homeStrings, ["home.js"], [...HOME_ADDED, ...HOME_CHANGED]);
     expect(ownKeys(homeStrings, HOME_ADDED)).toEqual(legacyKeys("home.js", [...HOME_MOVED, ...HOME_DROPPED]));
   });
   it("edit: every string of edit.js, plus the labels it borrows, word for word", () => {

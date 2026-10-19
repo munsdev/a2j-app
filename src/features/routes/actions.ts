@@ -109,6 +109,19 @@ export function coversThis(courseId: string, x: SkillRef, name: string): void {
   toast(t()("r_covers_added", { c: c.name, x: name }));
 }
 
+/** Say whether a course covers a skill (the quilt, the route sheet, the skill sheet): on, or off again. */
+export function toggleCovers(courseId: string, x: SkillRef, name: string): void {
+  const c = getDoc().courses.find((y) => y.id === courseId);
+  if (!c) return;
+  const on = c.covers.some((v) => skKey(v) === skKey(x));
+  update((d) => {
+    const y = d.courses.find((z) => z.id === courseId);
+    if (!y) return;
+    y.covers = on ? y.covers.filter((v) => skKey(v) !== skKey(x)) : [...y.covers, x];
+  });
+  toast(t()(on ? "q_covers_off" : "q_covers_on", { c: c.name, x: name }));
+}
+
 export const openRouteList = (): void => openSheet(createElement(RouteList), { label: t()("r_list_h") });
 export const openRouteSheet = (id: RouteId | null, jobId?: string | null): void =>
   openSheet(createElement(RouteSheet, { id, jobId: jobId ?? null, key: (id ?? "new") + (jobId ?? "") }), {

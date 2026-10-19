@@ -79,19 +79,19 @@ describe("the plan", () => {
 });
 
 describe("keeping found items", () => {
-  it("merges with a saved item of the same name and link, and links the goal", () => {
+  it("saves new items, and hands back the ones that match a saved one to compare", () => {
     const d = doc();
     const c1 = d.courses[0];
     const next = produce(d, (dr) => {
-      const ids = keepFound(dr, { kind: "course", job: "j6", skill: null, url: "" }, [
+      const { ids, matches } = keepFound(dr, { kind: "course", job: "j6", skill: null, url: "" }, [
         { name: c1.name.toUpperCase(), fields: { url: c1.url }, azav: "", covers: ["Own skill"] },
         { name: "New one", fields: { provider: "P" }, azav: "provider", covers: [] },
       ]);
-      expect(ids[0]).toBe(c1.id);
+      expect(ids.length).toBe(1);
+      expect(matches.map((m) => m.savedId)).toEqual([c1.id]);
     });
-    const merged = next.courses.find((c) => c.id === c1.id)!;
-    expect(merged.goals).toContain("j6");
-    expect(merged.covers).toContain("Own skill");
+    /* the match changes nothing until the person compares */
+    expect(next.courses.find((c) => c.id === c1.id)).toEqual(c1);
     const added = next.courses[next.courses.length - 1];
     expect(added).toMatchObject({
       name: "New one",

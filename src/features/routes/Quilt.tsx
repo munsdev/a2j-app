@@ -9,15 +9,17 @@ import { jobTiles } from "@/domain/skills";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Button, Hint, Icon, Lede, Page, RunHeader, ToggleChip } from "@/ui";
-import { goRoute, openRouteSheet } from "./actions";
+import { goRoute, openRouteSheet, toggleCovers } from "./actions";
 import { differs, quiltRows, routeWords } from "./model";
-import { Patch, QuiltKey, RouteDisc, Score } from "./parts";
+import { Bar, BarKey, RouteDisc, Score } from "./parts";
 import { strings } from "./strings";
 
 /* =================== COMPARE ROUTES: THE QUILT ===================
    Up to three routes side by side. Each column is a route (its job and its one course, the match today and
    with the course, when and what the course costs); each row a skill any of them needs, the square saying
-   where it comes from on that route. "Only where they differ" hides the rows that read the same across. */
+   where it comes from on that route, as a bar of five like the skill ratings: what you can do, then what the
+   course adds. Tapping a square says whether that route's course covers the skill. "Only where they differ"
+   hides the rows that read the same across. */
 
 /** Rows shown before "Show all". */
 const SHOWN = 24;
@@ -85,7 +87,10 @@ export function Quilt() {
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <QuiltKey cells={["have", "also", "course", "learn", "none"]} />
+            <div className="flex flex-col gap-1.5">
+              <BarKey />
+              <Hint>{t("q_tap")}</Hint>
+            </div>
             <ToggleChip pressed={diff} onClick={() => setDiff((v) => !v)}>
               {diff && <Icon name="check" />}
               {t("q_diff")}
@@ -161,11 +166,29 @@ export function Quilt() {
                 >
                   {row.name}
                 </span>
-                {row.cells.map((c, i) => (
-                  <span role="cell" key={cols[i].r.id} className="flex px-0.5">
-                    <Patch cell={c} />
-                  </span>
-                ))}
+                {row.cells.map((c, i) => {
+                  const course = cols[i].w.course;
+                  /* tap: the route's course covers this skill, or not (only where the job needs it) */
+                  return (
+                    <span role="cell" key={cols[i].r.id} className="flex px-0.5">
+                      {course && c.c !== "none" ? (
+                        <button
+                          type="button"
+                          aria-pressed={c.c === "course" || c.c === "also"}
+                          onClick={() => toggleCovers(course.id, row.x, row.name)}
+                          className="w-full rounded-tile px-1 transition-colors hover:bg-surface-2"
+                        >
+                          <Bar cell={c} />
+                          <span className="sr-only">
+                            , {t("r_route", { x: cols[i].r.id })}: {course.name}
+                          </span>
+                        </button>
+                      ) : (
+                        <Bar cell={c} className="px-1" />
+                      )}
+                    </span>
+                  );
+                })}
               </div>
             ))}
             {!shown.length && <Hint className="py-3">{t("q_same")}</Hint>}
