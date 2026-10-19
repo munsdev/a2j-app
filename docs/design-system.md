@@ -35,12 +35,20 @@ paper (`src/features/plan/plan.css`), which uses the light primitives on purpose
 | --- | --- | --- |
 | Paper | `#f3f1eb` | the page background |
 | Pine ink | `#1c2b27` | text, primary buttons, the job stop |
-| Brick | `#c4512b` | the line: ground covered, skills you have |
+| Green | `#2f6b4f` | the line: ground covered, skills you have, progress, yes |
 | Course blue | `#2d5f86` | skills a saved course covers |
 | Track | `#c3c9c4` | the line still ahead, dividers |
-| Brick tint | `#f7e3da` | soft highlights, the sample bar |
+| Green tint | `#e2efe7` | soft highlights, the sample bar |
+| Brick | `#c4512b` | the logo only (line mark, wordmark, app icons) |
+| Red | `#b23c32` | no, ruled out, delete, errors |
 
-Dark theme: pine-black surfaces (`#131a18`, `#1b2421`), a lighter brick (`#e0714c`) and blue (`#7fb0d8`).
+Dark theme: pine-black surfaces (`#131a18`, `#1b2421`), a lighter green (`#6cc196`), blue (`#7fb0d8`) and
+brick for the logo (`#e0714c`).
+
+**One meaning per hue, everywhere.** Green is good (have, progress, done, yes), blue is a course, red is bad
+(no, ruled out, delete, errors), ink is neutral and "selected". Brick is the brand and appears only in the logo,
+so nothing good is ever drawn in a red-orange. Colour never carries meaning alone: a skill you have has a check,
+a pressed chip a check (or a cross when it rules something out), a course a book.
 
 | Role | Utility | Meaning |
 | --- | --- | --- |
@@ -53,6 +61,7 @@ Dark theme: pine-black surfaces (`#131a18`, `#1b2421`), a lighter brick (`#e0714
 | **learn** | `outline-learn` | a skill still to learn (always drawn dashed or as an open ring) |
 | yes / no (+ `-bg`, `on-yes`, `on-no`) | `bg-yes` … | thumbs up / down, success / danger |
 | on-accent | `text-on-accent` | text and marks on a solid `have` fill |
+| brand, on-brand | `fill-brand` … | the logo only |
 | focus | `outline-focus` | the keyboard focus ring |
 | riasec-r … riasec-c | `text-riasec-r` … | the six interest-type letters |
 

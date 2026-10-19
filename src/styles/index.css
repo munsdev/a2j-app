@@ -29,6 +29,8 @@
   --color-line: var(--line);
   --color-line-2: var(--line-2);
   --color-on-accent: var(--on-accent);
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
   --color-have: var(--have);
   --color-have-bg: var(--have-bg);
   --color-have-ink: var(--have-ink);

@@ -28,9 +28,9 @@ import "./board.css";
 
 /* =================== THE BOARD: THE LINE ===================
    A goal's way from You to the job, drawn as a transit line with one stop per skill: the skills you have
-   (filled, brick), then "You are here", then the skills your saved courses cover (ringed in course blue, with
+   (filled, green), then "You are here", then the skills your saved courses cover (ringed in course blue, with
    a badge naming the course), then the next stop (a highlighted card) and the rest still to learn (grey
-   rings), and the job as the last stop. Ground covered is a solid brick line, the rest grey track. Every
+   rings), and the job as the last stop. Ground covered is a solid green line, the rest grey track. Every
    skill opens its sheet (rate it, see its courses, find one). It reads the document, so rating a skill or
    saving a course moves things at once; what arrives gets a small pop. Wide boxes (a container query, not
    the window) wrap the line into two columns. */

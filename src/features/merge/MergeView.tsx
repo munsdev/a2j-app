@@ -7,7 +7,7 @@ import { COURSE_F, JOBAD_F, type TextField } from "@/features/courses/found";
 import { labelKey } from "@/features/courses/labels";
 import { strings as courseStrings } from "@/features/courses/strings";
 import { useT } from "@/i18n";
-import { Button, Chips, Choice, Hint, Icon, SheetHead, ToggleChip } from "@/ui";
+import { Button, Chips, Choice, Hint, SheetHead, ToggleChip } from "@/ui";
 import { strings } from "./strings";
 
 /* =================== COMPARE TWO RECORDS ===================
@@ -141,7 +141,6 @@ export function MergeView({
                     })
                   }
                 >
-                  {on && <Icon name="check" />}
                   {skName(E, x)}
                 </ToggleChip>
               );

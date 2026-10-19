@@ -316,7 +316,6 @@ export function ItemForm({
                     pressed={on}
                     onClick={() => setDraft((x) => ({ ...x, goals: toggle(x.goals, j.id) }))}
                   >
-                    {on && <Icon name="check" />}
                     {j.role === "goal" && <Icon name="flag" />}
                     {j.title}
                   </ToggleChip>
@@ -459,7 +458,6 @@ function CoverPicker({
                   onClick={() => onToggle(tl.x)}
                   className="text-left"
                 >
-                  {pressed && <Icon name="check" />}
                   <span className="min-w-0 break-words hyphens-auto">{tl.name}</span>
                   {tl.have && (
                     <Tag tone="have" className="-mr-1.5 whitespace-nowrap">

@@ -1,9 +1,12 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { Icon } from "./Icon";
 
 /* Chips: small rounded labels. ToggleChip is a pressable chip for multi-select choices. Tag is smaller,
-   for card metadata (goal, fit, preparation level). */
+   for card metadata (goal, fit, preparation level). A pressed chip carries a mark as well as its colour:
+   a check, or a cross for a danger chip (something ruled out), so red and green are never told apart by
+   colour alone. */
 const chip = cva(
   "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-small leading-tight font-bold no-underline [&_svg]:size-[15px]",
   {
@@ -30,6 +33,7 @@ export function ToggleChip({
   pressed,
   danger,
   className,
+  children,
   ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & { pressed: boolean; danger?: boolean }) {
   return (
@@ -39,11 +43,14 @@ export function ToggleChip({
       className={cn(
         chip({ tone: "plain" }),
         "min-h-10 px-3.5 shadow-[inset_0_0_0_1.5px_var(--line-2)] transition-colors",
-        pressed && (danger ? "bg-no text-white shadow-none" : "bg-ink text-canvas shadow-none"),
+        pressed && (danger ? "bg-no text-on-no shadow-none" : "bg-ink text-canvas shadow-none"),
         className,
       )}
       {...rest}
-    />
+    >
+      {pressed && <Icon name={danger ? "close" : "check"} className="stroke-3" />}
+      {children}
+    </button>
   );
 }
 

@@ -92,7 +92,6 @@ export function Quilt() {
               <Hint>{t("q_tap")}</Hint>
             </div>
             <ToggleChip pressed={diff} onClick={() => setDiff((v) => !v)}>
-              {diff && <Icon name="check" />}
               {t("q_diff")}
             </ToggleChip>
           </div>

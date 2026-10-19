@@ -1,8 +1,8 @@
 import { cn } from "@/lib/cn";
 
-/* The picture next to the welcome: a line from A to the job. Two stops behind (filled, brick), "You are
+/* The picture next to the welcome: a line from A to the job. Two stops behind (filled, green), "You are
    here", a stop a course covers (ringed in course blue), two still to learn (dashed rings), and the job as
-   the last stop. The ground covered is solid brick, the rest grey track. One SVG, so it stays crisp at every
+   the last stop. The ground covered is solid green, the rest grey track. One SVG, so it stays crisp at every
    size; colours come from the tokens, so it follows dark mode. Decorative: hidden from screen readers. */
 
 const W = 400;

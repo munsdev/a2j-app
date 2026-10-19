@@ -75,7 +75,7 @@ type LineItem =
   | { kind: "next" }
   | { kind: "job" };
 export type LineRow = LineItem & {
-  /** ground covered: the line is drawn solid (brick) through this row */
+  /** ground covered: the line is drawn solid (green) through this row */
   lit: boolean;
 };
 

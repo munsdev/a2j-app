@@ -9,10 +9,13 @@
 
    The three skill states are the heart of the product and must stay distinguishable without colour:
    have = solid fill + check, course = tinted fill + solid outline + book, learn = dashed outline.
+   One meaning per hue, everywhere: green = have, progress, yes; blue = course; red = no, ruled out, danger;
+   brick = the logo only (LineMark, Wordmark, app icons). Never use brick or red for something good.
    ========================================================================== */
 
 /* ---------- 1. brand primitives ---------- */
-/* Workshop: pine-black ink on paper, a brick line for ground covered, a steady blue for courses.
+/* Workshop: pine-black ink on paper, a green line for ground covered, a steady blue for courses, brick for the
+   logo.
    Away on purpose from orange + navy (ING), Arbeitsagentur and Bahn red, job-board blues and XING teal. */
 :root {
   --brand-paper-50: #f8f7f3;
@@ -53,8 +56,11 @@
   --brand-green-100: #e2efe7;
   --brand-green-400: #6cc196;
   --brand-green-600: #2f6b4f;
+  --brand-green-800: #1d4a36;
   --brand-green-900: #16352a;
   --brand-green-950: #0c1f17;
+  --brand-green-ink-dark: #b4e2c9;
+  --brand-green-soft-dark: #1a2b24;
 
   --brand-red-100: #fbe6e3;
   --brand-red-400: #f08a7e;
@@ -88,10 +94,13 @@
   --line-2: var(--brand-pine-300);
   /* text and marks on top of a solid "have" fill */
   --on-accent: #ffffff;
+  /* the logo: the one place brick appears */
+  --brand: var(--brand-brick-600);
+  --on-brand: #ffffff;
 
-  --have: var(--brand-brick-600);
-  --have-bg: var(--brand-brick-100);
-  --have-ink: var(--brand-brick-800);
+  --have: var(--brand-green-600);
+  --have-bg: var(--brand-green-100);
+  --have-ink: var(--brand-green-800);
   --course: var(--brand-blue-600);
   --course-bg: var(--brand-blue-100);
   --course-ink: var(--brand-blue-700);
@@ -105,8 +114,8 @@
   --on-no: #ffffff;
   --focus: var(--brand-blue-600);
   /* decoration that is not a skill state (call-to-action panels, the sample bar, highlights) */
-  --accent-soft: var(--brand-brick-100);
-  --accent-ink: var(--brand-brick-800);
+  --accent-soft: var(--brand-green-100);
+  --accent-ink: var(--brand-green-800);
 
   --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgb(28 43 39 / 0.04);
   --shadow-lift: 0 0 0 1px var(--line), 0 12px 32px rgb(28 43 39 / 0.14);
@@ -128,10 +137,12 @@
      must stay visible on dark surfaces */
   --line-2: var(--brand-night-600);
   --on-accent: var(--brand-pine-900);
+  --brand: var(--brand-brick-400);
+  --on-brand: var(--brand-pine-900);
 
-  --have: var(--brand-brick-400);
-  --have-bg: var(--brand-brick-900);
-  --have-ink: var(--brand-brick-ink-dark);
+  --have: var(--brand-green-400);
+  --have-bg: var(--brand-green-900);
+  --have-ink: var(--brand-green-ink-dark);
   --course: var(--brand-blue-300);
   --course-bg: var(--brand-blue-900);
   --course-ink: var(--brand-blue-ink-dark);
@@ -144,8 +155,8 @@
   --no-bg: var(--brand-red-900);
   --on-no: var(--brand-red-900);
   --focus: var(--brand-blue-300);
-  --accent-soft: #2e211b;
-  --accent-ink: var(--brand-brick-ink-dark);
+  --accent-soft: var(--brand-green-soft-dark);
+  --accent-ink: var(--brand-green-ink-dark);
 
   --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.3);
   --shadow-lift: 0 0 0 1px var(--line), 0 12px 32px rgb(0 0 0 / 0.45);

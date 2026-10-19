@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 import { Icon } from "./Icon";
 
 /* A skill as a tile. Three states, told apart by shape as well as colour:
-   have = brick fill + check · course = blue tint + solid outline + book · learn = dashed outline. */
+   have = green fill + check · course = blue tint + solid outline + book · learn = dashed outline. */
 export function SkillTile({
   name,
   state,

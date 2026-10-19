@@ -37,7 +37,6 @@ export function AlsoSheet({
               pressed={pressed}
               onClick={() => setOn((l) => (pressed ? l.filter((x) => x !== j.id) : [...l, j.id]))}
             >
-              {pressed && <Icon name="check" />}
               {j.role === "goal" && <Icon name="flag" />}
               {j.title}
             </ToggleChip>

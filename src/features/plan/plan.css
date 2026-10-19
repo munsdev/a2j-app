@@ -72,7 +72,7 @@
   padding-top: 2px;
 }
 
-/* sections: uppercase headings with a brick underline */
+/* sections: uppercase headings with a green underline */
 .sp-sec {
   @apply flex flex-col gap-1;
   break-inside: avoid;
@@ -83,7 +83,7 @@
   line-height: 1.2;
   letter-spacing: 0.08em;
   color: var(--brand-pine-500);
-  border-bottom: 2px solid var(--brand-brick-600);
+  border-bottom: 2px solid var(--brand-green-600);
   padding-bottom: 4px;
   margin-bottom: 4px;
 }

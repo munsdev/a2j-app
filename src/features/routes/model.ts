@@ -45,7 +45,7 @@ export function quiltRows(cols: readonly (readonly Tile[])[]): QuiltRow[] {
 /** The routes ask something different of you on this skill. */
 export const differs = (r: QuiltRow): boolean => r.cells.some((c) => c.c !== r.cells[0].c);
 
-/** A square as five parts, like the skill ratings: what you can do (brick), what the course adds on top
+/** A square as five parts, like the skill ratings: what you can do (green), what the course adds on top
  *  (blue, up to five), and the rest: still to learn (dashed) when you cannot do it yet, room to grow
  *  (plain) when you can. */
 export type Part = "have" | "course" | "learn" | "room";

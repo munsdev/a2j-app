@@ -63,7 +63,7 @@ export function Score({ m, className }: { m: Match; className?: string }) {
   );
 }
 
-/** The look of each state, told apart by shape as well as colour: have a brick fill and a check; also the
+/** The look of each state, told apart by shape as well as colour: have a green fill and a check; also the
  *  same with a blue ring around it; course a blue ring and a book; learn a dashed outline; none a dot. */
 const LOOK: Record<Cell, string> = {
   have: "bg-have text-on-accent",
@@ -163,7 +163,7 @@ const PART: Record<Part, string> = {
   room: "bg-sunk",
 };
 
-/** A square of the quilt as five parts, like the skill ratings: your level in brick, what the course adds in
+/** A square of the quilt as five parts, like the skill ratings: your level in green, what the course adds in
  *  blue, the rest dashed (to learn) or plain (room to grow). A dot when the job does not need it. The words
  *  are for screen readers. */
 export function Bar({ cell, className }: { cell: QuiltCell; className?: string }) {
