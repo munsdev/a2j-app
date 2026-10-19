@@ -37,5 +37,18 @@ if (session.get("a2j:finished")) {
   setTimeout(() => toast(t()("fin_done")), 300);
 }
 
-/* installable app: an offline copy of the app files (never of the person's data) */
-if ("serviceWorker" in navigator && location.protocol !== "file:") registerSW({ immediate: true });
+/* installable app: an offline copy of the app files (never of the person's data). The browser only looks for a
+   new version when a page is opened, and a phone keeps the app open for days, so also look when the app comes
+   back to the front and once an hour; a new version then takes over (the data stays, it is in localStorage). */
+if ("serviceWorker" in navigator && location.protocol !== "file:")
+  registerSW({
+    immediate: true,
+    onRegisteredSW(_url, reg) {
+      if (!reg) return;
+      const check = () => {
+        if (document.visibilityState === "visible" && navigator.onLine) void reg.update();
+      };
+      document.addEventListener("visibilitychange", check);
+      setInterval(check, 60 * 60 * 1000);
+    },
+  });
