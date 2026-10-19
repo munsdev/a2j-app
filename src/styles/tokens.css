@@ -12,97 +12,98 @@
    ========================================================================== */
 
 /* ---------- 1. brand primitives ---------- */
+/* Workshop: pine-black ink on paper, a brick line for ground covered, a steady blue for courses.
+   Away on purpose from orange + navy (ING), Arbeitsagentur and Bahn red, job-board blues and XING teal. */
 :root {
-  --brand-slate-50: #f5f7fa;
-  --brand-slate-100: #eef2f6;
-  --brand-slate-150: #e4e9f0;
-  --brand-slate-200: #dce3eb;
-  --brand-slate-300: #c3ccd7;
-  --brand-slate-400: #9aa5b3;
-  --brand-slate-500: #636e7e;
-  --brand-slate-600: #4a5566;
-  --brand-slate-900: #1e2633;
+  --brand-paper-50: #f8f7f3;
+  --brand-paper-100: #f3f1eb;
+  --brand-paper-200: #e9e6dd;
+  --brand-paper-300: #e3dfd5;
+  --brand-pine-300: #c3c9c4;
+  --brand-pine-400: #8b958f;
+  --brand-pine-500: #5d6a65;
+  --brand-pine-600: #43524d;
+  --brand-pine-900: #1c2b27;
 
-  --brand-night-950: #0e1218;
-  --brand-night-900: #12161d;
-  --brand-night-850: #1b212b;
-  --brand-night-800: #222a35;
-  --brand-night-700: #2c3542;
-  --brand-night-600: #3c4756;
-  --brand-night-400: #6d7887;
-  --brand-night-300: #97a2b1;
-  --brand-night-200: #bcc5d1;
+  --brand-night-950: #0e1412;
+  --brand-night-900: #131a18;
+  --brand-night-850: #1b2421;
+  --brand-night-800: #212c29;
+  --brand-night-700: #2d3a36;
+  --brand-night-600: #4a5953;
+  --brand-night-400: #6f7d77;
+  --brand-night-300: #98a39e;
+  --brand-night-200: #bcc6c1;
+  --brand-night-100: #eef1ee;
 
-  --brand-apricot-100: #ffe8d4;
-  --brand-apricot-400: #f4a462;
-  --brand-apricot-500: #f2994a;
-  --brand-apricot-800: #8a4a10;
-  --brand-apricot-900: #4a2e14;
-  --brand-apricot-ink-dark: #ffd3ae;
+  --brand-brick-100: #f7e3da;
+  --brand-brick-400: #e0714c;
+  --brand-brick-600: #c4512b;
+  --brand-brick-800: #8e3518;
+  --brand-brick-900: #3a2219;
+  --brand-brick-ink-dark: #f6bfa8;
 
-  --brand-blue-100: #e3f0fa;
-  --brand-blue-300: #6aa9de;
-  --brand-blue-600: #2b74b3;
-  --brand-blue-700: #1d5f96;
-  --brand-blue-900: #17324a;
-  --brand-blue-ink-dark: #b9daf5;
+  --brand-blue-100: #e2ecf4;
+  --brand-blue-300: #7fb0d8;
+  --brand-blue-600: #2d5f86;
+  --brand-blue-700: #234b6b;
+  --brand-blue-900: #17293a;
+  --brand-blue-ink-dark: #b9d6ee;
 
-  --brand-green-100: #e1f3e8;
-  --brand-green-400: #5cc28a;
-  --brand-green-600: #237545;
-  --brand-green-900: #173a27;
-  --brand-green-950: #0d1f15;
+  --brand-green-100: #e2efe7;
+  --brand-green-400: #6cc196;
+  --brand-green-600: #2f6b4f;
+  --brand-green-900: #16352a;
+  --brand-green-950: #0c1f17;
 
   --brand-red-100: #fbe6e3;
   --brand-red-400: #f08a7e;
   --brand-red-600: #b23c32;
   --brand-red-900: #40201c;
 
-  --brand-blush-300: #f7a7a1;
-  --brand-blush-600: #c46d68;
-
   /* Holland interest types (RIASEC): one hue each, used only for the interest code letters */
-  --brand-riasec-r: #c26a1f;
-  --brand-riasec-i: #2b74b3;
-  --brand-riasec-a: #a24d9a;
-  --brand-riasec-s: #2e8b57;
-  --brand-riasec-e: #c2453a;
-  --brand-riasec-c: #5b6b85;
+  --brand-riasec-r: #b4561f;
+  --brand-riasec-i: #2d5f86;
+  --brand-riasec-a: #94488d;
+  --brand-riasec-s: #2f6b4f;
+  --brand-riasec-e: #b23c32;
+  --brand-riasec-c: #56656f;
 
-  --brand-font-display: "Fredoka Variable", ui-rounded, "Nunito Variable", system-ui, sans-serif;
-  --brand-font-text: "Nunito Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Barlow: after California highway signs. Atkinson Hyperlegible Next: letters that cannot be confused. */
+  --brand-font-display: "Barlow", "Atkinson Hyperlegible Next Variable", system-ui, sans-serif;
+  --brand-font-text: "Atkinson Hyperlegible Next Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --brand-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  --brand-radius-tile: 12px;
-  --brand-radius-control: 14px;
-  --brand-radius-option: 16px;
-  --brand-radius-card: 18px;
-  --brand-radius-panel: 26px;
+  --brand-radius-tile: 8px;
+  --brand-radius-control: 10px;
+  --brand-radius-option: 12px;
+  --brand-radius-card: 14px;
+  --brand-radius-panel: 16px;
 }
 
 /* ---------- 2. semantic roles: light ---------- */
 :root,
 :root[data-theme="light"] {
   color-scheme: light;
-  --canvas: var(--brand-slate-100);
+  --canvas: var(--brand-paper-100);
   --surface: #ffffff;
-  --surface-2: var(--brand-slate-50);
-  --sunk: var(--brand-slate-150);
-  --ink: var(--brand-slate-900);
-  --ink-2: var(--brand-slate-600);
-  --ink-3: var(--brand-slate-500);
-  --line: var(--brand-slate-200);
-  --line-2: var(--brand-slate-300);
-  /* text on top of a solid accent (have, the mascot) in both themes */
-  --on-accent: var(--brand-slate-900);
+  --surface-2: var(--brand-paper-50);
+  --sunk: var(--brand-paper-200);
+  --ink: var(--brand-pine-900);
+  --ink-2: var(--brand-pine-600);
+  --ink-3: var(--brand-pine-500);
+  --line: var(--brand-paper-300);
+  --line-2: var(--brand-pine-300);
+  /* text and marks on top of a solid "have" fill */
+  --on-accent: #ffffff;
 
-  --have: var(--brand-apricot-500);
-  --have-bg: var(--brand-apricot-100);
-  --have-ink: var(--brand-apricot-800);
+  --have: var(--brand-brick-600);
+  --have-bg: var(--brand-brick-100);
+  --have-ink: var(--brand-brick-800);
   --course: var(--brand-blue-600);
   --course-bg: var(--brand-blue-100);
   --course-ink: var(--brand-blue-700);
-  --learn: var(--brand-slate-400);
+  --learn: var(--brand-pine-400);
 
   --yes: var(--brand-green-600);
   --yes-bg: var(--brand-green-100);
@@ -110,15 +111,14 @@
   --no: var(--brand-red-600);
   --no-bg: var(--brand-red-100);
   --on-no: #ffffff;
-  --cheek: var(--brand-blush-300);
   --focus: var(--brand-blue-600);
   /* decoration that is not a skill state (call-to-action panels, the sample bar, highlights) */
-  --accent-soft: var(--brand-apricot-100);
-  --accent-ink: var(--brand-apricot-800);
+  --accent-soft: var(--brand-brick-100);
+  --accent-ink: var(--brand-brick-800);
 
-  --shadow-card: 0 1px 2px rgb(30 38 51 / 0.06), 0 6px 20px rgb(30 38 51 / 0.07);
-  --shadow-lift: 0 2px 6px rgb(30 38 51 / 0.08), 0 18px 40px rgb(30 38 51 / 0.12);
-  --scrim: rgb(14 18 24 / 0.5);
+  --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgb(28 43 39 / 0.04);
+  --shadow-lift: 0 0 0 1px var(--line), 0 12px 32px rgb(28 43 39 / 0.14);
+  --scrim: rgb(14 20 18 / 0.5);
 }
 
 /* ---------- 2. semantic roles: dark ---------- */
@@ -128,22 +128,22 @@
   --surface: var(--brand-night-850);
   --surface-2: var(--brand-night-800);
   --sunk: var(--brand-night-950);
-  --ink: var(--brand-slate-100);
+  --ink: var(--brand-night-100);
   --ink-2: var(--brand-night-200);
   --ink-3: var(--brand-night-300);
   --line: var(--brand-night-700);
   /* a step lighter than the light theme's equivalent: dashed "learn" outlines and empty bar segments
      must stay visible on dark surfaces */
-  --line-2: #4d5a6b;
-  --on-accent: var(--brand-slate-900);
+  --line-2: var(--brand-night-600);
+  --on-accent: var(--brand-pine-900);
 
-  --have: var(--brand-apricot-400);
-  --have-bg: var(--brand-apricot-900);
-  --have-ink: var(--brand-apricot-ink-dark);
+  --have: var(--brand-brick-400);
+  --have-bg: var(--brand-brick-900);
+  --have-ink: var(--brand-brick-ink-dark);
   --course: var(--brand-blue-300);
   --course-bg: var(--brand-blue-900);
   --course-ink: var(--brand-blue-ink-dark);
-  --learn: #7d8999;
+  --learn: var(--brand-night-400);
 
   --yes: var(--brand-green-400);
   --yes-bg: var(--brand-green-900);
@@ -151,12 +151,11 @@
   --no: var(--brand-red-400);
   --no-bg: var(--brand-red-900);
   --on-no: var(--brand-red-900);
-  --cheek: var(--brand-blush-600);
   --focus: var(--brand-blue-300);
-  --accent-soft: #33281f;
-  --accent-ink: var(--brand-apricot-ink-dark);
+  --accent-soft: #2e211b;
+  --accent-ink: var(--brand-brick-ink-dark);
 
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 6px 20px rgb(0 0 0 / 0.25);
-  --shadow-lift: 0 2px 6px rgb(0 0 0 / 0.35), 0 18px 40px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-lift: 0 0 0 1px var(--line), 0 12px 32px rgb(0 0 0 / 0.45);
   --scrim: rgb(0 0 0 / 0.6);
 }

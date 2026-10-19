@@ -11,7 +11,7 @@ import { ToastHost } from "@/ui/ToastHost";
 import { EmptyState } from "@/ui/EmptyState";
 import { Button } from "@/ui/Button";
 import { Page } from "@/ui/Layout";
-import { Mascot } from "@/ui/Mascot";
+import { LineMark } from "@/ui/LineMark";
 import { performRedo, performUndo } from "./history";
 import { go } from "./router";
 import { isShortcutBlocked } from "@/lib/keys";
@@ -31,7 +31,7 @@ const SCREENS: Record<View, LazyExoticComponent<ComponentType>> = {
 function ScreenLoading() {
   return (
     <div className="flex min-h-[60vh] [animation:fade-in_.3s_ease-out_.3s_forwards] items-center justify-center opacity-0">
-      <Mascot size={48} mood="think" className="animate-bob" />
+      <LineMark height={28} state="waiting" />
     </div>
   );
 }

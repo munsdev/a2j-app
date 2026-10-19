@@ -13,7 +13,7 @@ const chip = cva(
         have: "bg-have-bg text-have-ink",
         course: "bg-course-bg text-course-ink",
         yes: "bg-yes-bg text-yes",
-        no: "bg-no-bg text-no",
+        no: "bg-transparent text-no shadow-[inset_0_0_0_1.5px_currentColor]",
         plain: "bg-surface text-ink",
       },
     },

@@ -14,8 +14,7 @@ export const bandWidth = (band: number): number => [400, 600, 800, 950, 1100, 12
 /** Cards side by side on the idea deck: one on phones, two on tablets, three on computers. */
 export const ideaSlots = (w: number): 1 | 2 | 3 => (w >= 1180 ? 3 : w >= 760 ? 2 : 1);
 
-/* ---------- the board: a path with milestones ---------- */
-export type Milestone = "you" | "have" | "courses" | "learn" | "job";
+/* ---------- the board: the line ---------- */
 export interface PathCourse {
   id: string;
   name: string;
@@ -33,18 +32,13 @@ export interface BoardPath {
   course: Tile[];
   learn: Tile[];
   courses: PathCourse[];
-  /** the milestones shown, in order */
-  milestones: Milestone[];
-  /** where the guide stands */
-  here: Milestone;
   /** the one thing to do next */
   next: PathNext;
 }
 
-/** The goal's skills grouped into milestones from You to the job. The guide stands on the last milestone
- *  reached: the courses once a saved course covers something, else what you have, else You; on the job when
- *  you have every skill. Next is the first skill no course covers; when every one is covered, starting the
- *  first course; when you have them all, job ads. saved = courses saved for this job, in order. */
+/** The goal's skills grouped by state, the saved courses with the skills they cover, and the one next step:
+ *  the first skill no course covers; when every one is covered, starting the first course; when you have
+ *  them all, job ads. saved = courses saved for this job, in order. */
 export function boardPath(tiles: readonly Tile[], saved: readonly { id: string; name: string }[]): BoardPath {
   const have = tiles.filter((x) => x.state === "have");
   const course = tiles.filter((x) => x.state === "course");
@@ -61,11 +55,6 @@ export function boardPath(tiles: readonly Tile[], saved: readonly { id: string; 
   });
   const courses = [...byId.values()];
   const all = tiles.length > 0 && have.length === tiles.length;
-  const milestones: Milestone[] = ["you", "have"];
-  if (courses.length || learn.length) milestones.push("courses");
-  if (learn.length) milestones.push("learn");
-  milestones.push("job");
-  const here: Milestone = all ? "job" : course.length ? "courses" : have.length ? "have" : "you";
   const next: PathNext = learn.length
     ? { kind: "skill", tile: learn[0] }
     : course.length
@@ -73,10 +62,99 @@ export function boardPath(tiles: readonly Tile[], saved: readonly { id: string; 
       : all
         ? { kind: "done" }
         : { kind: "none" };
-  return { have, course, learn, courses, milestones, here, next };
+  return { have, course, learn, courses, next };
 }
-/** The line from a milestone to the next one is lit (apricot) up to where the guide stands. */
-export const segmentLit = (p: BoardPath, i: number): boolean => i + 1 <= p.milestones.indexOf(p.here);
+
+export type Zone = "have" | "courses" | "learn";
+type LineItem =
+  | { kind: "start" }
+  | { kind: "zone"; zone: Zone; n: number }
+  | { kind: "stop"; tile: Tile }
+  | { kind: "more"; zone: Zone; n: number; open: boolean }
+  | { kind: "here" }
+  | { kind: "next" }
+  | { kind: "job" };
+export type LineRow = LineItem & {
+  /** ground covered: the line is drawn solid (brick) through this row */
+  lit: boolean;
+};
+
+/** The line from You to the job, one row per stop, in reading order: You; the skills you have; where you
+ *  are; the skills your courses cover; the next stop and the rest still to learn; the job (with every
+ *  skill had, the next stop is job ads, just before it). Long groups show
+ *  the first `cap` stops and a "+N more" row (open = the groups shown in full). The line is lit up to
+ *  where you are, all the way when you have every skill. */
+export function boardLine(p: BoardPath, cap = 8, open: ReadonlySet<Zone> = new Set()): LineRow[] {
+  const rows: LineItem[] = [{ kind: "start" }];
+  const group = (zone: Zone, tiles: readonly Tile[], limit = cap) => {
+    const all = open.has(zone) || tiles.length <= limit;
+    (all ? tiles : tiles.slice(0, limit)).forEach((tile) => rows.push({ kind: "stop", tile }));
+    if (tiles.length > limit) rows.push({ kind: "more", zone, n: tiles.length - limit, open: all });
+  };
+  if (p.have.length) {
+    rows.push({ kind: "zone", zone: "have", n: p.have.length });
+    group("have", p.have);
+  }
+  rows.push({ kind: "here" });
+  const here = rows.length - 1;
+  if (p.courses.length) {
+    rows.push({ kind: "zone", zone: "courses", n: p.course.length });
+    group("courses", p.course);
+  }
+  if (p.next.kind === "course") rows.push({ kind: "next" });
+  if (p.learn.length) {
+    rows.push({ kind: "zone", zone: "learn", n: p.learn.length });
+    rows.push({ kind: "next" });
+    group("learn", p.learn.slice(1), cap - 1);
+  }
+  if (p.next.kind === "done") rows.push({ kind: "next" });
+  rows.push({ kind: "job" });
+  const done = p.next.kind === "done";
+  return rows.map((r, i) => ({ ...r, lit: done || i <= here }));
+}
+
+/** A short badge per course, so a stop can say which course covers it: a short word in brackets ("IHK"),
+ *  else a short word in capitals ("SQL", "B1"), else the initials of the longer words. Unique within the
+ *  list (a number is added when two would read the same). */
+const SMALL = new Set([
+  "and",
+  "for",
+  "the",
+  "with",
+  "und",
+  "für",
+  "der",
+  "die",
+  "das",
+  "den",
+  "mit",
+  "zum",
+  "zur",
+]);
+export function courseBadges(courses: readonly { id: string; name: string }[]): Map<string, string> {
+  const out = new Map<string, string>();
+  const used = new Set<string>();
+  courses.forEach((c) => {
+    const name = c.name.trim();
+    const words = name.split(/[\s\-/,:()]+/).filter(Boolean);
+    const bracket = /\(([^()]{2,5})\)/.exec(name)?.[1].trim();
+    const caps = words.find((w) => /^[A-ZÄÖÜ][A-ZÄÖÜ0-9]{1,4}$/.test(w));
+    const initials = words
+      .filter((w) => w.length > 2 && !SMALL.has(w.toLowerCase()))
+      .slice(0, 3)
+      .map((w) => w[0].toUpperCase())
+      .join("");
+    let b = bracket || caps || initials || name.slice(0, 3).toUpperCase() || "?";
+    if (used.has(b)) {
+      let i = 2;
+      while (used.has(b + i)) i++;
+      b = b + i;
+    }
+    used.add(b);
+    out.set(c.id, b);
+  });
+  return out;
+}
 
 /* ---------- compare ---------- */
 export interface CompareRow {

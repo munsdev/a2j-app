@@ -3,7 +3,6 @@ import { useDoc } from "@/data/store";
 import { loadExamples, exampleName, type ExampleId } from "@/data/examples";
 import { backToOwn, ownKept, sampleStrings, startOwn } from "@/app/samples";
 import { useT, useLang } from "@/i18n";
-import { Mascot } from "@/ui/Mascot";
 import { LinkButton } from "@/ui/Button";
 import { openSamplePicker } from "@/features/backup/sheets";
 
@@ -22,7 +21,6 @@ export function SampleBar() {
   return (
     <div className="flex items-center justify-center gap-x-3 bg-accent-soft px-4 text-small font-bold text-accent-ink print:hidden">
       <span className="inline-flex min-w-0 items-center gap-1.5">
-        <Mascot size={22} mood="wink" />
         <span className="truncate">{t("sb_text", { x: name || exampleName(example, lang) })}</span>
       </span>
       {/* also in the menu ("Try a sample profile"): on small phones the bar keeps to one line */}

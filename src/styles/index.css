@@ -1,7 +1,12 @@
 @import "tailwindcss";
-@import "@fontsource-variable/fredoka";
-@import "@fontsource-variable/nunito";
-@import "@fontsource-variable/nunito/wght-italic.css";
+@import "@fontsource/barlow/latin-600.css";
+@import "@fontsource/barlow/latin-700.css";
+@import "@fontsource/barlow/latin-800.css";
+@import "@fontsource/barlow/latin-ext-600.css";
+@import "@fontsource/barlow/latin-ext-700.css";
+@import "@fontsource/barlow/latin-ext-800.css";
+@import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
+@import "@fontsource-variable/atkinson-hyperlegible-next/wght-italic.css";
 @import "./tokens.css";
 
 /* The theme is always set on <html data-theme> by the boot script in index.html (stored choice or system). */
@@ -37,7 +42,6 @@
   --color-no: var(--no);
   --color-no-bg: var(--no-bg);
   --color-on-no: var(--on-no);
-  --color-cheek: var(--cheek);
   --color-focus: var(--focus);
   --color-accent-soft: var(--accent-soft);
   --color-accent-ink: var(--accent-ink);
@@ -99,6 +103,13 @@
   --animate-sheet-up: sheet-up 0.3s var(--ease-out-soft);
 
   --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-stop-pulse: stop-pulse 1.4s ease-in-out infinite;
+
+  @keyframes stop-pulse {
+    50% {
+      transform: scale(0.82);
+    }
+  }
 
   @keyframes fade-in {
     from {
@@ -155,7 +166,7 @@
   h1,
   h2,
   h3 {
-    @apply font-display font-semibold text-balance;
+    @apply font-display font-bold text-balance;
     overflow-wrap: break-word;
     hyphens: auto;
     letter-spacing: -0.005em;

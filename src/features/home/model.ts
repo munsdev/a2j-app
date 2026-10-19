@@ -27,3 +27,22 @@ export function nextStep(d: Doc): NextStep {
 
 /** The first word of a name, for the welcome. */
 export const firstName = (name: string): string => name.trim().split(/\s+/)[0] ?? "";
+
+/* ---------- the line on Home: Start · Profile · Goals · Plan · Job ---------- */
+export type LineStop = "start" | "profile" | "goals" | "plan" | "job";
+export const LINE_STOPS: readonly LineStop[] = ["start", "profile", "goals", "plan", "job"];
+
+/** Where the person is on Home's line: on the profile until it is done or there is a goal, then on the
+ *  goals while skills are left to get, then on the plan, then at the job. allHad: every skill of the main
+ *  goal is had. */
+export function lineStop(d: Doc, allHad: boolean): Exclude<LineStop, "start"> {
+  if (!mainGoal(d)) return partsDone(d) < 6 ? "profile" : "goals";
+  if (!allHad) return "goals";
+  return planStarted(d) ? "job" : "plan";
+}
+
+/** A count as a word, up to twelve ("four", "elf"), else as digits. words: the words from zero, comma-separated. */
+export function countWord(n: number, words: string, capital = false): string {
+  const w = words.split(",")[n]?.trim() || String(n);
+  return capital ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+}

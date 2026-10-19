@@ -42,7 +42,7 @@ export const useSettings = create<SettingsState>(() => ({
 function applyTheme(t: Theme) {
   document.documentElement.dataset.theme = t;
   const m = document.querySelector('meta[name="theme-color"]');
-  if (m) m.setAttribute("content", t === "dark" ? "#12161d" : "#eef2f6");
+  if (m) m.setAttribute("content", t === "dark" ? "#131a18" : "#f3f1eb");
 }
 
 export function setLang(lang: Lang): void {

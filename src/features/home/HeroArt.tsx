@@ -1,53 +1,41 @@
-import { useId } from "react";
 import { cn } from "@/lib/cn";
-import { Mascot } from "@/ui/Mascot";
 
-/* The picture next to the welcome: the guide hops from A over skill tiles (two you have, one a course covers,
-   two to learn) to the job flag. One SVG, so it stays crisp at every size; colours come from the tokens, so it
-   follows dark mode. Decorative: hidden from screen readers. */
+/* The picture next to the welcome: a line from A to the job. Two stops behind (filled, brick), "You are
+   here", a stop a course covers (ringed in course blue), two still to learn (dashed rings), and the job as
+   the last stop. The ground covered is solid brick, the rest grey track. One SVG, so it stays crisp at every
+   size; colours come from the tokens, so it follows dark mode. Decorative: hidden from screen readers. */
 
-const S = 44; // tile size
 const W = 400;
-const H = 196;
-const TILES = [
-  { k: "a", x: 32, y: 164 },
-  { k: "have", x: 88, y: 140 },
-  { k: "have", x: 144, y: 116 },
-  { k: "course", x: 200, y: 126 },
-  { k: "learn", x: 256, y: 138 },
-  { k: "learn", x: 312, y: 102 },
-  { k: "job", x: 368, y: 58 },
-] as const;
-
-/* a hop from tile to tile: up and over, landing on the next one */
-const TRAIL = TILES.slice(1)
-  .map((b, i) => {
-    const a = TILES[i];
-    const mx = (a.x + b.x) / 2;
-    const my = Math.min(a.y, b.y) - 36;
-    return `${i ? "" : `M${a.x} ${a.y}`} Q${mx} ${my} ${b.x} ${b.y}`;
-  })
-  .join(" ");
+const H = 180;
+const Y1 = 132; // the line before the bend
+const Y2 = 88; // and after it
+const HERE = 152; // where you are, on the lower stretch
+const BEND = 168;
 
 /* the icons, drawn on the same 24px grid as the icon set */
 const CHECK = "M5 12.5l4.5 4.5L19 7.5";
-const BOOK = "M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5";
-const FLAG = "M5 21V4M5 4h11l-2 4 2 4H5";
+const PERSON = "M12 4a4 4 0 1 1 0 8a4 4 0 1 1 0-8M4 21c1-4.5 4.5-7 8-7s7 2.5 8 7";
 
-function Glyph({ d, x, y, className }: { d: string; x: number; y: number; className: string }) {
-  const k = 0.95; // 24px grid → about 23px on a 44px tile
+function Glyph({ d, x, y, k, className }: { d: string; x: number; y: number; k: number; className: string }) {
   return (
     <path
       d={d}
       transform={`translate(${x - 12 * k} ${y - 12 * k}) scale(${k})`}
-      className={cn("fill-none [stroke-width:2.7] [stroke-linecap:round] [stroke-linejoin:round]", className)}
+      className={cn("fill-none [stroke-linecap:round] [stroke-linejoin:round]", className)}
     />
   );
 }
 
-export function HeroArt({ className }: { className?: string }) {
-  const id = useId().replace(/:/g, "");
-  const guide = TILES[2];
+const STOPS = [
+  { k: "have", x: 76, y: Y1 },
+  { k: "have", x: 116, y: Y1 },
+  { k: "course", x: 220, y: Y2 },
+  { k: "learn", x: 266, y: Y2 },
+  { k: "learn", x: 310, y: Y2 },
+] as const;
+
+export function HeroArt({ here, className }: { here: string; className?: string }) {
+  const pillW = 64 + here.length * 7.4;
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
@@ -55,105 +43,82 @@ export function HeroArt({ className }: { className?: string }) {
       aria-hidden="true"
       focusable="false"
     >
-      <defs>
-        <radialGradient id={`${id}-glow`}>
-          <stop offset="0" className="[stop-color:var(--accent-soft)] [stop-opacity:0.9]" />
-          <stop offset="0.55" className="[stop-color:var(--accent-soft)] [stop-opacity:0.35]" />
-          <stop offset="1" className="[stop-color:var(--accent-soft)] [stop-opacity:0]" />
-        </radialGradient>
-        <mask id={`${id}-trail`} maskUnits="userSpaceOnUse" x="0" y="0" width={W} height={H}>
-          <path
-            d={TRAIL}
-            pathLength={1}
-            className="trail-reveal fill-none stroke-white [stroke-width:8] [stroke-linecap:round]"
-          />
-        </mask>
-      </defs>
-
-      {/* a warm light behind the way */}
-      <ellipse
-        cx={W / 2}
-        cy={H / 2 + 12}
-        rx={W / 2 + 20}
-        ry={H / 2 + 8}
-        fill={`url(#${id}-glow)`}
-        className="dark:opacity-45"
-      />
-
-      {/* the dotted trail, drawn in from the start */}
+      {/* the track still ahead, then the ground covered on top of it */}
       <path
-        d={TRAIL}
-        mask={`url(#${id}-trail)`}
-        className="fill-none stroke-learn [stroke-width:3.2] opacity-70 [stroke-dasharray:0.1_9] [stroke-linecap:round]"
+        d={`M${HERE} ${Y1} H${BEND} L${BEND + Y1 - Y2} ${Y2} H352`}
+        className="fill-none stroke-line-2 [stroke-width:8] [stroke-linejoin:round]"
+      />
+      <path
+        d={`M30 ${Y1} H${HERE}`}
+        pathLength={1}
+        className="hart-lit fill-none stroke-have [stroke-width:8] [stroke-linecap:round]"
       />
 
-      {TILES.map((t, i) => {
-        const x = t.x - S / 2;
-        const y = t.y - S / 2;
-        return (
-          <g key={i} className="tile" style={{ ["--i" as string]: i }}>
-            {t.k === "a" && (
-              <>
-                <rect x={x} y={y} width={S} height={S} rx={11} className="fill-ink" />
-                {/* 21px in the picture's own units (it scales with the SVG), not a type step */}
-                <text
-                  x={t.x}
-                  y={t.y + 7.5}
-                  textAnchor="middle"
-                  className="fill-canvas font-display text-[21px] font-semibold"
-                >
-                  A
-                </text>
-              </>
-            )}
-            {t.k === "have" && (
-              <>
-                <rect x={x} y={y} width={S} height={S} rx={11} className="fill-have" />
-                <Glyph d={CHECK} x={t.x} y={t.y} className="stroke-on-accent" />
-              </>
-            )}
-            {t.k === "course" && (
-              <>
-                <rect
-                  x={x + 1}
-                  y={y + 1}
-                  width={S - 2}
-                  height={S - 2}
-                  rx={10}
-                  className="fill-course-bg stroke-course [stroke-width:2]"
-                />
-                <Glyph d={BOOK} x={t.x} y={t.y - 0.5} className="stroke-course-ink [stroke-width:2.2]" />
-              </>
-            )}
-            {t.k === "learn" && (
-              <rect
-                x={x + 1}
-                y={y + 1}
-                width={S - 2}
-                height={S - 2}
-                rx={10}
-                className="fill-surface stroke-learn [stroke-width:2] [stroke-dasharray:5_4]"
-              />
-            )}
-            {t.k === "job" && (
-              <>
-                <rect x={x} y={y} width={S} height={S} rx={11} className="fill-ink" />
-                <g className="flag-wave">
-                  <Glyph d={FLAG} x={t.x + 0.5} y={t.y} className="stroke-have" />
-                </g>
-              </>
-            )}
-          </g>
-        );
-      })}
+      {/* A: the start */}
+      <g className="hart-stop" style={{ ["--i" as string]: 0 }}>
+        <circle cx={30} cy={Y1} r={17} className="fill-surface stroke-have [stroke-width:6]" />
+        {/* 17px in the picture's own units (it scales with the SVG), not a type step */}
+        <text
+          x={30}
+          y={Y1 + 6}
+          textAnchor="middle"
+          className="fill-ink font-display text-[17px] font-extrabold"
+        >
+          A
+        </text>
+      </g>
 
-      {/* the guide, standing on the last tile the person has */}
-      <g transform={`translate(${guide.x - 26} ${guide.y - S / 2 - 49})`}>
-        <g className="guide-hop">
-          <g className="guide-idle">
-            <Mascot size={52} mood="wink" />
-          </g>
+      {STOPS.map((s, i) => (
+        <g key={i} className="hart-stop" style={{ ["--i" as string]: i + (s.k === "have" ? 1 : 2) }}>
+          {s.k === "have" && (
+            <>
+              <circle cx={s.x} cy={s.y} r={12} className="fill-have" />
+              <Glyph d={CHECK} x={s.x} y={s.y} k={0.62} className="stroke-on-accent [stroke-width:4.2]" />
+            </>
+          )}
+          {s.k === "course" && (
+            <circle cx={s.x} cy={s.y} r={11} className="fill-course-bg stroke-course [stroke-width:5]" />
+          )}
+          {s.k === "learn" && (
+            <circle
+              cx={s.x}
+              cy={s.y}
+              r={10.5}
+              className="fill-surface stroke-learn [stroke-width:3] [stroke-dasharray:4.5_3.6]"
+            />
+          )}
         </g>
+      ))}
+
+      {/* the job: the last stop */}
+      <g className="hart-stop" style={{ ["--i" as string]: 7 }}>
+        <rect x={340} y={Y2 - 17} width={52} height={34} rx={17} className="fill-ink" />
+        <text
+          x={366}
+          y={Y2 + 5.5}
+          textAnchor="middle"
+          className="fill-canvas font-display text-[16px] font-extrabold"
+        >
+          Job
+        </text>
+      </g>
+
+      {/* you are here: an ink pill over the line, pointing at where the ground covered ends */}
+      <g className="hart-here">
+        <circle cx={HERE} cy={Y1} r={5} className="fill-ink" />
+        <path d={`M${HERE} 60 V${Y1 - 4}`} className="stroke-ink [stroke-width:2.5]" />
+        <rect x={HERE - pillW / 2} y={34} width={pillW} height={34} rx={17} className="fill-ink" />
+        <circle cx={HERE - pillW / 2 + 19} cy={51} r={12} className="fill-have" />
+        <Glyph
+          d={PERSON}
+          x={HERE - pillW / 2 + 19}
+          y={51}
+          k={0.6}
+          className="stroke-on-accent [stroke-width:3.2]"
+        />
+        <text x={HERE - pillW / 2 + 38} y={56} className="fill-canvas font-sans text-[14px] font-bold">
+          {here}
+        </text>
       </g>
     </svg>
   );

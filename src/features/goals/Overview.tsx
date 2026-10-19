@@ -10,7 +10,7 @@ import { useOccSearch } from "@/app/useCatalogSearch";
 import { canRank, setVote } from "@/domain/rank";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { Button, Hint, Icon, Mascot, Page, PageHeader, Panel, PanelTitle, SuggestInput, Tag } from "@/ui";
+import { Button, Hint, Icon, Page, PageHeader, Panel, PanelTitle, SuggestInput, Tag } from "@/ui";
 import { BoardCard } from "./BoardCard";
 import { FitBadge } from "./Fit";
 import { useFitText, useMatch } from "./useFit";
@@ -61,8 +61,7 @@ export function Overview() {
           {/* one dark button per screen: without a goal the empty board has it. Before ideas can be ranked
               the empty board already explains why and leads to part 2, so this panel waits for a goal */}
           {(ranks || main) && (
-            <section className="flex items-center gap-4 rounded-panel bg-[linear-gradient(135deg,var(--have-bg),var(--course-bg))] p-5 min-[1000px]:flex-col min-[1000px]:items-start">
-              <Mascot size={64} mood="wink" />
+            <section className="flex flex-col items-start gap-2 rounded-panel bg-accent-soft p-5">
               <div className="flex flex-col items-start gap-2">
                 <h2 className="text-title">{t("g_ideas_h")}</h2>
                 <p className="text-ink-2">{ranks ? t("g_ideas_p") : t("g_ideas_need")}</p>

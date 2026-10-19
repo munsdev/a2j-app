@@ -3,7 +3,7 @@ import { go } from "@/app/router";
 import { useDoc } from "@/data/store";
 import { PARTS, partStatus } from "@/domain/assess";
 import { useT } from "@/i18n";
-import { ActionBar, Button, Icon, Mascot, StepPills } from "@/ui";
+import { ActionBar, Button, Icon, LineMark, StepPills } from "@/ui";
 import { partAfter } from "../logic";
 import { strings } from "../strings";
 import { useStepFocus } from "./hooks";
@@ -27,7 +27,7 @@ export function DoneScreen({ part }: { part: PartKey }) {
         <i />
         <i />
       </div>
-      <Mascot size={88} mood="yay" className="animate-pop-in" />
+      <LineMark height={44} state="arrived" className="animate-pop-in" />
       <StepHeading ref={heading}>{t("run_done_h", { n: PARTS.indexOf(part) + 1 })}</StepHeading>
       <p className="max-w-[44ch] text-lead text-ink-2">{nx ? t("run_done_p") : t("run_all_done")}</p>
       <StepPills

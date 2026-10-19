@@ -1,244 +1,207 @@
 @reference "@/styles/index.css";
 
-/* =================== THE BOARD: A PATH WITH MILESTONES ===================
-   Narrow boxes: one line down the left, a square per milestone on it, the milestone's content to the right.
-   Wide boxes (container query): the milestones become columns along a horizontal line, squares on top.
-   Each milestone draws the line on to the next one; lit (apricot) up to where the guide stands. */
+/* =================== THE BOARD: THE LINE ===================
+   One row per stop: a 30px rail on the left with the track and the stop's dot, the content to the right.
+   Each row draws its own piece of track, so the line runs on unbroken; solid brick where ground is covered
+   (data-lit), grey track after. --dot-y is where the dot sits in its row (the middle of the first line). */
 
-.path {
+.line {
   container-type: inline-size;
 }
-/* the guide on the first square needs room above it */
-.path[data-here="you"] {
-  padding-top: 14px;
-}
-.path-list {
+.line-list {
   display: flex;
   flex-direction: column;
 }
 
-.ms {
+.lr {
+  --dot-y: 22px;
   position: relative;
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-columns: 30px minmax(0, 1fr);
   column-gap: 12px;
-  padding-bottom: 22px;
 }
-.ms:last-child {
-  padding-bottom: 0;
+.lr[data-kind="next"] {
+  --dot-y: 30px;
 }
-/* the line on to the next milestone, from under this square to the top of the next one */
-.ms:not(:last-child)::before {
+.lr-rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.lr-rail::before {
   content: "";
   position: absolute;
-  left: 18px;
-  top: 40px;
+  left: 12px;
+  width: 6px;
+  top: 0;
   bottom: 0;
-  width: 4px;
   background: var(--line-2);
   transition: background-color 0.4s;
 }
-.ms[data-lit]::before {
+.lr[data-lit] .lr-rail::before {
   background: var(--have);
 }
+/* the line starts at the first stop and ends at the last */
+.lr:first-child .lr-rail::before {
+  top: var(--dot-y);
+}
+.lr:last-child .lr-rail::before {
+  bottom: auto;
+  height: var(--dot-y);
+}
 
-/* ---------- squares ---------- */
-.ms-sq {
-  @apply relative z-[1] flex size-10 items-center justify-center rounded-tile font-display text-caption font-semibold;
+.lr-body {
+  @apply flex min-w-0 flex-col justify-center;
+  min-height: 44px;
 }
-.ms-sq svg {
-  width: 20px;
-  height: 20px;
+.lr[data-kind="zone"] .lr-body {
+  padding: 14px 0 2px;
 }
-.ms-sq-you,
-.ms-sq-job {
-  @apply bg-ink text-canvas;
+.lr[data-kind="here"] .lr-body {
+  padding: 8px 0;
 }
-.ms-sq-job svg {
-  color: var(--have);
+.lr[data-kind="next"] .lr-body {
+  padding: 8px 0;
 }
-.ms-sq-have {
+
+/* ---------- the dots ---------- */
+.lr-dot {
+  @apply relative z-[1] flex flex-none items-center justify-center rounded-full font-display text-[0.6875rem] leading-none font-extrabold;
+  width: 22px;
+  height: 22px;
+  margin-top: calc(var(--dot-y) - 11px);
+}
+.lr-dot svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 3.4;
+}
+.lr-dot-start {
+  @apply bg-surface text-ink;
+  box-shadow: inset 0 0 0 5px var(--have);
+}
+.lr-dot-have {
   @apply bg-have text-on-accent;
 }
-.ms-sq-have svg {
-  stroke-width: 2.8;
+/* a course covers it: tinted inside a thick blue ring */
+.lr-dot-course {
+  @apply bg-course-bg;
+  box-shadow: inset 0 0 0 5px var(--course);
 }
-.ms-sq-courses {
-  @apply bg-course-bg text-course-ink;
-  box-shadow: inset 0 0 0 2px var(--course);
+/* still to learn: a dashed ring, so it reads without colour too */
+.lr-dot-learn {
+  @apply border-[2.5px] border-dashed border-learn bg-surface;
+  /* a gap in the track around it, so the dashes read as a ring */
+  box-shadow: 0 0 0 2px var(--surface);
 }
-.ms-sq-learn {
-  @apply bg-surface text-lead text-ink-3 tabular-nums outline-2 -outline-offset-2 outline-learn outline-dashed;
+.lr-dot-next {
+  @apply bg-surface;
+  box-shadow: inset 0 0 0 5px var(--have);
 }
-/* nothing here yet: a quiet square */
-.ms-sq[data-quiet] {
-  @apply bg-surface-2 text-ink-3 shadow-ring;
+.lr-dot-more {
+  @apply border-2 border-learn bg-surface;
+  width: 12px;
+  height: 12px;
+  margin-top: calc(var(--dot-y) - 6px);
 }
-.ms-sq-have[data-quiet] svg {
-  stroke-width: 2;
+/* the job: the last stop, an ink pill */
+.lr-dot-job {
+  @apply bg-ink px-2 text-[0.75rem] text-canvas;
+  width: auto;
+  min-width: 36px;
+  height: 26px;
+  margin-top: calc(var(--dot-y) - 13px);
+}
+.lr-dot-arrived {
+  @apply bg-have text-on-accent;
+}
+.lr-dot-lg {
+  @apply text-label;
+  min-width: 38px;
+  height: 38px;
+  margin-top: 0;
+}
+.lr-dot-start.lr-dot-lg {
+  width: 38px;
+}
+.lr-dot-unknown {
+  @apply bg-surface text-lead text-ink-3 outline-[2.5px] -outline-offset-[2.5px] outline-learn outline-dashed;
+  animation: wiggle 3s ease-in-out infinite;
 }
 
-/* the guide stands on the milestone you have reached: it pops in where it lands, then bobs */
-.ms-token {
-  position: absolute;
-  bottom: calc(100% - 12px);
-  left: 50%;
-  margin-left: -15px;
-  width: 30px;
-  height: 30px;
-  pointer-events: none;
-  z-index: 2;
-  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.18));
+/* ---------- the content ---------- */
+.lr-zone {
+  @apply font-display text-caption font-bold tracking-[.08em] text-ink-3 uppercase;
+}
+/* a stop: the whole row right of the dot opens the skill */
+.lr-stop {
+  @apply flex min-h-11 w-full items-center gap-2.5 py-1 text-left text-label leading-snug font-bold transition-transform duration-150 active:scale-[.99];
+}
+@media (hover: hover) {
+  .lr-stop:hover > span:first-child,
+  .lr-course:hover .lr-course-name {
+    @apply underline underline-offset-2;
+  }
+}
+/* which course covers a stop */
+.lr-badge {
+  @apply flex-none rounded-[5px] bg-course-bg px-1.5 py-0.5 font-display text-caption leading-tight font-extrabold text-course-ink;
+  box-shadow: inset 0 0 0 1.5px var(--course);
+}
+.lr-course {
+  @apply flex min-h-11 items-center gap-2.5 py-1 text-left text-small;
+}
+.lr-course-name {
+  @apply font-bold text-course-ink;
+}
+
+/* You are here: an ink pill with the person's initial on a brick disc */
+.lr-here {
+  @apply inline-flex items-center gap-2 self-start rounded-full bg-ink py-1.5 pr-3 pl-1.5 text-caption font-bold text-canvas;
   animation: var(--animate-pop-in);
 }
-.ms-token > svg {
-  width: 30px;
-  height: 30px;
-  animation: var(--animate-bob);
-  animation-duration: 2.2s;
+.lr-here-me {
+  @apply flex size-[22px] flex-none items-center justify-center rounded-full bg-have font-display text-caption leading-none font-extrabold text-on-accent;
+}
+.lr-here-me svg {
+  width: 14px;
+  height: 14px;
 }
 
-/* ---------- content ---------- */
-.ms-body {
-  @apply flex min-w-0 flex-col items-stretch gap-2.5;
-}
-.ms-title {
-  @apply flex min-h-10 items-center font-display text-[1.125rem] leading-tight font-semibold text-balance;
-}
-.ms-quiet {
-  @apply font-sans text-label font-bold text-ink-2;
-}
-.ms-title.ms-quiet {
-  font-size: var(--text-label);
-}
-.ms-caption {
-  display: none;
-}
-
-/* a skill: opens its sheet. Looks small, but the tap area is 44px tall */
-.ms-chip {
-  @apply relative inline-flex min-h-8 items-center rounded-full px-2.5 py-1 text-left text-caption leading-snug font-bold transition-[transform,box-shadow] duration-150 active:scale-[.97];
-}
-.ms-chip::after {
-  content: "";
-  position: absolute;
-  inset: -6px 0;
-}
-.ms-chip-have {
-  @apply bg-have-bg text-have-ink hover:shadow-[inset_0_0_0_1.5px_var(--have)];
-}
-.ms-chip-learn {
-  @apply bg-surface text-ink-2 outline-[1.5px] -outline-offset-[1.5px] outline-learn outline-dashed hover:text-ink;
-}
-.ms-chip-more {
-  @apply bg-transparent text-ink-2 underline underline-offset-2 hover:text-ink;
-}
-.ms-link {
-  @apply underline-offset-2 hover:underline;
+/* the next stop: brick tint, a brick frame */
+.lr-next {
+  @apply flex flex-col items-stretch gap-2 rounded-option border-2 border-have bg-have-bg p-3 text-ink;
 }
 
 /* what just arrived (a skill rated, a course saved) pops in */
-.ms-fresh {
-  animation: ms-arrive 0.5s var(--ease-bounce) both;
+.lr-fresh {
+  animation: lr-arrive 0.5s var(--ease-bounce) both;
 }
-@keyframes ms-arrive {
+@keyframes lr-arrive {
   from {
-    transform: scale(0.6);
+    transform: scale(0.85);
     opacity: 0;
   }
 }
 
-/* ---------- wide boxes: the milestones as columns along the line ---------- */
+/* wide boxes: the line wraps into two columns, read down the first, then the second */
 @container (min-width: 46rem) {
-  .path-list {
-    display: grid;
-    grid-template-columns: var(--path-cols);
-    column-gap: 22px;
-    align-items: start;
+  .line-list {
+    display: block;
+    columns: 2;
+    column-gap: 40px;
   }
-  .ms {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding-bottom: 0;
-  }
-  .ms:not(:last-child)::before {
-    left: 56px;
-    right: -22px;
-    top: 26px;
-    bottom: auto;
-    width: auto;
-    height: 4px;
-  }
-  .ms[data-narrow] {
-    align-items: center;
-  }
-  .ms-sq {
-    @apply size-14 rounded-option text-label;
-  }
-  .ms-sq svg {
-    width: 26px;
-    height: 26px;
-  }
-  .ms-sq-learn {
-    @apply text-title;
-  }
-  .ms-token {
-    margin-left: -16px;
-    width: 32px;
-    height: 32px;
-    bottom: calc(100% - 10px);
-  }
-  .ms-token > svg {
-    width: 32px;
-    height: 32px;
-  }
-  .ms-title {
-    @apply min-h-0 text-title;
-  }
-  .ms-from,
-  .ms-wide-hide {
-    display: none;
-  }
-  .ms-caption {
-    @apply block text-center font-display text-caption font-semibold text-ink-2;
+  .lr {
+    break-inside: avoid;
   }
 }
 
-/* =================== NO GOAL YET ===================
-   You, a dashed line, a question mark that wiggles now and then */
-.sq {
-  @apply relative flex aspect-square flex-col items-center justify-center gap-0.5 rounded-control p-0 font-display text-lead font-semibold;
-}
-.sq-start {
-  @apply cursor-default bg-ink text-canvas;
-}
-.sq-start b {
-  font-size: 0.8125rem;
-  line-height: 1;
-}
-.sq-start svg.mascot-in {
-  width: 46%;
-  max-width: 28px;
-}
-.qboard {
-  display: grid;
-  grid-template-columns: auto auto auto 1fr;
-  gap: 12px;
-  align-items: center;
-}
-.qboard .sq {
-  width: 60px;
-}
-.qboard-dash {
-  width: 30px;
-  height: 4px;
-  background: repeating-linear-gradient(90deg, var(--line-2) 0 6px, transparent 6px 10px);
-}
-.sq-q {
-  /* one-off: the question mark fills the square */
-  @apply cursor-default bg-surface-2 text-[1.875rem] text-ink-3 outline-[2.5px] -outline-offset-[3px] outline-learn outline-dashed;
-  animation: wiggle 3s ease-in-out infinite;
+/* no goal yet, or a goal outside the catalogue: a dashed track between You and the end */
+.qline-dash {
+  width: 44px;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, var(--line-2) 0 8px, transparent 8px 13px);
 }
 @keyframes wiggle {
   0%,
@@ -251,14 +214,5 @@
   }
   96% {
     transform: rotate(6deg);
-  }
-}
-@media (max-width: 559px) {
-  /* the text goes under the squares; the last track takes its width, so the squares stay together */
-  .qboard {
-    row-gap: 14px;
-  }
-  .qboard > div {
-    grid-column: 1 / -1;
   }
 }

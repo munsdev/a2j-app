@@ -30,12 +30,7 @@ export function Results() {
     skills: ratedSkills(doc.esco.rated).length > 0 || doc.esco.own.some((o) => o.level > 0),
   };
   const any = Object.values(show).some(Boolean);
-  if (!any)
-    return (
-      <EmptyState soft mood="wink">
-        {t("pr_none_yet")}
-      </EmptyState>
-    );
+  if (!any) return <EmptyState soft>{t("pr_none_yet")}</EmptyState>;
   return (
     <section aria-labelledby="pr-results" className="flex flex-col gap-3">
       <div className="mt-2.5 flex flex-col gap-1.5">

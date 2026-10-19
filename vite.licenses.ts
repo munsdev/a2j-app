@@ -18,8 +18,8 @@ const FIXED = [
   "tailwind-merge",
   "class-variance-authority",
   "tailwindcss",
-  "@fontsource-variable/fredoka",
-  "@fontsource-variable/nunito",
+  "@fontsource/barlow",
+  "@fontsource-variable/atkinson-hyperlegible-next",
 ];
 const scoped = (scope: string, filter: (n: string) => boolean = () => true) =>
   existsSync(join(ROOT, "node_modules", scope))

@@ -6,7 +6,7 @@
 .paper {
   /* a sheet of paper has nearly square corners: a one-off radius, not a UI shape */
   @apply min-w-0 rounded-[6px] bg-white shadow-lift;
-  color: var(--brand-slate-900);
+  color: var(--brand-pine-900);
   padding: 22px 18px;
   color-scheme: light;
 }
@@ -34,7 +34,7 @@
 /* header: name or goal, contact line, date; a heavy rule under it */
 .sp-head {
   @apply flex items-start justify-between gap-4;
-  border-bottom: 3px solid var(--brand-slate-900);
+  border-bottom: 3px solid var(--brand-pine-900);
   padding-bottom: 12px;
 }
 @media (max-width: 479px) {
@@ -51,28 +51,28 @@
   @apply font-extrabold uppercase;
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: var(--brand-slate-500);
+  color: var(--brand-pine-500);
 }
 .sp-title {
   @apply font-display font-semibold;
   font-size: 26px;
   line-height: 1.12;
-  color: var(--brand-slate-900);
+  color: var(--brand-pine-900);
   margin-top: 2px;
 }
 .sp-contact {
   font-size: 12.5px;
-  color: var(--brand-slate-600);
+  color: var(--brand-pine-600);
   margin-top: 4px;
 }
 .sp-date {
   @apply whitespace-nowrap;
   font-size: 12px;
-  color: var(--brand-slate-500);
+  color: var(--brand-pine-500);
   padding-top: 2px;
 }
 
-/* sections: uppercase headings with an apricot underline */
+/* sections: uppercase headings with a brick underline */
 .sp-sec {
   @apply flex flex-col gap-1;
   break-inside: avoid;
@@ -82,8 +82,8 @@
   font-size: 13px;
   line-height: 1.2;
   letter-spacing: 0.08em;
-  color: var(--brand-slate-500);
-  border-bottom: 2px solid var(--brand-apricot-500);
+  color: var(--brand-pine-500);
+  border-bottom: 2px solid var(--brand-brick-600);
   padding-bottom: 4px;
   margin-bottom: 4px;
 }
@@ -96,7 +96,7 @@
   margin-top: 1px;
 }
 .sp-sec li::marker {
-  color: var(--brand-slate-400);
+  color: var(--brand-pine-400);
 }
 .sp-lead {
   @apply font-extrabold;
@@ -108,14 +108,14 @@
 }
 .sp-note {
   font-size: 12px;
-  color: var(--brand-slate-500);
+  color: var(--brand-pine-500);
 }
 .sp-via {
   color: var(--brand-blue-700);
 }
 .sp-pending {
   @apply italic;
-  color: var(--brand-slate-400);
+  color: var(--brand-pine-400);
 }
 .sp-tab {
   border-collapse: collapse;
@@ -129,7 +129,7 @@
 }
 .sp-tab th {
   @apply font-normal whitespace-nowrap;
-  color: var(--brand-slate-500);
+  color: var(--brand-pine-500);
 }
 .sp-tab td {
   overflow-wrap: anywhere;
@@ -137,7 +137,7 @@
 .sp-url {
   display: block;
   font-size: 11.5px;
-  color: var(--brand-slate-500);
+  color: var(--brand-pine-500);
   word-break: break-all;
 }
 .sp-text {

@@ -36,7 +36,7 @@
 }
 .confetti i:nth-child(6) {
   left: 90%;
-  background: var(--cheek);
+  background: var(--course);
   animation-delay: 0.25s;
 }
 @keyframes confetti-fall {

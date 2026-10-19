@@ -6,10 +6,8 @@ import { doInstall, isStandalone, useInstall } from "@/app/install";
 import { useDocStore } from "@/data/store";
 import { hasOwnData } from "@/data/doc";
 import { useT } from "@/i18n";
-import { BRAND } from "@/i18n/common";
 import { cn } from "@/lib/cn";
 import { Icon, type IconName } from "@/ui/Icon";
-import { Mascot } from "@/ui/Mascot";
 import { Wordmark } from "@/ui/Wordmark";
 import { LangSwitch } from "@/ui/LangSwitch";
 import { openPrompts } from "@/features/prompts/api";
@@ -34,10 +32,11 @@ export function TopBar() {
             go("home");
           }}
           className="col-start-1 row-start-1 flex items-center gap-2 text-[1.125rem] no-underline md:text-[1.25rem]"
-          aria-label={`${BRAND}, ${t("nav_home")}`}
         >
-          <Mascot size={34} />
-          <Wordmark className="max-[360px]:text-base" />
+          {/* the name comes from the visible words (the mark is decorative), so voice control users can say
+              what they see; under 400px the words are only read out, the mark carries the brand */}
+          <Wordmark className="max-[399px]:[&>span:last-child]:sr-only" />
+          <span className="sr-only">, {t("nav_home")}</span>
         </a>
         <nav
           aria-label={t("nav_aria")}

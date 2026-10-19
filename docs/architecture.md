@@ -63,7 +63,7 @@ Dark mode comes from the tokens; `dark:` is rarely needed.
 **Components.** Use the kit in `src/ui` first (Button, IconButton, LinkButton, Chip, ToggleChip, Tag, Field, Input,
 Textarea, Select, Checkbox, Choice, Page, PageHeader, Panel, PanelTitle, Lede, Hint, Eyebrow, SubHeading, ButtonRow,
 SkillBar, Track, StepPills, Segmented, ActionBar, EmptyState, PromptBox, SuggestInput, SkillTile, TileLegend,
-TileGrid, RunHeader, Icon, Mascot). Components that only one feature needs live in that feature's folder.
+TileGrid, RunHeader, Icon, LineMark). Components that only one feature needs live in that feature's folder.
 
 **State.**
 - The document (everything the person entered) lives in `@/data/store`. Read with a narrow selector:

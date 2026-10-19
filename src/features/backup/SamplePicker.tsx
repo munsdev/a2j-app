@@ -9,11 +9,10 @@ import {
   type ExampleId,
 } from "@/data/examples";
 import { useDoc } from "@/data/store";
+import { cn } from "@/lib/cn";
 import { useLang, useT } from "@/i18n";
-import { Mascot, RowButton, SheetHead, type Mood } from "@/ui";
+import { RowButton, SheetHead } from "@/ui";
 import { backupStrings } from "./strings";
-
-const MOOD: Record<ExampleId, Mood> = { holmes: "think", robin: "wink", geppetto: "" };
 
 /** The sheet to pick a sample profile. */
 export function SamplePicker() {
@@ -46,8 +45,14 @@ export function SamplePicker() {
                   void openExample(id).finally(() => setBusy(null));
                 }}
                 lead={
-                  <span className="flex size-14 items-center justify-center rounded-option bg-surface shadow-ring-soft">
-                    <Mascot size={40} mood={MOOD[id]} className={busy === id ? "animate-bob" : ""} />
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "flex size-12 items-center justify-center rounded-full bg-have font-display text-heading font-extrabold text-on-accent",
+                      busy === id && "animate-pulse",
+                    )}
+                  >
+                    {exampleName(id, lang).charAt(0)}
                   </span>
                 }
                 title={exampleName(id, lang)}

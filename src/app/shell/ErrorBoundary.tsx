@@ -2,7 +2,7 @@ import { Component, type ReactNode } from "react";
 import { makeT } from "@/i18n";
 import { useSettings } from "@/app/settings";
 import { defineStrings } from "@/i18n";
-import { Mascot } from "@/ui/Mascot";
+import { LineMark } from "@/ui/LineMark";
 
 const S = defineStrings(
   {
@@ -43,7 +43,7 @@ export class ErrorBoundary extends Component<
         role="alert"
         className="mx-auto flex max-w-[560px] flex-col items-center gap-3 px-4 py-16 text-center"
       >
-        <Mascot size={64} mood="think" />
+        <LineMark height={36} />
         <h1 className="text-heading">{t("err_h")}</h1>
         <p className="text-ink-2">{t("err_p")}</p>
         <div className="flex gap-2.5">

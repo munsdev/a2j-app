@@ -1,7 +1,7 @@
 # Name and logo
 
 The source code of this project is free software under the [GNU AGPL v3.0 or later](LICENSE). The name
-**From A to Job**, the domain **a2j.app** and the logo and mascot are not part of that licence. They belong to
+**From A to Job**, the domain **a2j.app** and the logo (the line mark with the stops A, to and Job) are not part of that licence. They belong to
 Casey Muns and identify the version published at https://a2j.app.
 
 You are welcome to:
@@ -11,7 +11,7 @@ You are welcome to:
 
 Please do not:
 
-- publish a modified or self-hosted copy under the name "From A to Job" or with its logo or mascot;
+- publish a modified or self-hosted copy under the name "From A to Job" or with its logo;
 - suggest that your copy is the official app or endorsed by it.
 
 If you host a copy, give it its own name and logo. The brand assets are listed in

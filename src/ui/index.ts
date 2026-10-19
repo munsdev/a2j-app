@@ -1,6 +1,6 @@
 /* The UI kit. Everything a screen needs to look like the rest of the app. */
 export { Icon, ICON_NAMES, type IconName } from "./Icon";
-export { Mascot, type Mood } from "./Mascot";
+export { LineMark, type LineState } from "./LineMark";
 export { Button, IconButton, LinkButton, buttonVariants, type ButtonProps } from "./Button";
 export { Chip, Chips, ToggleChip, Tag, type ChipTone } from "./Chip";
 export { Input, Textarea, Select, Field, FieldGrid, Checkbox, Choice } from "./Form";

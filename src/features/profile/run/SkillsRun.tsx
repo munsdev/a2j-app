@@ -5,7 +5,7 @@ import { getDoc, update, useDoc } from "@/data/store";
 import { isKnowledge, skLabel } from "@/domain/catalog";
 import { buildDeck } from "@/domain/skills";
 import { useT } from "@/i18n";
-import { ActionBar, Button, Eyebrow, Hint, Icon, LevelPicker, Mascot, type Mood } from "@/ui";
+import { ActionBar, Button, Eyebrow, Hint, Icon, LevelPicker, LineMark, type LineState } from "@/ui";
 import { strings } from "../strings";
 import { AddSkill } from "./AddSkill";
 import { useDigitKeys, useStepFocus, useTouchSwipe } from "./hooks";
@@ -68,7 +68,7 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
     return (
       <RunFrame part="skills">
         <RunEmpty
-          mood="think"
+          state="way"
           heading={
             <StepHeading ref={heading} className="text-heading">
               {t("sk_nojobs_h")}
@@ -95,7 +95,7 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
     return (
       <RunFrame part="skills">
         <RunEmpty
-          mood="yay"
+          state="arrived"
           heading={
             <StepHeading ref={heading} className="text-heading">
               {t("sk_all_rated")}
@@ -155,22 +155,22 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
   );
 }
 
-/** An empty or finished deck: the guide, the (focused) heading, a line, one action. Not the kit's
+/** An empty or finished deck: the line mark, the (focused) heading, a line, one action. Not the kit's
  *  EmptyState, because the heading here must take the step's focus ref. */
 function RunEmpty({
-  mood,
+  state,
   heading,
   text,
   action,
 }: {
-  mood: Mood;
+  state: LineState;
   heading: ReactNode;
   text?: string;
   action?: ReactNode;
 }) {
   return (
     <div className="flex animate-fade-in flex-col items-center gap-3 px-2.5 py-8 text-center">
-      <Mascot size={64} mood={mood} />
+      <LineMark height={32} state={state} />
       {heading}
       {text && <p className="max-w-[52ch] text-ink-2">{text}</p>}
       {action && <div className="mt-1 flex flex-wrap justify-center gap-2.5">{action}</div>}

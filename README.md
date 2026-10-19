@@ -74,7 +74,7 @@ The source code is free software: you can redistribute it and/or modify it under
 [GNU Affero General Public License](LICENSE) as published by the Free Software Foundation, version 3 or (at your
 option) any later version. If you run a modified copy as a website, you must offer its source code to its users.
 
-The name "From A to Job", the domain a2j.app, the logo and the mascot are not covered by this licence, see
+The name "From A to Job", the domain a2j.app and the logo (the A, to, Job line mark) are not covered by this licence, see
 [TRADEMARKS.md](TRADEMARKS.md). Third-party data and libraries keep their own licences: ESCO (European
 Commission, free reuse with attribution), O*NET (USDOL/ETA, CC BY 4.0), the fonts (SIL Open Font License 1.1)
 and the npm packages listed in the generated `licenses.txt`.

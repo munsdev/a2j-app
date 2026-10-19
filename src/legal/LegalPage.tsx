@@ -3,7 +3,6 @@ import type { Lang } from "@/data/types";
 import { setLang } from "@/app/settings";
 import { Footer } from "@/app/shell/Footer";
 import { useLang } from "@/i18n";
-import { Mascot } from "@/ui/Mascot";
 import { Wordmark } from "@/ui/Wordmark";
 import { LangSwitch } from "@/ui/LangSwitch";
 import "./legal.css";
@@ -34,7 +33,6 @@ export function LegalPage({ titles, de, en }: LegalPageProps) {
             href="./"
             className="flex min-h-11 items-center gap-2 text-[1.125rem] no-underline md:text-[1.25rem]"
           >
-            <Mascot size={34} />
             <Wordmark />
           </a>
           <LangSwitch onChange={setLang} />

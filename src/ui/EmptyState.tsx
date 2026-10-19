@@ -1,19 +1,19 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { Mascot, type Mood } from "./Mascot";
+import { LineMark, type LineState } from "./LineMark";
 
-/** A friendly empty or finished state: the guide, a title, a line, actions. soft=true for an inline row. */
+/** An empty, waiting or finished state: the line mark, a title, a line, actions. soft=true for an inline row. */
 export function EmptyState({
-  mood = "think",
+  state = "way",
   title,
   children,
   actions,
   soft,
-  size = 64,
+  size = 32,
   titleAs: Title = "h2",
   className,
 }: {
-  mood?: Mood;
+  state?: LineState;
   title?: ReactNode;
   children?: ReactNode;
   actions?: ReactNode;
@@ -31,13 +31,13 @@ export function EmptyState({
           className,
         )}
       >
-        <Mascot size={48} mood={mood} />
+        <LineMark height={22} state={state} />
         <div>{children}</div>
       </div>
     );
   return (
     <div className={cn("flex flex-col items-center gap-3 px-2.5 py-8 text-center", className)}>
-      <Mascot size={size} mood={mood} />
+      <LineMark height={Math.min(size, 32)} state={state} />
       {title && <Title className="text-heading">{title}</Title>}
       {children && <div className="max-w-[52ch] text-ink-2">{children}</div>}
       {actions && <div className="flex flex-wrap justify-center gap-2.5">{actions}</div>}

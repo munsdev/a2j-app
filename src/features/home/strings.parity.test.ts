@@ -43,6 +43,11 @@ const ownKeys = (dict: Dict, added: readonly string[] = []) =>
 /* Strings that live elsewhere now: the install and "all deleted" toasts in main.tsx, the sample bar and its
    toasts in app/samples.ts, Edit's profile labels in i18n/profileFields (w_hobbies_s was never used). */
 const HOME_MOVED = ["inst_done"];
+/* the welcome and the sample hero, which the line replaced */
+const HOME_DROPPED = [
+  ...["h_back", "h_back0", "h_g_skills"],
+  ...["h_sample_h", "h_sample_p", "h_sample_own", "h_sample_back"],
+];
 const EDIT_MOVED = ["w_situation", "w_hobbies_s"];
 const BACKUP_MOVED = [
   ...["sb_text", "sb_back", "sb_own", "sb_switch"],
@@ -51,11 +56,13 @@ const BACKUP_MOVED = [
 /* strings for UI the previous app did not have */
 const EDIT_ADDED = ["e_filter", "e_filter_none"];
 const BACKUP_ADDED = ["bk_choose", "bk_nofile"];
+/* Home of a returning person: the line (l_), the next stops (n_), the stages (s_) */
+const HOME_ADDED = Object.keys(homeStrings.en).filter((k) => /^[lns]_/.test(k));
 
 describe("copy taken over from the previous app", () => {
   it("home: every string of home.js, word for word", () => {
-    expectCopied(homeStrings, ["home.js"]);
-    expect(ownKeys(homeStrings)).toEqual(legacyKeys("home.js", HOME_MOVED));
+    expectCopied(homeStrings, ["home.js"], HOME_ADDED);
+    expect(ownKeys(homeStrings, HOME_ADDED)).toEqual(legacyKeys("home.js", [...HOME_MOVED, ...HOME_DROPPED]));
   });
   it("edit: every string of edit.js, plus the labels it borrows, word for word", () => {
     expectCopied(editStrings, ["edit.js", "profile.js", "goals.js"], EDIT_ADDED);

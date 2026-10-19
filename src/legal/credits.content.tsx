@@ -58,8 +58,9 @@ export function CreditsDe() {
       </p>
       <h2>Schriften</h2>
       <p>
-        Fredoka (Überschriften) und Nunito (Text), unter der SIL Open Font License 1.1. Die Lizenztexte stehen
-        in <a href="licenses.txt">licenses.txt</a>.
+        Barlow von Jeremy Tribby (Überschriften) und Atkinson Hyperlegible Next vom Braille Institute (Text),
+        unter der SIL Open Font License 1.1. Die Lizenztexte stehen in <a href="licenses.txt">licenses.txt</a>
+        .
       </p>
       <h2>Software</h2>
       <p>
@@ -70,7 +71,7 @@ export function CreditsDe() {
       <p>
         Der Quellcode dieser App ist selbst freie Software, unter der GNU Affero General Public License,
         Version 3 oder später: <a href="https://github.com/munsdev/a2j-app">github.com/munsdev/a2j-app</a>.
-        Name, Logo und Maskottchen sind davon ausgenommen.
+        Name und Logo sind davon ausgenommen.
       </p>
       <h2>Selbsteinschätzung</h2>
       <p>
@@ -135,8 +136,8 @@ export function CreditsEn() {
       </p>
       <h2>Fonts</h2>
       <p>
-        Fredoka (headings) and Nunito (text), under the SIL Open Font License 1.1. The license texts are in{" "}
-        <a href="licenses.txt">licenses.txt</a>.
+        Barlow by Jeremy Tribby (headings) and Atkinson Hyperlegible Next by the Braille Institute (text),
+        under the SIL Open Font License 1.1. The license texts are in <a href="licenses.txt">licenses.txt</a>.
       </p>
       <h2>Software</h2>
       <p>
@@ -147,7 +148,7 @@ export function CreditsEn() {
       <p>
         The source code of this app is free software itself, under the GNU Affero General Public License,
         version 3 or later: <a href="https://github.com/munsdev/a2j-app">github.com/munsdev/a2j-app</a>. The
-        name, logo and mascot are not included.
+        name and logo are not included.
       </p>
       <h2>Self-assessment</h2>
       <p>

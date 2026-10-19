@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import { loadCatalog, useCatalog } from "@/domain/catalog";
 import { useLang, useT } from "@/i18n";
-import { Mascot } from "@/ui/Mascot";
+import { LineMark } from "@/ui/LineMark";
 import { Button } from "@/ui/Button";
 
 /* Screens that need the catalogue wrap their content in <NeedCatalog>: it loads the files (about 3 MB, cached
@@ -17,7 +17,7 @@ export function NeedCatalog({ children }: { children: ReactNode }) {
   if (esco) return <>{children}</>;
   return (
     <div className="flex flex-col items-center gap-3 px-2.5 py-16 text-center text-ink-2" role="status">
-      <Mascot size={56} mood="think" className={status === "error" ? "" : "animate-bob"} />
+      <LineMark height={32} state={status === "error" ? "way" : "waiting"} />
       {status === "error" ? (
         <>
           <p className="font-bold text-no">{t("loadfail")}</p>

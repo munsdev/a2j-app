@@ -257,7 +257,7 @@ export function Ideas() {
     return shell(
       <EmptyState
         size={72}
-        mood="yay"
+        state="arrived"
         title={t("c_nomore_h")}
         actions={
           <>

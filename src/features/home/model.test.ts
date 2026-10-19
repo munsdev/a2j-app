@@ -3,7 +3,7 @@ import examples from "@/data/examples.json";
 import { emptyDoc, shape } from "@/data/doc";
 import type { Doc, PartKey } from "@/data/types";
 import { PARTS } from "@/domain/assess";
-import { firstName, nextStep, planStarted } from "./model";
+import { countWord, firstName, lineStop, nextStep, planStarted } from "./model";
 
 const holmes = (): Doc => ({ ...shape(structuredClone(examples.examples.holmes.en)), example: "holmes" });
 const withDone = (d: Doc, parts: readonly PartKey[]): Doc => ({
@@ -56,5 +56,25 @@ describe("firstName", () => {
     expect(firstName("Sherlock Holmes")).toBe("Sherlock");
     expect(firstName("  Ann  ")).toBe("Ann");
     expect(firstName("")).toBe("");
+  });
+});
+
+describe("lineStop", () => {
+  it("profile first, then goals, then plan, then the job", () => {
+    expect(lineStop(emptyDoc(), false)).toBe("profile");
+    expect(lineStop(withDone(emptyDoc(), PARTS), false)).toBe("goals");
+    const g = withGoal(emptyDoc());
+    expect(lineStop(g, false)).toBe("goals");
+    expect(lineStop(g, true)).toBe("plan");
+    expect(lineStop({ ...g, summary: { why: "x" } }, true)).toBe("job");
+  });
+});
+
+describe("countWord", () => {
+  const en = "zero,one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve";
+  it("words up to twelve, digits after", () => {
+    expect(countWord(4, en, true)).toBe("Four");
+    expect(countWord(11, en)).toBe("eleven");
+    expect(countWord(13, en, true)).toBe("13");
   });
 });
