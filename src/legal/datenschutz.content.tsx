@@ -45,13 +45,13 @@ export function DatenschutzDe() {
       <p>
         Ihre Angaben werden im lokalen Speicher (localStorage) Ihres Browsers abgelegt: Ihr Profil und
         Werdegang, Ihre Antworten in der Selbsteinschätzung, Ihre Fähigkeiten, Ziele, gemerkte Kurse und
-        Stellenanzeigen, Ihr Plan, Ihr eigenes Profil, solange ein Beispielprofil geöffnet ist, die
-        Sprachwahl, die Wahl zwischen hellem und dunklem Modus und die Angabe, wann Sie zuletzt eine Sicherung
-        gespeichert haben. Nach „Alle Daten löschen“ merkt sich der Browser bis zum Schließen des Fensters
-        nur, dass die Bestätigung angezeigt werden soll (sessionStorage). Das ist nötig, damit das Werkzeug
-        funktioniert, das Sie aufgerufen haben (§ 25 Abs. 2 Nr. 2 TDDDG). Diese Daten verlassen Ihr Gerät
-        nicht. Sie löschen sie mit „Alle Daten löschen“ im Menü oder indem Sie die Websitedaten in Ihrem
-        Browser löschen.
+        Stellenanzeigen, Ihr Plan, wo Sie in den Berufsideen stehen, Ihr eigenes Profil, solange ein
+        Beispielprofil geöffnet ist, die Sprachwahl, die Wahl zwischen hellem und dunklem Modus und die
+        Angabe, wann Sie zuletzt eine Sicherung gespeichert haben. Nach „Alle Daten löschen“ merkt sich der
+        Browser bis zum Schließen des Fensters nur, dass die Bestätigung angezeigt werden soll
+        (sessionStorage). Das ist nötig, damit das Werkzeug funktioniert, das Sie aufgerufen haben (§ 25 Abs.
+        2 Nr. 2 TDDDG). Diese Daten verlassen Ihr Gerät nicht. Sie löschen sie mit „Alle Daten löschen“ im
+        Menü oder indem Sie die Websitedaten in Ihrem Browser löschen.
       </p>
       <p>
         Damit die App auch ohne Internetverbindung funktioniert und sich installieren lässt, legt Ihr Browser
@@ -142,12 +142,12 @@ export function DatenschutzEn() {
       <h2>4. Storage in your browser</h2>
       <p>
         What you enter is kept in your browser's local storage (localStorage): your profile and story, your
-        self-assessment answers, your skills, goals, saved courses and job ads, your plan, your own profile
-        while a sample profile is open, your language, your choice of light or dark mode, and when you last
-        saved a backup. After "Delete all data" the browser only remembers, until you close the window, that
-        it should show the confirmation (sessionStorage). This is needed for the tool you opened to work (§ 25
-        (2) no. 2 TDDDG). This data does not leave your device. You delete it with "Delete all data" in the
-        menu or by deleting the site data in your browser.
+        self-assessment answers, your skills, goals, saved courses and job ads, your plan, where you are in
+        the job ideas, your own profile while a sample profile is open, your language, your choice of light or
+        dark mode, and when you last saved a backup. After "Delete all data" the browser only remembers, until
+        you close the window, that it should show the confirmation (sessionStorage). This is needed for the
+        tool you opened to work (§ 25 (2) no. 2 TDDDG). This data does not leave your device. You delete it
+        with "Delete all data" in the menu or by deleting the site data in your browser.
       </p>
       <p>
         So that the app works without an internet connection and can be installed, your browser keeps a copy

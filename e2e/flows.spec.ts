@@ -139,5 +139,17 @@ test("browse the job ideas: next and back, and change a mark on a card seen befo
   await page.keyboard.press("ArrowLeft");
   await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
   await expect(page.locator(".card3d").first().getByText("Not for me")).toBeHidden();
+
+  // the place in the deck survives a reload
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect(count).toHaveText(/^3 of /);
+  const third = await page.locator(".card3d").first().getAttribute("aria-label");
+  await page.reload();
+  await expect(count).toHaveText(/^3 of /, { timeout: 30000 });
+  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", third!);
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
   expect(errors).toEqual([]);
 });

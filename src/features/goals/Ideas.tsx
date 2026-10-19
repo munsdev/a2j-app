@@ -10,7 +10,6 @@ import { cn } from "@/lib/cn";
 import { useEscoReady, useOnet } from "@/app/catalog";
 import { go } from "@/app/router";
 import { toast, toastUndo } from "@/app/toast";
-import { useProfileEpoch } from "@/app/samples";
 import { loadOnet, occLabel } from "@/domain/catalog";
 import { type Idea, type Zone, canRank, rankAll, setVote, voteOf } from "@/domain/rank";
 import { useT } from "@/i18n";
@@ -51,7 +50,6 @@ export function Ideas() {
   const E = useEscoReady();
   const O = useOnet();
   const w = useViewportWidth();
-  const epoch = useProfileEpoch((s) => s.epoch);
   const st = useGoals(
     useShallow((s) => ({
       zone: s.zone,
@@ -69,7 +67,9 @@ export function Ideas() {
   /* preparation levels come with the O*NET file: without it there is nothing to filter by */
   const zones = !!O?.z;
   const zone: Zone | 0 = zones ? st.zone : 0;
-  const key = `${epoch}:${zone}:${O ? 1 : 0}`;
+  /* the profile, not the epoch: the place in the deck is kept across reloads (another profile opening clears it
+     anyway, see the store) */
+  const key = `${d.example ?? "own"}:${zone}:${O ? 1 : 0}`;
   /* another deck (filter, profile, catalogue) starts from its first card */
   const same = st.deckKey === key;
   const seen = same ? st.seen : NONE;
