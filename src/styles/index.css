@@ -45,12 +45,6 @@
   --color-focus: var(--focus);
   --color-accent-soft: var(--accent-soft);
   --color-accent-ink: var(--accent-ink);
-  --color-riasec-r: var(--brand-riasec-r);
-  --color-riasec-i: var(--brand-riasec-i);
-  --color-riasec-a: var(--brand-riasec-a);
-  --color-riasec-s: var(--brand-riasec-s);
-  --color-riasec-e: var(--brand-riasec-e);
-  --color-riasec-c: var(--brand-riasec-c);
 
   --font-display: var(--brand-font-display);
   --font-sans: var(--brand-font-text);

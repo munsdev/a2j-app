@@ -348,8 +348,11 @@ export const APTITUDES: readonly Aptitude[] = [
 export const INTERESTS: readonly Interest[] = [
   {
     id: "R",
-    en: ["Practical", "Working with your hands, tools, machines, plants or animals, often outdoors."],
-    de: ["Praktisch", "Mit den Händen arbeiten, mit Werkzeug, Maschinen, Pflanzen oder Tieren, oft draußen."],
+    en: ["Hands-on", "Working with your hands, tools, machines, plants or animals, often outdoors."],
+    de: [
+      "Handwerklich-technisch",
+      "Mit den Händen arbeiten, mit Werkzeug, Maschinen, Pflanzen oder Tieren, oft draußen.",
+    ],
     items: [
       ["Repair a machine or a bike", "Eine Maschine oder ein Fahrrad reparieren"],
       ["Build something out of wood or metal", "Etwas aus Holz oder Metall bauen"],
@@ -363,7 +366,7 @@ export const INTERESTS: readonly Interest[] = [
     id: "I",
     en: ["Investigating", "Finding out how things work, testing, researching and solving puzzles."],
     de: [
-      "Forschend",
+      "Untersuchend-forschend",
       "Herausfinden, wie etwas funktioniert, testen, recherchieren und knifflige Fragen lösen.",
     ],
     items: [
@@ -378,7 +381,10 @@ export const INTERESTS: readonly Interest[] = [
   {
     id: "A",
     en: ["Creative", "Designing, writing, making music, pictures or spaces, and expressing ideas."],
-    de: ["Gestaltend", "Gestalten, schreiben, Musik, Bilder oder Räume machen und Ideen ausdrücken."],
+    de: [
+      "Künstlerisch-kreativ",
+      "Gestalten, schreiben, Musik, Bilder oder Räume machen und Ideen ausdrücken.",
+    ],
     items: [
       ["Redesign a room", "Einen Raum neu gestalten"],
       ["Write a text, a story or a song", "Einen Text, eine Geschichte oder ein Lied schreiben"],
@@ -388,7 +394,7 @@ export const INTERESTS: readonly Interest[] = [
   {
     id: "S",
     en: ["Helping", "Teaching, caring for, advising and supporting other people."],
-    de: ["Sozial", "Anderen etwas beibringen, sie betreuen, beraten und unterstützen."],
+    de: ["Erziehend-pflegend", "Anderen etwas beibringen, sie betreuen, beraten und unterstützen."],
     items: [
       ["Teach someone something", "Jemandem etwas beibringen"],
       ["Care for sick or older people", "Kranke oder ältere Menschen betreuen"],
@@ -398,7 +404,7 @@ export const INTERESTS: readonly Interest[] = [
   {
     id: "E",
     en: ["Leading and selling", "Convincing people, selling, leading and starting things."],
-    de: ["Unternehmerisch", "Menschen überzeugen, verkaufen, leiten und Neues anstoßen."],
+    de: ["Führend-verkaufend", "Menschen überzeugen, verkaufen, leiten und Neues anstoßen."],
     items: [
       ["Run a market stall", "Einen Verkaufsstand leiten"],
       ["Win people over to an idea", "Menschen für eine Idee gewinnen"],
@@ -408,7 +414,10 @@ export const INTERESTS: readonly Interest[] = [
   {
     id: "C",
     en: ["Organizing", "Working with lists, numbers, forms and clear rules, keeping things in order."],
-    de: ["Ordnend", "Mit Listen, Zahlen, Formularen und klaren Regeln arbeiten und Ordnung halten."],
+    de: [
+      "Ordnend-verwaltend",
+      "Mit Listen, Zahlen, Formularen und klaren Regeln arbeiten und Ordnung halten.",
+    ],
     items: [
       ["Sort receipts into a spreadsheet", "Belege sortieren und in eine Tabelle eintragen"],
       ["Keep a stock list up to date", "Eine Lagerliste aktuell halten"],

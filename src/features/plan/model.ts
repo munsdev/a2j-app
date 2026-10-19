@@ -75,6 +75,8 @@ export interface PlanData {
   goal: Job | null;
   apt: string[];
   ints: string[];
+  /** the Holland (RIASEC) code of the three strongest interests, e.g. IRA: the shorthand counsellors know */
+  intCode: string;
   vals: string[];
   skills: string[];
   gaps: { name: string; via: string }[];
@@ -91,7 +93,9 @@ export function planData(d: Doc, E: Esco, s: PlanState): PlanData {
   const L = s.lang;
   const goal = jobById(d, s.goal);
   const apt = strongest(d, L).map((r) => r.name);
-  const ints = interestCode(d, L).map((c) => c.name);
+  const code = interestCode(d, L);
+  const ints = code.map((c) => c.name);
+  const intCode = code.map((c) => c.id).join("");
   const vals = assessOf(d)
     .values.map((id) => VALUES.find((x) => x.id === id)?.[L][0] ?? "")
     .filter(Boolean);
@@ -126,7 +130,23 @@ export function planData(d: Doc, E: Esco, s: PlanState): PlanData {
   const wantMore = Object.keys(want)
     .filter((x) => want[x] === 1)
     .map((x) => skn(+x));
-  return { s, L, goal, apt, ints, vals, skills, gaps, cnt, course, ads, others, wantMore, P: d.profile };
+  return {
+    s,
+    L,
+    goal,
+    apt,
+    ints,
+    intCode,
+    vals,
+    skills,
+    gaps,
+    cnt,
+    course,
+    ads,
+    others,
+    wantMore,
+    P: d.profile,
+  };
 }
 
 /** A first draft of "Why it fits me", in the page language. */
@@ -199,7 +219,12 @@ export function pageModel(x: PlanData, why: string, now: Date): PageModel {
 
   const st: Block[] = [];
   if (x.apt.length) st.push({ t: "p", lead: T("sm_aptitudes"), text: x.apt.join(", ") });
-  if (x.ints.length) st.push({ t: "p", lead: T("sm_interest"), text: x.ints.join(", ") });
+  if (x.ints.length)
+    st.push({
+      t: "p",
+      lead: T("sm_interest"),
+      text: `${x.ints.join(", ")} (${T("sm_holland", { c: x.intCode })})`,
+    });
   if (x.vals.length) st.push({ t: "p", lead: T("sm_values"), text: x.vals.join(", ") });
   if (st.length) st.push({ t: "p", text: T("sm_self", { b: BRAND, u: SITE }), tone: "note" });
   sec("strengths", st);

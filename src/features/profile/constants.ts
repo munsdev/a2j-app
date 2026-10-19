@@ -1,5 +1,4 @@
 import type { Lang, PartKey } from "@/data/types";
-import type { InterestId } from "@/domain/items";
 
 /* Fixed lists of the profile screen. Content (statements, scales, groups) lives in domain/items.ts. */
 
@@ -21,16 +20,6 @@ export type StoryStep = (typeof STORY)[number];
 /** Parts given as #profile/<part>. */
 export const isPart = (s: string | undefined): s is PartKey =>
   s === "apt" || s === "int" || s === "set" || s === "val" || s === "story" || s === "skills";
-
-/** One hue per interest type (letters of the interest code only). Spelled out so Tailwind sees the classes. */
-export const RIASEC_TEXT: Record<InterestId, string> = {
-  R: "text-riasec-r",
-  I: "text-riasec-i",
-  A: "text-riasec-a",
-  S: "text-riasec-s",
-  E: "text-riasec-e",
-  C: "text-riasec-c",
-};
 
 /** The resting, hover and chosen look of an answer card (questions, values). Chosen = the shared selected
  *  ring; hover only strengthens the outline and keeps the card's shadow. The hover shadow is two tokens

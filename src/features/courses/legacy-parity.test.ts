@@ -1,4 +1,5 @@
 // The fixtures were recorded from the previous app before its code was removed, so they are the reference answers.
+// One deliberate change since: the interest types carry their new names (Hands-on; the Arbeitsagentur's German names).
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it, vi } from "vitest";

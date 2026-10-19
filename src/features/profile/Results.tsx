@@ -7,10 +7,9 @@ import { assessOf, band, intResults, interestCode, partStatus, strongest } from 
 import { skLabel } from "@/domain/catalog";
 import { RULED_OUT, SETTING, VALUES } from "@/domain/items";
 import { pick, useLang, useT } from "@/i18n";
-import { cn } from "@/lib/cn";
 import { Button, Chip, Chips, Disclosure, EmptyState, ExternalLink, Hint, Icon, SubHeading } from "@/ui";
 import { AptitudeList } from "./AptitudeList";
-import { IBANDS, RIASEC_TEXT } from "./constants";
+import { IBANDS } from "./constants";
 import { ratedSkills, settingPrefs, topSkills } from "./logic";
 import { strings } from "./strings";
 import { WantSheet } from "./WantSheet";
@@ -102,24 +101,21 @@ function InterestCode() {
   const all = intResults(doc, lang).sort((x, y) => y.score - x.score || x.i - y.i);
   return (
     <Card title={t("res_code")} sub={t("res_code_p")}>
-      <div className="flex gap-2">
-        {code.map((c) => (
-          <div
-            key={c.id}
-            className="flex min-w-0 flex-1 flex-col items-center gap-1 rounded-option bg-surface-2 px-1.5 py-2.5 text-center"
-          >
-            <b
+      <ol className="flex flex-col gap-1.5">
+        {code.map((c, i) => (
+          <li key={c.id} className="flex items-center gap-3 rounded-option bg-surface-2 px-3 py-2.5">
+            <span
               aria-hidden="true"
-              className={cn("font-display text-display leading-none font-semibold", RIASEC_TEXT[c.id])}
+              className="flex size-7 flex-none items-center justify-center rounded-full bg-have font-display text-small font-extrabold text-on-accent"
             >
-              {c.id}
-            </b>
-            <span className="w-full text-caption leading-tight font-bold [overflow-wrap:anywhere] hyphens-auto text-ink-2">
+              {i + 1}
+            </span>
+            <span className="min-w-0 font-display text-title font-bold [overflow-wrap:anywhere] hyphens-auto">
               {c.name}
             </span>
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
       <ul className="flex flex-col gap-2">
         {all.map((r) => (
           <li

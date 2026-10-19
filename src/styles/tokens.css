@@ -61,14 +61,6 @@
   --brand-red-600: #b23c32;
   --brand-red-900: #40201c;
 
-  /* Holland interest types (RIASEC): one hue each, used only for the interest code letters */
-  --brand-riasec-r: #b4561f;
-  --brand-riasec-i: #2d5f86;
-  --brand-riasec-a: #94488d;
-  --brand-riasec-s: #2f6b4f;
-  --brand-riasec-e: #b23c32;
-  --brand-riasec-c: #56656f;
-
   /* Barlow: after California highway signs. Atkinson Hyperlegible Next: letters that cannot be confused. */
   --brand-font-display: "Barlow", "Atkinson Hyperlegible Next Variable", system-ui, sans-serif;
   --brand-font-text: "Atkinson Hyperlegible Next Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
