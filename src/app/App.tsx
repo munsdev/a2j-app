@@ -109,7 +109,9 @@ export function App() {
       {/* isolate: the 3D-turned cards stay under the toasts and sheets, which sit outside */}
       <main id="main" tabIndex={-1} className="isolate flex-1 outline-none" data-view={route.view}>
         <ErrorBoundary resetKey={route.path}>
-          <Suspense fallback={<ScreenLoading />}>{route.unknown ? <NotFound /> : <Screen />}</Suspense>
+          <Suspense fallback={<ScreenLoading />}>
+            {route.path === "__crash" ? <CrashTest /> : route.unknown ? <NotFound /> : <Screen />}
+          </Suspense>
         </ErrorBoundary>
       </main>
       <Footer />
@@ -117,4 +119,9 @@ export function App() {
       <ToastHost />
     </>
   );
+}
+
+/** #__crash: a screen that fails on purpose, to try the error screen and its crash report. */
+function CrashTest(): never {
+  throw new Error("Crash test (#__crash)");
 }

@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { execSync } from "node:child_process";
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -7,9 +8,24 @@ import { VitePWA } from "vite-plugin-pwa";
 import { prerenderLegal } from "./vite.prerender-legal";
 import { licenses } from "./vite.licenses";
 
+/** The version in crash reports: the commit (Cloudflare's build sets it; else git), else "dev". */
+function build(): string {
+  let sha = process.env.WORKERS_CI_COMMIT_SHA ?? "";
+  if (!sha)
+    try {
+      sha = execSync("git rev-parse HEAD", { stdio: ["ignore", "pipe", "ignore"] })
+        .toString()
+        .trim();
+    } catch {
+      /* no git: "dev" */
+    }
+  return sha ? sha.slice(0, 7) : "dev";
+}
+
 const page = (name: string) => fileURLToPath(new URL(`./${name}.html`, import.meta.url));
 
 export default defineConfig({
+  define: { __BUILD__: JSON.stringify(build()) },
   plugins: [
     react(),
     tailwindcss(),

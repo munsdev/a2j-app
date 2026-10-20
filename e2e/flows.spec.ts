@@ -332,3 +332,28 @@ test("the goal's line: a skill opens in place, one at a time, to rate it and say
   await expect(learn).toHaveAttribute("aria-expanded", "false");
   expect(errors).toEqual([]);
 });
+
+test("a crash shows a way back and a crash report to copy, without the person's data", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await seed(page, { sample: "holmes" });
+  await page.goto("#goals");
+  await expect(page.getByRole("heading", { name: "Goals" }).first()).toBeVisible({ timeout: 30000 });
+  await page.goto("#__crash");
+  await expect(page.getByRole("alert")).toContainText("Something went wrong");
+  await page.getByRole("button", { name: "Copy crash report" }).click();
+  await expect(page.getByText("Copied. Paste it into a message to us.")).toBeVisible();
+  const report = await page.evaluate(() => navigator.clipboard.readText());
+  expect(report).toContain("Error: Crash test (#__crash)");
+  expect(report).toMatch(/(open|screen) #goals\n.*screen #__crash/);
+  expect(report).toMatch(/jobs done 2, goals 2, shortlist 1/);
+  expect(report).toContain("sample holmes");
+  // no names, titles or typed text
+  expect(report).not.toContain("Fraud investigator");
+  expect(report).not.toContain("Sherlock");
+  // another screen comes back
+  await page.goto("#home");
+  await expect(page.getByRole("alert")).toHaveCount(0);
+});

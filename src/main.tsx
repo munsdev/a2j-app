@@ -8,6 +8,7 @@ import { initRouter, onRouteChange } from "./app/router";
 import { initSettings, useSettings } from "./app/settings";
 import { initCatalogSync } from "./app/catalog";
 import { initInstall } from "./app/install";
+import { initCrash } from "./app/crash";
 import { toast } from "./app/toast";
 import { makeT, defineStrings } from "./i18n";
 import { session } from "./lib/storage";
@@ -23,6 +24,7 @@ const t = () => makeT(useSettings.getState().lang, S);
 
 initSettings();
 initRouter();
+initCrash();
 initCatalogSync();
 initInstall(() => toast(t()("inst_done")));
 
