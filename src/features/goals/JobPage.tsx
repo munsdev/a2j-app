@@ -29,6 +29,7 @@ import {
 import { makeGoalAndOpen, makeMain, removeWithUndo } from "./actions";
 import { Board } from "./Board";
 import { JobCard } from "./JobCard";
+import { StarButton } from "./Overview";
 import { Title } from "./Title";
 import { cardKey, toggleFlip, useFlipped } from "./store";
 import { strings } from "./strings";
@@ -62,14 +63,17 @@ export function JobPage({ id }: { id: string }) {
         onBack={() => go("goals")}
         eyebrow={t("nav_goals")}
         end={
-          <IconButton
-            aria-label={t("d_more")}
-            aria-haspopup="dialog"
-            onClick={() => openSheet(<MoreSheet id={job.id} />, { label: job.title })}
-            className="-mr-2.5"
-          >
-            <Icon name="more" />
-          </IconButton>
+          <>
+            {job.role === "maybe" && <StarButton job={job} />}
+            <IconButton
+              aria-label={t("d_more")}
+              aria-haspopup="dialog"
+              onClick={() => openSheet(<MoreSheet id={job.id} />, { label: job.title })}
+              className="-mr-2.5"
+            >
+              <Icon name="more" />
+            </IconButton>
+          </>
         }
       />
       <div className="grid grid-cols-[minmax(0,1fr)] gap-[18px] min-[1000px]:grid-cols-2 min-[1000px]:items-start min-[1000px]:gap-[22px]">
@@ -89,7 +93,7 @@ export function JobPage({ id }: { id: string }) {
             <PanelHead icon="book" title={t("d_courses")}>
               <Button size="sm" onClick={() => openFinder("course", job.id)}>
                 <Icon name="search" />
-                {t("d_find_course")}
+                {d.courses.some((c) => c.goals.includes(job.id)) ? t("b_pick_more") : t("d_find_course")}
               </Button>
             </PanelHead>
             <CourseList job={job} />

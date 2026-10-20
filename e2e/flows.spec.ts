@@ -106,6 +106,49 @@ test("the match score with courses; a liked idea goes on the shortlist, its skil
   expect(errors).toEqual([]);
 });
 
+test("the shortlist: favourites first, five shown, the rest behind Show all", async ({ page }) => {
+  await seed(page, { sample: "holmes" });
+  await page.addInitScript(() => {
+    const d = JSON.parse(localStorage.getItem("a2j:v2")!);
+    if (d.jobs.length > 6) return;
+    for (let i = 0; i < 6; i++)
+      d.jobs.push({ id: "x" + i, title: "Liked " + i, occ: 100 + i * 37, role: "maybe", org: "", when: "" });
+    localStorage.setItem("a2j:v2", JSON.stringify(d));
+  });
+  const errors = watchErrors(page);
+  await page.goto("#goals");
+  const list = page.getByRole("region", { name: "Shortlist" }).getByRole("listitem");
+  await expect(list).toHaveCount(5);
+  await page.getByRole("button", { name: "Show all 7 jobs you liked" }).click();
+  await expect(list).toHaveCount(7);
+  const star = page.getByRole("button", { name: "Favourite: Liked 5" });
+  await star.click();
+  await expect(star).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Show fewer" }).click();
+  await expect(list).toHaveCount(5);
+  await expect(list.first()).toContainText("Liked 5");
+  expect(errors).toEqual([]);
+});
+
+test("a course already saved for the goal: the board offers it, not a search", async ({ page }) => {
+  await seed(page, { sample: "holmes" });
+  await page.addInitScript(() => {
+    const d = JSON.parse(localStorage.getItem("a2j:v2")!);
+    if (d.__patched) return;
+    d.__patched = true;
+    d.routes.forEach((r: { course: string | null }) => (r.course = null));
+    localStorage.setItem("a2j:v2", JSON.stringify(d));
+  });
+  const errors = watchErrors(page);
+  await page.goto("#goals/job/j3");
+  await expect(page.getByText("Choose your course")).toBeVisible({ timeout: 30000 });
+  const pick = page.locator("[data-pick] li");
+  await expect(pick).toHaveCount(2);
+  await pick.first().getByRole("button", { name: "Take this one" }).click();
+  await expect(page.getByText("Next: start your course")).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test("job ideas: the explore options in the dropdown deal other ideas and say why", async ({ page }) => {
   await seed(page, { sample: "holmes" });
   const errors = watchErrors(page);

@@ -23,6 +23,8 @@ export interface Job {
   extra?: string[];
   /** The match was made automatically (the person did not pick it). */
   auto?: boolean;
+  /** A favourite on the shortlist: always shown, at the top. */
+  star?: boolean;
 }
 
 export type GermanLevel = "native" | "c" | "b2" | "b1" | "a2" | "a1" | "unknown";

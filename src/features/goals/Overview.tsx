@@ -1,8 +1,8 @@
 import { useMemo, useState, type FormEvent } from "react";
 import type { Job } from "@/data/types";
-import { addJob, jobForOcc, jobsIn, mainGoal } from "@/data/doc";
+import { addJob, jobForOcc, mainGoal } from "@/data/doc";
 import { getDoc, update, useDoc } from "@/data/store";
-import { useEscoReady } from "@/app/catalog";
+import { useEscoReady, useOnet } from "@/app/catalog";
 import { go } from "@/app/router";
 import { toast } from "@/app/toast";
 import { normTxt, occLabel, searchOcc } from "@/domain/catalog";
@@ -10,7 +10,19 @@ import { useOccSearch } from "@/app/useCatalogSearch";
 import { canRank, setVote } from "@/domain/rank";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { Button, Hint, Icon, Page, PageHeader, Panel, PanelTitle, SuggestInput, Tag } from "@/ui";
+import {
+  Button,
+  Hint,
+  Icon,
+  IconButton,
+  LinkButton,
+  Page,
+  PageHeader,
+  Panel,
+  PanelTitle,
+  SuggestInput,
+  Tag,
+} from "@/ui";
 import { BoardCard } from "./BoardCard";
 import { jobMatch } from "@/data/dupes";
 import { strings as mergeStrings } from "@/features/merge/strings";
@@ -18,6 +30,7 @@ import { OtherRoutes } from "@/features/routes/OtherRoutes";
 import { FitBadge } from "./Fit";
 import { useFitText, useMatch } from "./useFit";
 import { Title } from "./Title";
+import { setStar, shortlist } from "./shortlist";
 import { strings } from "./strings";
 
 /* Goals: the main goal's board, other goals, the shortlist, job ideas, and a job you already have in mind.
@@ -25,7 +38,6 @@ import { strings } from "./strings";
 export function Overview() {
   const t = useT(strings);
   const d = useDoc();
-  const short = jobsIn(d, "maybe");
   const main = mainGoal(d);
   const ranks = canRank(d);
   return (
@@ -37,15 +49,7 @@ export function Overview() {
           {main && <OtherRoutes />}
         </div>
         <div className="flex min-w-0 flex-col gap-[18px]">
-          <Panel aria-labelledby="goals-short">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="flex flex-col gap-1">
-                <PanelTitle id="goals-short">{t("g_short")}</PanelTitle>
-                <Hint>{t("g_short_p")}</Hint>
-              </div>
-            </div>
-            {short.length ? <MiniList jobs={short} inPanel narrow /> : <Hint>{t("g_short_none")}</Hint>}
-          </Panel>
+          <Shortlist />
           {/* one dark button per screen: without a goal the empty board has it. Before ideas can be ranked
               the empty board already explains why and leads to part 2, so this panel waits for a goal */}
           {(ranks || main) && (
@@ -78,7 +82,43 @@ export function Overview() {
   );
 }
 
-function MiniList({ jobs, inPanel, narrow }: { jobs: Job[]; inPanel?: boolean; narrow?: boolean }) {
+/** The favourites and the best matches of the liked jobs; the rest behind "Show all" (shortlist.ts). */
+function Shortlist() {
+  const t = useT(strings);
+  const d = useDoc();
+  const E = useEscoReady();
+  const O = useOnet();
+  const [open, setOpen] = useState(false);
+  const { all, top } = useMemo(() => shortlist(d, E, O), [d, E, O]);
+  const more = all.length - top.length;
+  return (
+    <Panel aria-labelledby="goals-short">
+      <div className="flex flex-col gap-1">
+        <PanelTitle id="goals-short">{t("g_short")}</PanelTitle>
+        <Hint>{t(all.length ? "g_short_p" : "g_short_none")}</Hint>
+      </div>
+      {all.length > 0 && <MiniList jobs={open ? all : top} inPanel narrow star />}
+      {more > 0 && (
+        <LinkButton aria-expanded={open} onClick={() => setOpen(!open)}>
+          {open ? t("g_short_less") : t("g_short_all", { n: all.length })}
+        </LinkButton>
+      )}
+    </Panel>
+  );
+}
+
+function MiniList({
+  jobs,
+  inPanel,
+  narrow,
+  star,
+}: {
+  jobs: Job[];
+  inPanel?: boolean;
+  narrow?: boolean;
+  /** with a star to mark favourites */
+  star?: boolean;
+}) {
   return (
     <ul
       className={cn(
@@ -87,8 +127,9 @@ function MiniList({ jobs, inPanel, narrow }: { jobs: Job[]; inPanel?: boolean; n
       )}
     >
       {jobs.map((j) => (
-        <li key={j.id} className="flex">
-          <MiniCard job={j} inPanel={inPanel} />
+        <li key={j.id} className="relative flex">
+          <MiniCard job={j} inPanel={inPanel} star={star} />
+          {star && <StarButton job={j} className="absolute top-1/2 left-1 -translate-y-1/2" />}
         </li>
       ))}
     </ul>
@@ -97,7 +138,7 @@ function MiniList({ jobs, inPanel, narrow }: { jobs: Job[]; inPanel?: boolean; n
 
 /** A saved job as a row: goal tag, title, and how well it matches (score, band, the two reasons). Opens the
  *  job page. */
-function MiniCard({ job, inPanel }: { job: Job; inPanel?: boolean }) {
+function MiniCard({ job, inPanel, star }: { job: Job; inPanel?: boolean; star?: boolean }) {
   const t = useT(strings);
   const d = useDoc();
   const isMain = job.id === mainGoal(d)?.id;
@@ -112,6 +153,7 @@ function MiniCard({ job, inPanel }: { job: Job; inPanel?: boolean }) {
       }}
       className={cn(
         "group grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 rounded-card py-3.5 pr-3.5 pl-4 no-underline transition-[transform,box-shadow,background-color] duration-150",
+        star && "pl-12" /* room for the star, which sits over the row (a button cannot be inside a link) */,
         inPanel
           ? "bg-surface-2 hover:bg-sunk"
           : "bg-surface shadow-card hover:-translate-y-px hover:shadow-lift",
@@ -204,5 +246,22 @@ function AddJob() {
         </Button>
       </form>
     </Panel>
+  );
+}
+
+/** Star a liked job as a favourite, or take the star away. */
+export function StarButton({ job, className }: { job: Job; className?: string }) {
+  const t = useT(strings);
+  const on = !!job.star;
+  return (
+    <IconButton
+      aria-label={t("g_star", { x: job.title })}
+      aria-pressed={on}
+      title={t(on ? "g_star_off" : "g_star_on")}
+      onClick={() => update((d) => setStar(d, job.id, !on))}
+      className={cn(className, on ? "text-accent-ink" : "text-ink-3 hover:text-ink")}
+    >
+      <Icon name="star" className={cn(on && "fill-current")} />
+    </IconButton>
   );
 }

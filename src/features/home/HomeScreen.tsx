@@ -284,6 +284,7 @@ const STEP_ICON: Record<StepId, IconName> = {
   route: "flag",
   profile: "arrow",
   course: "search",
+  course_pick: "book",
   dupes: "copy",
   route2: "plus",
   ads: "bag",
@@ -306,6 +307,7 @@ function NextStops({ way }: { way: Way }) {
     else if (id === "ideas") go("goals/ideas");
     else if (id === "route") go("goals");
     else if (id === "course" && r) openFinder("course", r.job);
+    else if (id === "course_pick" && r) go("goals/job/" + r.job);
     else if (id === "ads" && r) openFinder("jobad", r.job);
     else if (id === "apply" && r) go("goals/job/" + r.job);
     else if (id === "dupes") go("edit");

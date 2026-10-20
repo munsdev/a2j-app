@@ -279,6 +279,48 @@ function NextStop({ p, job }: { p: BoardPath; job: Job }) {
   const d = useDoc();
   const r = routeForJob(d, job.id);
   const n = p.next;
+  /* courses already saved for this job: choose one of them, rather than search again */
+  const saved = n.kind === "find" ? d.courses.filter((c) => c.goals.includes(job.id)) : [];
+  if (n.kind === "find" && saved.length) {
+    const gaps = new Set(n.gaps.map((x) => x.key));
+    const fits = saved
+      .map((c) => ({ c, n: new Set(c.covers.map(skKey).filter((k) => gaps.has(k))).size }))
+      .sort((a, b) => b.n - a.n);
+    return (
+      <NextCard key="pick" eyebrow={t("b_next")} title={t("b_pick_h")}>
+        <p className="w-full text-small text-ink-2">{t("b_pick_p", { n: n.gaps.length })}</p>
+        <ul className="flex w-full flex-col gap-2" data-pick>
+          {fits.map(({ c, n: k }, i) => (
+            <li key={c.id} className="flex flex-col items-start gap-2 rounded-card bg-surface-2 p-3">
+              <button
+                type="button"
+                className="min-w-0 self-stretch text-left underline-offset-4 hover:underline"
+                onClick={() => openItem("course", c.id, job.id)}
+              >
+                <b className="block">{c.name}</b>
+                <span className="text-caption text-ink-3">
+                  {[c.provider, t("b_pick_covers", { c: k, t: n.gaps.length })].filter(Boolean).join(" · ")}
+                </span>
+              </button>
+              <Button
+                size="sm"
+                /* one dark button: the course that covers the most */
+                variant={i === 0 ? "primary" : "soft"}
+                onClick={() => (r ? saveRoute(r.id, job.id, c.id) : openItem("course", c.id, job.id))}
+              >
+                <Icon name="check" />
+                {t("b_pick_take")}
+              </Button>
+            </li>
+          ))}
+        </ul>
+        <Button size="sm" variant="ghost" onClick={() => openFinder("course", job.id)}>
+          <Icon name="search" />
+          {t("b_pick_more")}
+        </Button>
+      </NextCard>
+    );
+  }
   if (n.kind === "find") {
     const some = n.gaps.filter((x) => x.state === "some").length;
     return (

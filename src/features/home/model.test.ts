@@ -89,6 +89,12 @@ describe("appSteps: the next thing to do in the app, not the next skill", () => 
     expect(appSteps(d)).toEqual(["course", "route2", "ads", "plan"]);
     expect(appSteps({ ...d, summary: { why: "x" } }).at(-1)).toBe("plan_print");
   });
+  it("a course already saved for the job: choose it, not search again", () => {
+    const d = shape(withGoal(withDone(emptyDoc(), PARTS)));
+    d.courses = [{ id: "c1", name: "Bakery basics", goals: ["j1"], covers: [] }];
+    expect(appSteps(d)[0]).toBe("course_pick");
+    expect(appSteps(d)).not.toContain("course");
+  });
   it("Holmes, with three routes and courses: no course or route steps left", () => {
     const s = appSteps(holmes());
     expect(s).not.toContain("course");

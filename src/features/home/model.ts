@@ -38,6 +38,7 @@ export type StepId =
   | "route"
   | "profile"
   | "course"
+  | "course_pick"
   | "dupes"
   | "route2"
   | "ads"
@@ -69,7 +70,9 @@ export function appSteps(d: Doc, allHad = false): StepId[] {
   const ads = r ? d.jobads.filter((a) => a.goals.includes(r.job)) : [];
   if (ready && !ads.length) out.push("ads");
   if (ready && ads.length && !ads.some((a) => APPLIED.has(a.status ?? ""))) out.push("apply");
-  if (r && !ready && !routeCourse(d, r)) out.push("course");
+  /* courses already saved for the job: choose one of them, rather than search again */
+  if (r && !ready && !routeCourse(d, r))
+    out.push(d.courses.some((c) => c.goals.includes(r.job)) ? "course_pick" : "course");
   if (dupePairs(d).length) out.push("dupes");
   if (r && d.routes.length < 2) out.push("route2");
   if (r && !ready && !ads.length) out.push("ads");

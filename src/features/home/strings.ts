@@ -71,6 +71,10 @@ export const homeStrings = defineStrings(
     n_p_course:
       "The one course that gets you there. Can you apply without training? Choose “No course needed” for the route.",
     n_b_course: "Find a course",
+    n_s_course_pick: "Choose your course for {x}",
+    n_p_course_pick:
+      "You already saved courses for this job. Pick the one you will take: it goes on your route and in your plan.",
+    n_b_course_pick: "Choose",
     n_s_dupes: "Tidy up duplicates",
     n_p_dupes: "Some things look saved twice. Compare them and merge.",
     n_b_dupes: "Compare",
@@ -170,6 +174,10 @@ export const homeStrings = defineStrings(
     n_p_course:
       "Der eine Kurs, der Sie dorthin bringt. Können Sie sich ohne Weiterbildung bewerben? Wählen Sie bei der Route „Kein Kurs nötig“.",
     n_b_course: "Kurs finden",
+    n_s_course_pick: "Ihren Kurs für {x} wählen",
+    n_p_course_pick:
+      "Sie haben schon Kurse für diesen Beruf gespeichert. Wählen Sie den, den Sie machen: Er kommt auf Ihre Route und in Ihren Plan.",
+    n_b_course_pick: "Wählen",
     n_s_dupes: "Doppelte Einträge aufräumen",
     n_p_dupes: "Manches scheint doppelt gespeichert. Vergleichen und zusammenführen.",
     n_b_dupes: "Vergleichen",
