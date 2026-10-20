@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 import "./styles/index.css";
 import { App } from "./app/App";
+import { ErrorBoundary } from "./app/shell/ErrorBoundary";
 import { initRouter, onRouteChange } from "./app/router";
 import { initSettings, useSettings } from "./app/settings";
 import { initCatalogSync } from "./app/catalog";
@@ -27,9 +28,22 @@ initInstall(() => toast(t()("inst_done")));
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    {/* the last net: anything outside a screen or a sheet still shows a way back, never a blank page */}
+    <ErrorBoundary resetKey="app">
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 );
+
+/* a new version was put online while this page was open: a part of the app it loads later is gone. Load the
+   page again (the new version), once per minute at most, instead of failing on a blank screen */
+window.addEventListener("vite:preloadError", (e) => {
+  const last = +(session.get("a2j:reloaded") ?? 0);
+  if (Date.now() - last < 60_000) return;
+  e.preventDefault();
+  session.set("a2j:reloaded", String(Date.now()));
+  location.reload();
+});
 
 /* after "Delete all data" the page reloads; say that it worked */
 if (session.get("a2j:finished")) {

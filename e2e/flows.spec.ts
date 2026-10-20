@@ -245,3 +245,27 @@ test("with going on automatically turned off, an answer stays until Next", async
   await page.reload();
   await expect(page.getByLabel("Go to the next question automatically")).not.toBeChecked();
 });
+
+test("the goal's line: a skill opens in place, one at a time, to rate it and say the course covers it", async ({
+  page,
+}) => {
+  await seed(page, { sample: "geppetto" });
+  const errors = watchErrors(page);
+  await page.goto("#goals");
+  const stops = page.locator(".lr-stop");
+  await expect(stops.first()).toBeVisible({ timeout: 30000 });
+  const learn = page.locator(".lr-stop").filter({ hasText: "Statistical process control" });
+  await learn.click();
+  await expect(learn).toHaveAttribute("aria-expanded", "true");
+  const panel = page.locator("#stop-" + (await learn.getAttribute("aria-controls"))!.slice(5));
+  await panel.getByRole("radio", { name: /^2/ }).click();
+  await expect(panel.getByRole("radio", { name: /^2/ })).toHaveAttribute("aria-checked", "true");
+  const covers = panel.getByRole("checkbox");
+  await covers.check();
+  await expect(covers).toBeChecked();
+  // another skill opens, the first one closes
+  await stops.first().click();
+  await expect(stops.first()).toHaveAttribute("aria-expanded", "true");
+  await expect(learn).toHaveAttribute("aria-expanded", "false");
+  expect(errors).toEqual([]);
+});

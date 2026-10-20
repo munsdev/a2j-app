@@ -1,10 +1,12 @@
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { closeSheet, useSheetStore } from "@/app/sheet";
+import { ErrorBoundary } from "@/app/shell/ErrorBoundary";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Icon } from "./Icon";
 
-/* Renders the one sheet. Radix handles focus trapping, Escape, and returning focus to the trigger. */
+/* Renders the one sheet. Radix handles focus trapping, Escape, and returning focus to the trigger. A crash in a
+   sheet shows the error card inside the sheet; it never takes the page down with it. */
 export function SheetHost() {
   const { open, node, opts, key } = useSheetStore();
   const t = useT();
@@ -45,7 +47,7 @@ export function SheetHost() {
             key={key}
             className="flex flex-col gap-3.5 overflow-y-auto overscroll-contain px-4 pt-5 pb-6 sm:px-5 sm:pt-[22px] sm:pb-[26px] [&>h2:first-of-type]:pr-11 [&>h2:first-of-type]:text-heading"
           >
-            {node}
+            <ErrorBoundary resetKey={String(key)}>{node}</ErrorBoundary>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

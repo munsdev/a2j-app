@@ -44,6 +44,7 @@ export const strings = defineStrings(
     b_course_nothing: "No skill of this job ticked yet",
     b_learn: "Still to learn {n}",
     b_some: "Some, needs more {n}",
+    b_skill_more: "More about this skill",
     b_find_h: "One course for {n} skills",
     b_find_p:
       "Look for one course that covers as many of the skills on this line as you can, not one per skill.",
@@ -232,6 +233,7 @@ export const strings = defineStrings(
     b_course_nothing: "Noch keine Fähigkeit dieses Berufs angekreuzt",
     b_learn: "Noch zu lernen: {n}",
     b_some: "Etwas da, braucht mehr: {n}",
+    b_skill_more: "Mehr zu dieser Fähigkeit",
     b_find_h: "Ein Kurs für {n} Fähigkeiten",
     b_find_p:
       "Suchen Sie einen Kurs, der möglichst viele Fähigkeiten auf dieser Linie abdeckt, nicht einen pro Fähigkeit.",

@@ -1,18 +1,18 @@
 import { Fragment, useMemo, useState, type ReactNode } from "react";
-import type { Job } from "@/data/types";
+import type { Course, Job } from "@/data/types";
 import { jobsIn } from "@/data/doc";
-import { useDoc } from "@/data/store";
+import { update, useDoc } from "@/data/store";
 import { canRank } from "@/domain/rank";
 import { useEsco } from "@/app/catalog";
 import { go } from "@/app/router";
-import { jobCount } from "@/domain/skills";
+import { jobCount, level, setLevel, skKey, type Tile } from "@/domain/skills";
 import { DIRECT, courseForJob, isDirect, routeForJob } from "@/data/routes";
-import { saveRoute } from "@/features/routes/actions";
+import { saveRoute, toggleCovers } from "@/features/routes/actions";
 import { strings as routeStrings } from "@/features/routes/strings";
 import { openFinder, openItem } from "@/features/courses/api";
 import { useLang, useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { Button, Icon, LineMark, LinkButton } from "@/ui";
+import { Button, Checkbox, Icon, LevelPicker, LineMark, LinkButton } from "@/ui";
 import {
   boardLine,
   boardPath,
@@ -55,7 +55,17 @@ export function Board({ job }: { job: Job }) {
   const direct = isDirect(routeForJob(d, job.id));
   const p = useMemo(() => boardPath(tiles, rc ? [rc] : [], direct), [tiles, rc, direct]);
   const [open, setOpen] = useState<ReadonlySet<Zone>>(() => new Set());
-  const rows = useMemo(() => boardLine(p, CAP, open), [p, open]);
+  /* one skill open at a time, like an accordion; while it is open the line keeps its order (the path as it was
+     when the skill was opened), so rating it does not move it away; it takes its new place once closed */
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const [frozen, setFrozen] = useState<BoardPath | null>(null);
+  const toggleSkill = (key: string) => {
+    const close = openKey === key;
+    setOpenKey(close ? null : key);
+    setFrozen(close ? null : (frozen ?? p));
+  };
+  const live = useMemo(() => new Map(tiles.map((x) => [x.key, x])), [tiles]);
+  const rows = useMemo(() => boardLine(frozen ?? p, CAP, open), [frozen, p, open]);
   const badges = useMemo(() => courseBadges(p.courses), [p.courses]);
   const from = useMemo(() => {
     const titles = jobsIn(d, "done")
@@ -108,7 +118,9 @@ export function Board({ job }: { job: Job }) {
           </Row>
         );
       case "stop": {
-        const x = r.tile;
+        const x = live.get(r.tile.key) ?? r.tile;
+        const isOpen = openKey === x.key;
+        const panelId = `stop-${x.key}`;
         const badge = x.state === "course" && x.course ? badges.get(x.course.id) : undefined;
         return (
           <Row
@@ -121,8 +133,10 @@ export function Board({ job }: { job: Job }) {
           >
             <button
               type="button"
-              className={cn("lr-stop", fresh.has(x.state + ":" + x.key) && "lr-fresh")}
-              onClick={() => openSkill(x.x, job.occ, job.id)}
+              className={cn("lr-stop", fresh.has(x.state + ":" + x.key) && !frozen && "lr-fresh")}
+              aria-expanded={isOpen}
+              aria-controls={isOpen ? panelId : undefined}
+              onClick={() => toggleSkill(x.key)}
             >
               <span className={cn("min-w-0", x.state === "learn" ? "text-ink-2" : "text-ink")}>{x.name}</span>
               {badge && (
@@ -139,6 +153,7 @@ export function Board({ job }: { job: Job }) {
                     : t(`c_legend_${x.state}`)}
               </span>
             </button>
+            {isOpen && <StopPanel id={panelId} tile={x} job={job} course={rc} />}
           </Row>
         );
       }
@@ -446,6 +461,43 @@ export function BoardSkeleton() {
           </li>
         ))}
       </ol>
+    </div>
+  );
+}
+
+/** A skill opened on the line: how well you can do it (saved as you pick), whether the route's course covers it,
+ *  and the way to everything else about it (the skill's sheet). */
+function StopPanel({ id, tile, job, course }: { id: string; tile: Tile; job: Job; course: Course | null }) {
+  const t = useT(strings);
+  const tr = useT(routeStrings);
+  const rated = useDoc((d) => level(d, tile.x));
+  const covered = !!course?.covers.some((v) => skKey(v) === tile.key);
+  return (
+    <div id={id} className="my-1.5 flex animate-fade-in flex-col gap-3 rounded-option bg-surface-2 p-3">
+      <div className="flex flex-col gap-1.5">
+        <p className="text-small font-extrabold" aria-hidden="true">
+          {t("k_level")}
+        </p>
+        <LevelPicker
+          size="sm"
+          label={t("k_level")}
+          value={rated}
+          onChange={(n) => update((dr) => setLevel(dr, tile.x, n))}
+        />
+      </div>
+      {course ? (
+        <Checkbox
+          className="text-small"
+          label={tr("r_covers_this", { c: course.name })}
+          checked={covered}
+          onChange={() => toggleCovers(course.id, tile.x, tile.name)}
+        />
+      ) : (
+        <p className="text-small text-ink-3">{tr("r_no_course")}</p>
+      )}
+      <LinkButton className="self-start text-small" onClick={() => openSkill(tile.x, job.occ, job.id)}>
+        {t("b_skill_more")}
+      </LinkButton>
     </div>
   );
 }
