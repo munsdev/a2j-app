@@ -46,8 +46,6 @@ export const strings = defineStrings(
     run_overview: "See my profile",
     run_all_done: "That was the last part. Your profile is complete.",
     run_go_goals: "Find jobs that fit",
-    run_auto: "Go to the next question automatically",
-    run_auto_card: "Go to the next card automatically",
     run_later: "Skipped: {a} of {t}",
     run_later_p: "You skipped these. Answer them now, or skip again to finish.",
     set_q: "Where would you rather be?",
@@ -162,8 +160,6 @@ export const strings = defineStrings(
     run_overview: "Mein Profil ansehen",
     run_all_done: "Das war der letzte Teil. Ihr Profil ist vollständig.",
     run_go_goals: "Passende Berufe finden",
-    run_auto: "Automatisch zur nächsten Frage",
-    run_auto_card: "Automatisch zur nächsten Karte",
     run_later: "Übersprungen: {a} von {t}",
     run_later_p:
       "Diese haben Sie übersprungen. Beantworten Sie sie jetzt, oder überspringen Sie sie noch einmal, um abzuschließen.",

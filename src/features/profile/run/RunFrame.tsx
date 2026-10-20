@@ -4,8 +4,8 @@ import { go } from "@/app/router";
 import { PARTS } from "@/domain/assess";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { setAutoNext, useSettings } from "@/app/settings";
-import { Button, Checkbox, Icon, RunHeader } from "@/ui";
+import { Button, Icon, RunHeader } from "@/ui";
+export { AutoNextBox } from "@/app/AutoNextBox";
 import { strings } from "../strings";
 
 /* The frame of a part in progress: header with the way back to the overview, "Part n · name", count and
@@ -79,23 +79,6 @@ export const StepIntro = ({ className, ...rest }: HTMLAttributes<HTMLDivElement>
 export const Context = ({ className, ...rest }: HTMLAttributes<HTMLParagraphElement>) => (
   <p className={cn("max-w-[62ch] text-ink-2", className)} {...rest} />
 );
-
-/** The last row of the action bar: whether an answer goes on to the next card by itself. On unless turned off;
- *  the label says what will happen before anything moves (WCAG 3.2.2). */
-export function AutoNextBox({ what = "question" }: { what?: "question" | "card" }) {
-  const t = useT(strings);
-  const on = useSettings((s) => s.autoNext);
-  return (
-    <div data-row="full">
-      <Checkbox
-        className="min-h-9 text-small text-ink-2"
-        label={t(what === "card" ? "run_auto_card" : "run_auto")}
-        checked={on}
-        onChange={(e) => setAutoNext(e.target.checked)}
-      />
-    </div>
-  );
-}
 
 /** "Pause": back to the overview, low emphasis, only as wide as its word (ActionBar gives a ghost button its
  *  own row on phones). label only for the skill cards' "Finish for now", which takes this slot. */

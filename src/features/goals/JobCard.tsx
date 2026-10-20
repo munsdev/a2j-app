@@ -2,14 +2,15 @@ import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "rea
 import type { Job } from "@/data/types";
 
 import { jobForOcc, lc, mainGoal } from "@/data/doc";
-import { update, useDoc } from "@/data/store";
+import { useDoc } from "@/data/store";
 import { useEscoReady, useOnet } from "@/app/catalog";
 import { occLabel, skLabel } from "@/domain/catalog";
-import { type Idea, distinct, setSkillVote, skillVote, warnings, zoneOf } from "@/domain/rank";
+import { type Idea, distinct, warnings, zoneOf } from "@/domain/rank";
 import { jobCount, type Tile } from "@/domain/skills";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Icon, LinkButton, SkillTile, Tag, TileGrid, TileLegend } from "@/ui";
+import { HalfMark } from "@/features/routes/parts";
 import { FitBlock } from "./Fit";
 import { useMatch } from "./useFit";
 import { Title } from "./Title";
@@ -21,9 +22,8 @@ import "./card.css";
 /* =================== THE JOB CARD ===================
    Front: what the job is and how well it matches (one score, two reasons: interests and skills). Back: its
    skills as tiles (have, a saved course covers it, still to learn). Tapping the front turns the card over; the
-   flip button does the same and is the way for keyboards. In rating mode (job ideas, after a thumb up or down)
-   the back asks what the person likes about it (or what puts them off) and lists the skills as rows with two
-   buttons each: "I like this" and "Rather not". */
+   flip button does the same and is the way for keyboards. Flat (job ideas): one side only, with the skills on
+   it as chips, nothing to turn over. */
 
 export interface JobCardProps {
   /** catalogue occupation, -1 when not in the catalogue */
@@ -31,7 +31,8 @@ export interface JobCardProps {
   job?: Job | null;
   /** the ranking row, on job ideas */
   idea?: Idea | null;
-  rate?: boolean;
+  /** one side only, with the skills on it as chips (job ideas): nothing to turn over */
+  flat?: boolean;
   /** stretch to the height of its row (cards side by side) */
   fill?: boolean;
   /** play the deal-in animation when the card appears */
@@ -44,16 +45,24 @@ export interface JobCardProps {
 /** How an idea is marked: on the shortlist, one of the goals, not for me, or not at all. */
 export type IdeaMark = "like" | "goal" | "no" | null;
 
-export function JobCard({ occ, job, idea, rate, fill, deal, main, mark }: JobCardProps) {
+export function JobCard({ occ, job, idea, flat, fill, deal, main, mark }: JobCardProps) {
   const E = useEscoReady();
   const key = cardKey(occ, job?.id);
-  const flipped = useFlipped(key) || !!rate;
+  const flipped = useFlipped(key) && !flat;
   const title = job ? job.title : occLabel(E, occ);
-  const own = useHeightTween(flipped, !fill);
+  const own = useHeightTween(flipped, !fill && !flat);
   const onFront = (e: MouseEvent) => {
     if ((e.target as HTMLElement).closest("a,button")) return;
     toggleFlip(key);
   };
+  if (flat)
+    return (
+      <article ref={own} className="card3d" aria-label={title} data-card={key} data-deal={deal || undefined}>
+        <div className="face front">
+          <CardFront occ={occ} job={job ?? null} idea={idea ?? null} main={!!main} mark={mark ?? null} flat />
+        </div>
+      </article>
+    );
   return (
     <article
       ref={own}
@@ -68,7 +77,7 @@ export function JobCard({ occ, job, idea, rate, fill, deal, main, mark }: JobCar
         <CardFront occ={occ} job={job ?? null} idea={idea ?? null} main={!!main} mark={mark ?? null} />
       </div>
       <div className="face back" aria-hidden={!flipped || undefined} inert={!flipped}>
-        <CardBack occ={occ} job={job ?? null} rate={!!rate} main={!!main} mark={mark ?? null} />
+        <CardBack occ={occ} job={job ?? null} main={!!main} />
       </div>
     </article>
   );
@@ -125,12 +134,15 @@ function CardFront({
   idea,
   main,
   mark,
+  flat,
 }: {
   occ: number;
   job: Job | null;
   idea: Idea | null;
   main: boolean;
   mark: IdeaMark;
+  /** one side: the skills as chips, and no "tap to turn over" */
+  flat?: boolean;
 }) {
   const t = useT(strings);
   const E = useEscoReady();
@@ -200,14 +212,14 @@ function CardFront({
   const fit = m && <FitBlock m={m} main={isMain} />;
   if (!info)
     return (
-      <div className="flex min-h-full cursor-pointer flex-col gap-3.5 p-5 pb-[22px]">
+      <div className={cn("flex min-h-full flex-col gap-3.5 p-5 pb-[22px]", !flat && "cursor-pointer")}>
         {tags}
         {heading}
         {fit ?? <p className="text-small text-ink-3">{t("d_custom")}</p>}
       </div>
     );
   return (
-    <div className="flex min-h-full cursor-pointer flex-col gap-3.5 p-5 pb-[22px]">
+    <div className={cn("flex min-h-full flex-col gap-3.5 p-5 pb-[22px]", !flat && "cursor-pointer")}>
       {tags}
       <div className="flex flex-col gap-1">
         {heading}
@@ -223,6 +235,7 @@ function CardFront({
         </p>
       )}
       {fit}
+      {flat && <SkillChips occ={occ} job={job} />}
       {info.why.length > 0 && (
         <ul className="flex flex-col gap-1.5 text-small font-semibold text-ink-2">
           {info.why.map((w) => (
@@ -250,19 +263,7 @@ function CardFront({
 }
 
 /* ---------- the back ---------- */
-function CardBack({
-  occ,
-  job,
-  rate,
-  main,
-  mark,
-}: {
-  occ: number;
-  job: Job | null;
-  rate: boolean;
-  main: boolean;
-  mark: IdeaMark;
-}) {
+function CardBack({ occ, job, main }: { occ: number; job: Job | null; main: boolean }) {
   const t = useT(strings);
   const E = useEscoReady();
   const d = useDoc();
@@ -275,24 +276,10 @@ function CardBack({
         <H className="text-title">
           <Title text={title} split />
         </H>
-        {rate ? (
-          <div className="flex flex-col gap-1 rounded-tile bg-surface-2 px-3 py-2.5">
-            {/* after a thumb: what the person likes about it, or what puts them off */}
-            <p className="text-label font-extrabold text-ink">
-              {t(mark === "no" ? "c_why_no" : "c_why_yes")}
-            </p>
-            <p className="text-small text-ink-2">
-              <b className="text-ink">{t("c_rate_opt")}</b> {t("c_rate_hint")}
-            </p>
-          </div>
-        ) : (
-          tiles.length > 0 && <TileLegend />
-        )}
+        {tiles.length > 0 && <TileLegend />}
       </div>
       {tiles.length === 0 ? (
         <p className="text-small text-ink-3">{t("d_custom")}</p>
-      ) : rate ? (
-        <VoteRows occ={occ} tiles={tiles} />
       ) : (
         <TileGrid>
           {tiles.map((tile) => (
@@ -310,99 +297,62 @@ function CardBack({
   );
 }
 
-/* ---------- rating mode: a row per skill, "I like this" and "Rather not" ---------- */
-const ROWS_SHOWN = 8;
+/* ---------- the skills as chips (job ideas: one side, nothing to turn over) ---------- */
+const CHIPS_SHOWN = 10;
+const CHIP: Record<Tile["state"], string> = {
+  have: "bg-have-bg text-have-ink",
+  some: "bg-have-bg text-have-ink",
+  course: "bg-course-bg text-course-ink shadow-[inset_0_0_0_1.5px_var(--course)]",
+  learn: "bg-surface text-ink-2 outline-[1.5px] -outline-offset-[1.5px] outline-learn outline-dashed",
+};
 
-function VoteRows({ occ, tiles }: { occ: number; tiles: Tile[] }) {
+/** The job's core skills, each in its state (have, some, the course covers it, still to learn) and told apart
+ *  by its mark as well as its colour. A chip opens the skill's sheet, where the person can rate it. */
+function SkillChips({ occ, job }: { occ: number; job: Job | null }) {
   const t = useT(strings);
+  const E = useEscoReady();
+  const d = useDoc();
+  const tiles = useMemo(() => jobCount(d, E, occ, job).tiles, [d, E, occ, job]);
   const [all, setAll] = useState(false);
-  const shown = all ? tiles : tiles.slice(0, ROWS_SHOWN);
+  if (!tiles.length) return null;
+  const shown = all ? tiles : tiles.slice(0, CHIPS_SHOWN);
+  const jobId = job?.id ?? jobForOcc(d, occ)?.id ?? null;
   return (
-    <>
-      <ul className="flex flex-col gap-2">
+    <section className="flex flex-col gap-2" aria-label={t("c_skills_h")}>
+      <p className="text-label font-extrabold">{t("c_skills_h")}</p>
+      <ul className="flex flex-wrap gap-1.5">
         {shown.map((tile) => (
-          <VoteRow key={tile.key} occ={occ} tile={tile} />
+          <li key={tile.key}>
+            <button
+              type="button"
+              data-tile=""
+              className={cn(
+                "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1 text-left text-small leading-tight font-bold [&_svg]:size-3.5 [&_svg]:stroke-[2.8]",
+                CHIP[tile.state],
+              )}
+              onClick={() => openSkill(tile.x, occ, jobId)}
+            >
+              <span aria-hidden="true" className="flex">
+                {tile.state === "have" ? (
+                  <Icon name="check" />
+                ) : tile.state === "some" ? (
+                  <HalfMark />
+                ) : tile.state === "course" ? (
+                  <Icon name="book" />
+                ) : null}
+              </span>
+              <span className="break-words hyphens-auto">{tile.name}</span>
+              <span className="sr-only">, {t(`c_legend_${tile.state}`)}</span>
+            </button>
+          </li>
         ))}
       </ul>
       {tiles.length > shown.length && (
-        <LinkButton className="text-small" onClick={() => setAll(true)}>
+        <LinkButton className="self-start text-small" onClick={() => setAll(true)}>
           {t("c_more_sk", { n: tiles.length - shown.length })}
         </LinkButton>
       )}
-    </>
-  );
-}
-
-function VoteRow({ occ, tile }: { occ: number; tile: Tile }) {
-  const t = useT(strings);
-  const x = tile.x;
-  const vote = useDoc((d) => (typeof x === "number" ? skillVote(d, occ, x) : 0));
-  /* the saves are quiet: Next (or leaving) makes this card's thumbs one undo step */
-  const set = (dir: 1 | -1) => {
-    if (typeof x !== "number") return;
-    update((dr) => setSkillVote(dr, occ, x, vote === dir ? 0 : dir), { quiet: true });
-  };
-  const btn =
-    "flex size-11 flex-none items-center justify-center rounded-tile transition-[background-color,color,box-shadow,transform] duration-150 active:scale-95 [&_svg]:size-5";
-  const off = "bg-surface text-ink-3 shadow-ring hover:text-ink hover:shadow-ring-strong";
-  return (
-    <li
-      className={cn(
-        "grid min-h-[60px] grid-cols-[20px_minmax(0,1fr)_auto_auto] items-center gap-2 rounded-control py-2 pr-2 pl-2.5",
-        (tile.state === "have" || tile.state === "some") && "bg-have-bg text-have-ink",
-        tile.state === "course" && "bg-course-bg text-course-ink shadow-[inset_0_0_0_1.5px_var(--course)]",
-        tile.state === "learn" &&
-          "bg-surface text-ink-2 outline-[1.5px] -outline-offset-[1.5px] outline-learn outline-dashed",
-      )}
-    >
-      <span
-        aria-hidden="true"
-        className={cn(
-          "flex size-5 items-center justify-center rounded-full [&_svg]:size-3.5 [&_svg]:stroke-[2.6]",
-          tile.state === "have" && "bg-have text-on-accent",
-          tile.state === "some" &&
-            "bg-[linear-gradient(90deg,var(--have)_50%,transparent_50%)] shadow-[inset_0_0_0_2px_var(--have)]",
-          tile.state === "course" && "bg-course text-white",
-          tile.state === "learn" && "shadow-[inset_0_0_0_2px_var(--line-2)]",
-        )}
-      >
-        {tile.state === "have" ? (
-          <Icon name="check" />
-        ) : tile.state === "course" ? (
-          <Icon name="book" />
-        ) : null}
-      </span>
-      <span className="text-small leading-tight font-bold break-words hyphens-auto">
-        {tile.name}
-        <span className="sr-only">
-          {", "}
-          {t(`c_legend_${tile.state}`)}
-        </span>
-      </span>
-      {typeof x === "number" && (
-        <>
-          <button
-            type="button"
-            aria-pressed={vote > 0}
-            aria-label={t("c_vote_up", { x: tile.name })}
-            data-vote="up"
-            className={cn(btn, vote > 0 ? "bg-yes text-on-yes" : off)}
-            onClick={() => set(1)}
-          >
-            <Icon name="up" />
-          </button>
-          <button
-            type="button"
-            aria-pressed={vote < 0}
-            aria-label={t("c_vote_dn", { x: tile.name })}
-            data-vote="down"
-            className={cn(btn, vote < 0 ? "bg-no text-on-no" : off)}
-            onClick={() => set(-1)}
-          >
-            <Icon name="up" flip />
-          </button>
-        </>
-      )}
-    </li>
+      <TileLegend className="mt-0.5" />
+    </section>
   );
 }

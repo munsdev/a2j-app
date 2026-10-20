@@ -23,8 +23,6 @@ interface GoalsState {
   pass: number[] | null;
   /** bumped when marks change, so the cards still ahead are ranked again */
   rankVer: number;
-  /** occupation whose card is in rating mode */
-  rating: number | null;
   /** compared job ids, null = not chosen yet (the first three) */
   cmp: string[] | null;
   cmpAll: boolean;
@@ -37,7 +35,6 @@ const initial = (): GoalsState => ({
   pos: 0,
   pass: null,
   rankVer: 0,
-  rating: null,
   cmp: null,
   cmpAll: false,
 });

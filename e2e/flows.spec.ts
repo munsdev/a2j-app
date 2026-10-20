@@ -84,7 +84,9 @@ test("answer keys do nothing while a dialog is open", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Almost always" })).toHaveAttribute("aria-pressed", "false");
 });
 
-test("the match score with courses, and rating skills on a liked idea", async ({ page }) => {
+test("the match score with courses; a liked idea goes on the shortlist, its skills open their sheet", async ({
+  page,
+}) => {
   await seed(page, { sample: "holmes" });
   const errors = watchErrors(page);
   await page.goto("#goals/job/j3");
@@ -93,15 +95,14 @@ test("the match score with courses, and rating skills on a liked idea", async ({
   await expect(front.getByText(/^Rises to 41/)).toBeVisible();
 
   await page.goto("#goals/ideas");
+  const title = (await page.locator(".card3d").first().getAttribute("aria-label", { timeout: 30000 }))!;
+  await page.locator(".card3d [data-tile]").first().click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "I like it" }).first().click();
-  const up = page.locator('button[data-vote="up"][aria-pressed="false"]').first();
-  const name = (await up.getAttribute("aria-label"))!;
-  expect(name).toMatch(/^I like this: /);
-  const btn = page.getByRole("button", { name, exact: true });
-  await btn.click();
-  await expect(btn).toHaveAttribute("aria-pressed", "true");
-  await btn.click();
-  await expect(btn).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("On your shortlist").first()).toBeVisible();
+  await page.goto("#goals");
+  await expect(page.getByText(title).first()).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -122,37 +123,37 @@ test("browse the job ideas: next and back, and change a mark on a card seen befo
   await expect(count).toHaveText(/^1 of /);
   await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
 
-  // a thumb marks the card and turns it to its skills, it stays on the card; the filled thumb again takes the
-  // mark away, the other one switches it
+  // a thumb marks the card and the next one comes by itself; going back shows the mark; the filled thumb
+  // again takes it away, the other one switches it
   const no = page.getByRole("button", { name: "Not for me" }).first();
   const yes = page.getByRole("button", { name: "I like it", exact: true }).first();
   await expect(no).toHaveAttribute("aria-pressed", "false");
   await no.click();
-  await expect(no).toHaveAttribute("aria-pressed", "true");
-  await expect(count).toHaveText(/^1 of /);
-  await expect(page.getByText("What puts you off?")).toBeVisible();
-  await yes.click();
-  await expect(yes).toHaveAttribute("aria-pressed", "true");
-  await expect(no).toHaveAttribute("aria-pressed", "false");
-  await expect(page.getByText("What do you like about it?")).toBeVisible();
-  await yes.click();
-  await expect(yes).toHaveAttribute("aria-pressed", "false");
-
-  // the letter key marks too, and the toast's Undo takes the mark back
-  await page.keyboard.press("n");
-  await expect(no).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: "Undo" }).click();
-  await expect(no).toHaveAttribute("aria-pressed", "false");
-  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
-
-  // marked, then Next: going back shows the mark
-  await no.click();
-  await page.getByRole("button", { name: "Next", exact: true }).click();
   await expect(count).toHaveText(/^2 of /);
   await back.click();
   await expect(count).toHaveText(/^1 of /);
-  await expect(page.locator(".card3d").first().getByText("Not for me")).toBeVisible();
-  await no.click();
+  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+  await expect(no).toHaveAttribute("aria-pressed", "true");
+  await yes.click();
+  await expect(count).toHaveText(/^2 of /);
+  await back.click();
+  await expect(yes).toHaveAttribute("aria-pressed", "true");
+  await expect(no).toHaveAttribute("aria-pressed", "false");
+  await yes.click();
+  await expect(yes).toHaveAttribute("aria-pressed", "false");
+  await expect(count).toHaveText(/^1 of /);
+
+  // the card has no back to turn to: its skills are on it
+  await expect(page.getByText("Its core skills")).toBeVisible();
+  await expect(page.getByRole("button", { name: "See skills" })).toHaveCount(0);
+
+  // the letter key marks too, and the toast's Undo takes the mark back
+  await page.keyboard.press("n");
+  await expect(count).toHaveText(/^2 of /);
+  await page.getByRole("button", { name: "Undo" }).click();
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+  await expect(no).toHaveAttribute("aria-pressed", "false");
 
   // the place in the deck survives a reload
   await page.keyboard.press("ArrowRight");
