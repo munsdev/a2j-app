@@ -74,9 +74,29 @@
     rotate 0.24s cubic-bezier(0.4, 0, 1, 1),
     opacity 0.24s;
 }
-/* a vertical drag on a card still scrolls the page */
+/* the deck takes every drag on the card (up is skip), so it does not scroll the page; the deck fits the screen */
 [data-swipe] .card3d {
-  touch-action: pan-y;
+  touch-action: none;
+}
+
+/* while dragging: what letting go will do, as a stamp over the card */
+.deck-hint {
+  @apply pointer-events-none absolute top-8 z-[2] rounded-control border-[3px] bg-surface px-3.5 py-1.5 font-display text-title font-extrabold uppercase opacity-0;
+  transition: opacity 0.12s;
+}
+.deck-hint[data-for="right"] {
+  @apply left-5 -rotate-6 border-yes text-yes;
+}
+.deck-hint[data-for="left"] {
+  @apply right-5 rotate-6 border-no text-no;
+}
+.deck-hint[data-for="up"] {
+  @apply left-1/2 -translate-x-1/2 border-ink-3 text-ink-2;
+}
+[data-hint="right"] > .deck-hint[data-for="right"],
+[data-hint="left"] > .deck-hint[data-for="left"],
+[data-hint="up"] > .deck-hint[data-for="up"] {
+  opacity: 1;
 }
 
 /* the deck on phones: two cards peek out behind the one on top */
@@ -89,4 +109,15 @@
 .deck-stack > i + i {
   inset: 0 14px 12px;
   opacity: 0.7;
+}
+
+/* the deck: the card is no taller than the screen above the answers (--deck-max, measured); what does not fit
+   fades out under the way to the details */
+.deck .card3d > .front {
+  max-height: var(--deck-max, none);
+  overflow: hidden;
+}
+.deck-more {
+  @apply absolute inset-x-0 bottom-0 z-[1] flex min-h-14 items-end justify-center gap-1 rounded-b-panel pb-3 text-small font-extrabold text-ink underline-offset-4 hover:underline;
+  background: linear-gradient(to top, var(--surface) 55%, transparent);
 }

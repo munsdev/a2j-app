@@ -1,4 +1,13 @@
-import { useEffect, useEffectEvent, useMemo, useRef, type ReactNode } from "react";
+import {
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { useShallow } from "zustand/react/shallow";
 import type { Doc } from "@/data/types";
 import { addJob, jobForOcc, removeJob } from "@/data/doc";
@@ -13,25 +22,24 @@ import { toastUndo } from "@/app/toast";
 import { loadOnet, occLabel } from "@/domain/catalog";
 import { type DeckFilter, type Idea, READY, canRank, rankAll, setVote, voteOf } from "@/domain/rank";
 import { useT } from "@/i18n";
-import { ActionBar, Button, EmptyState, Icon, Page, RunHeader, Select } from "@/ui";
-import { JobCard, type IdeaMark } from "./JobCard";
+import { closeSheet, openSheet } from "@/app/sheet";
+import { Button, EmptyState, Icon, LinkButton, Page, RunHeader, Select } from "@/ui";
+import { IdeaDetails, JobCard, type IdeaMark } from "./JobCard";
 import { DECK_SIZE, clampPos, dealHand, deckOrder, markSeen, stepPos, unmarked } from "./layout";
-import { useAutoNext } from "@/app/autoNext";
-import { AutoNextBox } from "@/app/AutoNextBox";
 import { ideaRanking, useGoals } from "./store";
-import { usePointerSwipe } from "./usePointerSwipe";
+import { useDeckFling, type Fling } from "./usePointerSwipe";
 import { strings } from "./strings";
 
 /* =================== JOB IDEAS: A DECK YOU BROWSE ===================
-   Next and Back go through the ideas one card at a time, like photos: swipe a card to the left for the next
-   one, to the right for the one before. Marking is done with the buttons only: "I like it" puts the job on
-   the shortlist and turns the card over so single skills can be rated (optional); "Not for me" marks it and
-   goes on (with Undo in the toast). Marked cards stay in the deck and show their mark, so going back to one
-   lets you change your mind. The cards you have seen keep their order; the ones ahead are ranked again as you
-   mark (see layout.ts). At the end: how many are still unmarked, and a way through just those.
-   One card at a time, on every screen, with its skills on it (nothing to turn over). A thumb marks it and the
-   next card comes a moment later (unless "go on automatically" is off).
-   Keys: ← back, → next, L I like it, N not for me. */
+   One card at a time, fitting the screen: the job, its score in a line, its first skills, and "All skills and
+   details" for the rest (a sheet, so a long list never moves the deck). Under it the two big answers, 👎 Not
+   for me and 👍 I like it, then Skip, then a small Back. Swipe the card right for I like it, left for Not for
+   me, up to skip; the buttons and keys throw the card the same way. An answer marks the card and the next one
+   comes; going back shows the mark: the filled thumb again takes it away, the other one switches it. Marks
+   are steps of the app's undo (the toast, Ctrl+Z). The cards you have seen keep their order; the ones ahead
+   are ranked again as you mark (see layout.ts). At the end: how many are still unmarked, and a way through
+   just those.
+   Keys: → I like it, ← Not for me, ↑ skip, Backspace back (L and N also mark). */
 
 const ZONES = [1, 2, 3, 4] as const;
 const NONE: number[] = [];
@@ -119,10 +127,16 @@ export function Ideas() {
     };
   }, [zones]);
 
+  const deckRef = useRef<HTMLDivElement>(null);
+  const deckRefFor = deckRef;
+  /* the card gets the screen above the answers, so they are always in view without scrolling */
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const deckMax = useDeckMax(deckRefFor, controlsRef);
+
   /* ---------- what the buttons, keys and swipes do ---------- */
   /* focus is not lost when the pressed button gives way to the next ones; after a shortcut pressed with
      nothing focused, focus stays where it was, so Space and Enter keep meaning "turn" and "next" */
-  const deckRef = useRef<HTMLDivElement>(null);
+
   const focusAim = useRef<FocusAim>(null);
   const aimFocus = (aim: FocusAim) => {
     focusAim.current = deckRef.current?.contains(document.activeElement) ? aim : null;
@@ -130,7 +144,7 @@ export function Ideas() {
   const at = (patch: Partial<ReturnType<typeof useGoals.getState>>) =>
     useGoals.setState({ deckKey: key, seen: [...seen], pos, pass, rankVer: ver, ...patch });
 
-  /** one card on or back */
+  /** one card on or back; the card is replaced in place, the page does not move */
   const step = (dir: 1 | -1) => {
     const to = stepPos(pos, dir, view.length);
     at({ pos: to });
@@ -138,40 +152,25 @@ export function Ideas() {
       to >= view.length
         ? ['[data-end="go"]', '[data-end="goals"]']
         : dir < 0
-          ? ['[data-nav="back"]:not([aria-disabled="true"])', '[data-nav="next"]']
-          : ['[data-nav="next"]'],
+          ? ['[data-nav="back"]:not([aria-disabled="true"])', '[data-idea="yes"]']
+          : ['[data-idea="yes"]'],
     );
-    if (to !== pos) window.scrollTo(0, 0);
   };
-  /* after a thumb, the next card a moment later (unless "go on automatically" is off) */
-  const auto = useAutoNext(pos, () => step(1));
-  /* The two thumbs work the same way: a thumb marks the card, the filled thumb again takes the mark away, the
-     other one switches it. Every mark is one step of the app's undo (the toast, Ctrl+Z). */
-  const like = (occ: number) => {
-    commit(); // thumbs on another card's skills are their own undo step
-    update((dr) => {
-      setVote(dr, occ, 1);
-      if (!jobForOcc(dr, occ)) addJob(dr, { title: occLabel(E, occ), occ, role: "maybe" });
-    });
-    at({ rankVer: ver + 1 });
-    aimFocus(['[data-nav="next"]']);
-    auto();
-    toastUndo(t("c_liked"));
-  };
-  const notForMe = (occ: number) => {
+  /** mark a card and go on to the next, in one step (the deck moves and is ranked again together) */
+  const mark = (occ: number, dir: 1 | -1) => {
     commit();
     update((dr) => {
-      /* from "I like it": off the shortlist too (a goal is changed on its own page) */
       const j = jobForOcc(dr, occ);
-      if (j?.role === "maybe") removeJob(dr, j.id);
-      setVote(dr, occ, -1);
+      if (dir > 0 && !j) addJob(dr, { title: occLabel(E, occ), occ, role: "maybe" });
+      /* from "I like it" to "Not for me": off the shortlist too (a goal is changed on its own page) */
+      if (dir < 0 && j?.role === "maybe") removeJob(dr, j.id);
+      setVote(dr, occ, dir);
     });
-    at({ rankVer: ver + 1 });
-    aimFocus(['[data-nav="next"]']);
-    auto();
-    toastUndo(t("c_no_t"));
+    at({ rankVer: ver + 1, pos: stepPos(pos, 1, view.length) });
+    aimFocus(['[data-idea="yes"]', '[data-end="go"]', '[data-end="goals"]']);
+    toastUndo(t(dir > 0 ? "c_liked" : "c_no_t"));
   };
-  /** the filled thumb again: no mark (and off the shortlist), back to the front */
+  /** the filled thumb again: no mark (and off the shortlist); the card stays */
   const unmark = (occ: number) => {
     commit();
     update((dr) => {
@@ -180,21 +179,40 @@ export function Ideas() {
       setVote(dr, occ, 0);
     });
     at({ rankVer: ver + 1 });
-    aimFocus(['[data-nav="next"]']);
     toastUndo(t("c_unmark_t"));
   };
-  const thumbUp = (occ: number) => {
-    const m = markOf(occ);
-    if (m === "goal") return;
-    if (m === "like") unmark(occ);
-    else like(occ);
+  /** the card was thrown (a swipe, a button, a key): right I like it, left Not for me, up skip. A card already
+   *  marked that way, or a goal, just goes on. */
+  const thrown = (dir: Fling) => {
+    if (cur == null) return;
+    const m = markOf(cur);
+    if (dir === "up" || m === "goal" || (dir === "right" && m === "like") || (dir === "left" && m === "no"))
+      step(1);
+    else mark(cur, dir === "right" ? 1 : -1);
   };
-  const thumbDown = (occ: number) => {
-    const m = markOf(occ);
+  const { fling, handlers: swipe } = useDeckFling(thrown);
+  /** a thumb button: the filled one again takes the mark away, otherwise the card is thrown that way */
+  const thumb = (dir: 1 | -1) => {
+    if (cur == null) return;
+    const m = markOf(cur);
     if (m === "goal") return;
-    if (m === "no") unmark(occ);
-    else notForMe(occ);
+    if ((dir > 0 && m === "like") || (dir < 0 && m === "no")) unmark(cur);
+    else fling(dir > 0 ? "right" : "left");
   };
+  const openDetails = (occ: number) =>
+    openSheet(
+      <DetailsSheet
+        occ={occ}
+        idea={ideaOf(occ)}
+        onMore={() => openDetails(occ)}
+        onThumb={(dir) => {
+          closeSheet();
+          /* once the sheet is gone, the card goes the way of the answer */
+          setTimeout(() => thumb(dir), 60);
+        }}
+      />,
+      { label: occLabel(E, occ) },
+    );
   const startPass = () => {
     at({ pass: unmarked(order, (o) => markOf(o) !== null), pos: 0 });
     aimFocus(['[data-nav="next"]']);
@@ -217,19 +235,22 @@ export function Ideas() {
   const onKey = useEffectEvent((e: KeyboardEvent) => {
     if (e.defaultPrevented || isShortcutBlocked(e)) return;
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    if (k === "ArrowLeft" || k === "ArrowRight") {
-      if (!view.length) return;
+    if (k === "Backspace") {
+      if (!view.length || pos === 0) return;
       e.preventDefault();
-      step(k === "ArrowLeft" ? -1 : 1);
+      step(-1);
       return;
     }
     if (cur == null) return;
-    if (k === "l") {
+    if (k === "ArrowRight" || k === "l") {
       e.preventDefault();
-      thumbUp(cur);
-    } else if (k === "n") {
+      thumb(1);
+    } else if (k === "ArrowLeft" || k === "n") {
       e.preventDefault();
-      thumbDown(cur);
+      thumb(-1);
+    } else if (k === "ArrowUp") {
+      e.preventDefault();
+      fling("up");
     }
   });
   useEffect(() => {
@@ -248,38 +269,32 @@ export function Ideas() {
       : atEnd
         ? t("c_end_h", { n: order.length })
         : "";
-  /* the filter sits under the title, so the way back, the count and the title keep one line each */
+  /* one slim line: the way back, "Job ideas", the count and the filter, so the card gets the screen */
+  const filter = zones && (
+    <Select
+      aria-label={t("c_filter")}
+      value={zone}
+      onChange={(e) => setZone(+e.target.value as DeckFilter)}
+      className="min-h-9 w-auto max-w-[34vw] truncate rounded-tile py-1 pr-7 pl-2 text-caption font-bold sm:max-w-none"
+    >
+      <option value={0}>{t("c_all_levels")}</option>
+      <option value={READY}>{t("c_ready")}</option>
+      {ZONES.map((z) => (
+        <option key={z} value={z}>
+          {t(`z${z}`)}
+        </option>
+      ))}
+    </Select>
+  );
   const head = (
-    <div className="flex flex-col gap-3">
-      <div>
-        <RunHeader
-          onBack={() => go("goals")}
-          backLabel={t("nav_goals")}
-          eyebrow={t("nav_goals")}
-          title={t("g_ideas_h")}
-          count={
-            cur != null ? t(pass ? "c_count_pass" : "c_count", { n: pos + 1, t: view.length }) : undefined
-          }
-        />
-      </div>
-      {zones && (
-        <Select
-          aria-label={t("c_filter")}
-          value={zone}
-          onChange={(e) => setZone(+e.target.value as DeckFilter)}
-          className="min-h-11 w-auto max-w-full self-start rounded-tile py-1.5 pr-9 pl-3 text-small font-bold"
-        >
-          <option value={0}>
-            {t("c_filter")}: {t("c_any")}
-          </option>
-          <option value={READY}>{t("c_ready")}</option>
-          {ZONES.map((z) => (
-            <option key={z} value={z}>
-              {t(`z${z}`)}
-            </option>
-          ))}
-        </Select>
-      )}
+    <div>
+      <RunHeader
+        onBack={() => go("goals")}
+        backLabel={t("nav_goals")}
+        eyebrow={t("g_ideas_h")}
+        count={cur != null ? t(pass ? "c_count_pass" : "c_count", { n: pos + 1, t: view.length }) : undefined}
+        end={filter || undefined}
+      />
       <p className="sr-only" aria-live="polite">
         {said}
       </p>
@@ -337,14 +352,6 @@ export function Ideas() {
       </EmptyState>,
     );
 
-  const nav = (
-    <Nav
-      first={pos === 0}
-      marked={cur != null && markOf(cur) !== null}
-      onBack={() => step(-1)}
-      onNext={() => step(1)}
-    />
-  );
   if (cur == null)
     return shell(
       <div ref={deckRef}>
@@ -362,7 +369,7 @@ export function Ideas() {
               <Button variant={left.length ? "soft" : "primary"} data-end="goals" onClick={() => go("goals")}>
                 {t("g_title")}
               </Button>
-              <Button data-end="back" aria-keyshortcuts="ArrowLeft" onClick={() => step(-1)}>
+              <Button data-end="back" aria-keyshortcuts="Backspace" onClick={() => step(-1)}>
                 <Icon name="back" />
                 {t("c_back")}
               </Button>
@@ -381,134 +388,141 @@ export function Ideas() {
       </div>,
     );
 
-  const handlers: CardActions = { thumbUp, thumbDown, step, canBack: pos > 0 };
+  const m = markOf(cur);
   return shell(
-    <div ref={deckRef} className="flex flex-col">
-      <Single key={cur} occ={cur} idea={ideaOf(cur)} mark={markOf(cur)} nav={nav} {...handlers} />
-    </div>,
-  );
-}
-
-interface CardActions {
-  thumbUp: (occ: number) => void;
-  thumbDown: (occ: number) => void;
-  step: (dir: 1 | -1) => void;
-  canBack: boolean;
-}
-interface CardProps extends CardActions {
-  occ: number;
-  idea: Idea | null;
-  mark: IdeaMark;
-}
-
-/* a swipe to the left brings the next card, to the right the one before (not past the first card) */
-const useDeckSwipe = (step: (dir: 1 | -1) => void, canBack: boolean) =>
-  usePointerSwipe(
-    (dir) => step(dir < 0 ? 1 : -1),
-    (dir) => dir < 0 || canBack,
-  );
-
-/** Phones: one big card with a stack behind it; the marks and Back / Next in a bar at the bottom. */
-function Single(p: CardProps & { nav: ReactNode }) {
-  const swipe = useDeckSwipe(p.step, p.canBack);
-  return (
-    <>
-      <div className="relative pt-1.5" {...swipe}>
+    <div ref={deckRef} className="flex flex-col gap-3">
+      <div className="deck relative pt-1.5" style={{ ["--deck-max" as string]: `${deckMax}px` }} {...swipe}>
         <div className="deck-stack" aria-hidden="true">
           <i />
           <i />
         </div>
-        <JobCard occ={p.occ} idea={p.idea} mark={p.mark} flat deal />
+        <JobCard key={cur} occ={cur} idea={ideaOf(cur)} mark={m} flat deal onMore={() => openDetails(cur)} />
+        {/* the rest of the card is in the details sheet: the way there sits on the card's lower edge */}
+        <button type="button" className="deck-more" onClick={() => openDetails(cur)}>
+          {t("c_details_short")}
+          <Icon name="chev" className="size-4" />
+        </button>
+        {/* what a drag will do, shown as it passes the threshold */}
+        <span className="deck-hint" data-for="right" aria-hidden="true">
+          {t("c_yes")}
+        </span>
+        <span className="deck-hint" data-for="left" aria-hidden="true">
+          {t("c_no")}
+        </span>
+        <span className="deck-hint" data-for="up" aria-hidden="true">
+          {t("c_skip")}
+        </span>
       </div>
-      {/* phones: the thumbs, then Back and Next, two to a row; from md up: Back, the thumbs, Next in one row */}
-      <ActionBar stretch className="flex-wrap gap-y-2 max-md:[&>button]:basis-[calc(50%-5px)]">
-        <Buttons {...p} />
-        {p.nav}
-        <AutoNextBox what="card" />
-      </ActionBar>
-    </>
+      <div ref={controlsRef} className="flex flex-col gap-3">
+        <Thumbs mark={m} onThumb={thumb} />
+        <Button
+          wide
+          data-nav="next"
+          aria-keyshortcuts="ArrowUp"
+          className="min-h-12"
+          variant={m ? "primary" : "soft"}
+          onClick={() => fling("up")}
+        >
+          {t(m ? "c_next" : "c_skip")}
+          <Icon name="arrow" className={m ? undefined : "-rotate-90"} />
+        </Button>
+        <LinkButton
+          data-nav="back"
+          aria-keyshortcuts="Backspace"
+          aria-disabled={pos === 0 || undefined}
+          className="min-h-11 gap-1.5 self-center text-small aria-disabled:cursor-default aria-disabled:opacity-45"
+          onClick={() => pos > 0 && step(-1)}
+        >
+          <Icon name="back" className="size-4" />
+          {t("c_back")}
+        </LinkButton>
+      </div>
+    </div>,
   );
 }
 
-/** Back and Next: the same as a swipe to the right or to the left. Back stays focusable on the first card
- *  (aria-disabled), so focus is not lost when it gets there. Two buttons, not a box: the action bar places them
- *  (under the thumbs on phones, Back first and Next last in one row from md up). */
-function Nav({
-  first,
-  marked,
-  onBack,
-  onNext,
-}: {
-  first: boolean;
-  /** the card on the table is marked: Next is the thing to do */
-  marked: boolean;
-  onBack: () => void;
-  onNext: () => void;
-}) {
+/** The two answers, big and side by side: 👎 Not for me (red), 👍 I like it (green). The mark fills its
+ *  thumb (aria-pressed); a job that is one of the goals shows "On your goals" and is changed on its own page. */
+function Thumbs({ mark, onThumb }: { mark: IdeaMark; onThumb: (dir: 1 | -1) => void }) {
   const t = useT(strings);
-  return (
-    <>
-      <Button
-        data-nav="back"
-        aria-keyshortcuts="ArrowLeft"
-        aria-disabled={first || undefined}
-        className="min-h-12 aria-disabled:cursor-default aria-disabled:opacity-45 aria-disabled:active:scale-100 md:order-first"
-        onClick={() => !first && onBack()}
-      >
-        <Icon name="back" />
-        {t("c_back")}
-      </Button>
-      <Button
-        data-nav="next"
-        variant={marked ? "primary" : "soft"}
-        aria-keyshortcuts="ArrowRight"
-        className="min-h-12"
-        onClick={onNext}
-      >
-        {t("c_next")}
-        <Icon name="arrow" />
-      </Button>
-    </>
-  );
-}
-
-/** The marks, in the same place on every card: Not for me (red), I like it (green). Unmarked,
- *  both thumbs are outlined in their colour; the mark fills its thumb (aria-pressed). A job that is one of the
- *  goals shows "On your goals" and is changed on its own page. */
-function Buttons({ occ, mark, thumbUp, thumbDown }: CardProps) {
-  const t = useT(strings);
-  const tall = "min-h-12 gap-2 px-2 whitespace-normal [&_svg]:size-5";
+  const big = "min-h-16 gap-2.5 text-lead whitespace-normal [&_svg]:size-6";
   const goal = mark === "goal";
   const up = mark === "like" || goal;
   const down = mark === "no";
   return (
-    <>
+    <div className="grid grid-cols-2 gap-3">
       <Button
-        key="no"
-        variant={down ? "danger" : "soft"}
-        className={cn(tall, !down && "text-no shadow-[inset_0_0_0_1.5px_var(--no)] hover:bg-no-bg")}
+        variant={down ? "danger" : "no"}
+        className={cn(big, !down && "shadow-[inset_0_0_0_2px_var(--no)]")}
         data-idea="no"
         aria-pressed={down}
         aria-disabled={goal || undefined}
-        aria-keyshortcuts="N"
-        onClick={() => thumbDown(occ)}
+        aria-keyshortcuts="ArrowLeft"
+        onClick={() => onThumb(-1)}
       >
         <Icon name="up" flip />
         <span>{t("c_no")}</span>
       </Button>
       <Button
-        key="yes"
-        variant={up ? "yes" : "soft"}
-        className={cn(tall, !up && "text-yes shadow-[inset_0_0_0_1.5px_var(--yes)] hover:bg-yes-bg")}
+        variant="yes"
+        className={cn(big, !up && "bg-yes-bg text-yes shadow-[inset_0_0_0_2px_var(--yes)]")}
         data-idea="yes"
         aria-pressed={up}
         aria-disabled={goal || undefined}
-        aria-keyshortcuts="L"
-        onClick={() => thumbUp(occ)}
+        aria-keyshortcuts="ArrowRight"
+        onClick={() => onThumb(1)}
       >
         <Icon name="up" />
         <span>{goal ? t("c_goal_on") : t("c_yes")}</span>
       </Button>
-    </>
+    </div>
   );
+}
+
+/** "All skills and details": everything the deck card leaves out, in a sheet that scrolls on its own; the two
+ *  answers stay at its foot. */
+function DetailsSheet({
+  occ,
+  idea,
+  onMore,
+  onThumb,
+}: {
+  occ: number;
+  idea: Idea | null;
+  onMore: () => void;
+  onThumb: (dir: 1 | -1) => void;
+}) {
+  const mark = useDoc((d) => ideaMark(d, occ));
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="-mx-5 -mt-5">
+        <IdeaDetails occ={occ} idea={idea} mark={mark} onMore={onMore} />
+      </div>
+      <div className="sticky -bottom-6 z-[1] -mx-4 border-t border-line bg-surface px-4 py-3 sm:-bottom-[26px] sm:-mx-5 sm:px-5">
+        <Thumbs mark={mark} onThumb={onThumb} />
+      </div>
+    </div>
+  );
+}
+
+/** The tallest the card may be: the window, less what is above the deck and the answers under it (at least
+ *  260px; on a very small screen the page scrolls). Measured again when the window or the answers change. */
+function useDeckMax(deck: RefObject<HTMLElement | null>, controls: RefObject<HTMLElement | null>): number {
+  const [h, setH] = useState(520);
+  useLayoutEffect(() => {
+    const measure = () => {
+      const top = (deck.current?.getBoundingClientRect().top ?? 0) + window.scrollY;
+      const below = controls.current?.offsetHeight ?? 0;
+      setH(Math.max(260, Math.round(window.innerHeight - top - below - 36)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (controls.current) ro.observe(controls.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  });
+  return h;
 }

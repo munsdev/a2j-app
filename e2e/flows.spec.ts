@@ -106,66 +106,80 @@ test("the match score with courses; a liked idea goes on the shortlist, its skil
   expect(errors).toEqual([]);
 });
 
-test("browse the job ideas: next and back, and change a mark on a card seen before", async ({ page }) => {
+test("job ideas: two big answers, skip, a small back, swipes and keys", async ({ page }) => {
   await seed(page, { sample: "holmes" });
   const errors = watchErrors(page);
   await page.goto("#goals/ideas");
   const count = page.getByText(/^\d+ of \d+$/);
   await expect(count).toHaveText(/^1 of /, { timeout: 30000 });
-  const first = (await page.locator(".card3d").first().getAttribute("aria-label"))!;
-  const back = page.getByRole("button", { name: "Back", exact: true });
+  const card = () => page.locator(".card3d").first();
+  const first = (await card().getAttribute("aria-label"))!;
+  const back = page.locator('[data-nav="back"]');
+  const no = page.getByRole("button", { name: "Not for me" });
+  const yes = page.getByRole("button", { name: "I like it", exact: true });
   await expect(back).toHaveAttribute("aria-disabled", "true");
 
-  // Next and the arrow keys move through the deck; nothing is used up
-  await page.getByRole("button", { name: "Next", exact: true }).click();
-  await expect(count).toHaveText(/^2 of /);
-  await page.keyboard.press("ArrowLeft");
-  await expect(count).toHaveText(/^1 of /);
-  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
-
-  // a thumb marks the card and the next one comes by itself; going back shows the mark; the filled thumb
-  // again takes it away, the other one switches it
-  const no = page.getByRole("button", { name: "Not for me" }).first();
-  const yes = page.getByRole("button", { name: "I like it", exact: true }).first();
-  await expect(no).toHaveAttribute("aria-pressed", "false");
-  await no.click();
+  // Skip moves on without a mark; Back comes back
+  await page.getByRole("button", { name: /^Skip/ }).click();
   await expect(count).toHaveText(/^2 of /);
   await back.click();
   await expect(count).toHaveText(/^1 of /);
-  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+  await expect(card()).toHaveAttribute("aria-label", first);
+
+  // an answer marks the card and the next one comes; back shows the mark; the other thumb switches it, the
+  // filled one again takes it away (and the card stays)
+  await no.click();
+  await expect(count).toHaveText(/^2 of /);
+  await back.click();
   await expect(no).toHaveAttribute("aria-pressed", "true");
   await yes.click();
   await expect(count).toHaveText(/^2 of /);
   await back.click();
   await expect(yes).toHaveAttribute("aria-pressed", "true");
-  await expect(no).toHaveAttribute("aria-pressed", "false");
   await yes.click();
   await expect(yes).toHaveAttribute("aria-pressed", "false");
   await expect(count).toHaveText(/^1 of /);
 
-  // the card has no back to turn to: its skills are on it
-  await expect(page.getByText("Its core skills")).toBeVisible();
-  await expect(page.getByRole("button", { name: "See skills" })).toHaveCount(0);
-
-  // the letter key marks too, and the toast's Undo takes the mark back
-  await page.keyboard.press("n");
+  // keys: ↑ skips, Backspace goes back, ← is Not for me; Undo in the toast takes the mark back
+  await page.keyboard.press("ArrowUp");
+  await expect(count).toHaveText(/^2 of /);
+  await page.keyboard.press("Backspace");
+  await expect(count).toHaveText(/^1 of /);
+  await page.keyboard.press("ArrowLeft");
   await expect(count).toHaveText(/^2 of /);
   await page.getByRole("button", { name: "Undo" }).click();
-  await page.keyboard.press("ArrowLeft");
-  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+  await page.keyboard.press("Backspace");
+  await expect(card()).toHaveAttribute("aria-label", first);
   await expect(no).toHaveAttribute("aria-pressed", "false");
 
+  // all skills and details open in a sheet; the deck stays where it was
+  await page.locator(".deck-more").click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(count).toHaveText(/^1 of /);
+
+  // a swipe to the right is I like it
+  const deck = page.locator("[data-swipe]");
+  const box = (await card().boundingBox())!;
+  const at = (dx: number) => ({ pointerId: 7, button: 0, clientX: box.x + 100 + dx, clientY: box.y + 60 });
+  await deck.dispatchEvent("pointerdown", at(0));
+  await deck.dispatchEvent("pointermove", at(60));
+  await deck.dispatchEvent("pointermove", at(200));
+  await deck.dispatchEvent("pointerup", at(200));
+  await expect(count).toHaveText(/^2 of /);
+  await page.keyboard.press("Backspace");
+  await expect(yes).toHaveAttribute("aria-pressed", "true");
+
   // the place in the deck survives a reload
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowUp");
+  await expect(count).toHaveText(/^2 of /);
+  await page.keyboard.press("ArrowUp");
   await expect(count).toHaveText(/^3 of /);
-  const third = await page.locator(".card3d").first().getAttribute("aria-label");
+  const third = await card().getAttribute("aria-label");
   await page.reload();
   await expect(count).toHaveText(/^3 of /, { timeout: 30000 });
-  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", third!);
-  await page.keyboard.press("ArrowLeft");
-  await page.keyboard.press("ArrowLeft");
-  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+  await expect(card()).toHaveAttribute("aria-label", third!);
   expect(errors).toEqual([]);
 });
 

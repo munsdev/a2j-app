@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useLayoutEffect, useMemo, useRef, type MouseEvent } from "react";
 import type { Job } from "@/data/types";
 
 import { jobForOcc, lc, mainGoal } from "@/data/doc";
@@ -9,10 +9,10 @@ import { type Idea, distinct, warnings, zoneOf } from "@/domain/rank";
 import { jobCount, type Tile } from "@/domain/skills";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { Icon, LinkButton, SkillTile, Tag, TileGrid, TileLegend } from "@/ui";
+import { Icon, SkillTile, Tag, TileGrid, TileLegend } from "@/ui";
 import { HalfMark } from "@/features/routes/parts";
-import { FitBlock } from "./Fit";
-import { useMatch } from "./useFit";
+import { FitBadge, FitBlock } from "./Fit";
+import { useFitText, useMatch } from "./useFit";
 import { Title } from "./Title";
 import { cardKey, toggleFlip, useFlipped } from "./store";
 import { openSkill } from "./openSkill";
@@ -31,8 +31,10 @@ export interface JobCardProps {
   job?: Job | null;
   /** the ranking row, on job ideas */
   idea?: Idea | null;
-  /** one side only, with the skills on it as chips (job ideas): nothing to turn over */
+  /** one side only, nothing to turn over (job ideas): the score in a line, the first skills as chips, and
+   *  onMore for the rest (the details sheet) */
   flat?: boolean;
+  onMore?: () => void;
   /** stretch to the height of its row (cards side by side) */
   fill?: boolean;
   /** play the deal-in animation when the card appears */
@@ -45,7 +47,7 @@ export interface JobCardProps {
 /** How an idea is marked: on the shortlist, one of the goals, not for me, or not at all. */
 export type IdeaMark = "like" | "goal" | "no" | null;
 
-export function JobCard({ occ, job, idea, flat, fill, deal, main, mark }: JobCardProps) {
+export function JobCard({ occ, job, idea, flat, onMore, fill, deal, main, mark }: JobCardProps) {
   const E = useEscoReady();
   const key = cardKey(occ, job?.id);
   const flipped = useFlipped(key) && !flat;
@@ -59,7 +61,15 @@ export function JobCard({ occ, job, idea, flat, fill, deal, main, mark }: JobCar
     return (
       <article ref={own} className="card3d" aria-label={title} data-card={key} data-deal={deal || undefined}>
         <div className="face front">
-          <CardFront occ={occ} job={job ?? null} idea={idea ?? null} main={!!main} mark={mark ?? null} flat />
+          <CardFront
+            occ={occ}
+            job={job ?? null}
+            idea={idea ?? null}
+            main={!!main}
+            mark={mark ?? null}
+            view="deck"
+            onMore={onMore}
+          />
         </div>
       </article>
     );
@@ -134,16 +144,21 @@ function CardFront({
   idea,
   main,
   mark,
-  flat,
+  view = "card",
+  onMore,
 }: {
   occ: number;
   job: Job | null;
   idea: Idea | null;
   main: boolean;
   mark: IdeaMark;
-  /** one side: the skills as chips, and no "tap to turn over" */
-  flat?: boolean;
+  /** card: the front of a card that turns over. deck: one side, compact (the score in a line, the first skills,
+   *  a link to the rest). detail: everything, in the details sheet. */
+  view?: "card" | "deck" | "detail";
+  onMore?: () => void;
 }) {
+  const flat = view !== "card";
+  const deck = view === "deck";
   const t = useT(strings);
   const E = useEscoReady();
   const O = useOnet();
@@ -203,23 +218,42 @@ function CardFront({
     </div>
   );
   /* one-off size between heading and display, one step down (heading) on phones */
-  const H = main ? "h1" : "h3";
+  const H = main ? "h1" : view === "detail" ? "h2" : "h3";
   const heading = (
     <H className="text-heading sm:text-[1.875rem] sm:leading-[1.12]">
-      <Title text={title} split />
+      {/* on the deck, the title opens the details too */}
+      {deck && onMore ? (
+        <button type="button" className="text-left underline-offset-4 hover:underline" onClick={onMore}>
+          <Title text={title} split />
+        </button>
+      ) : (
+        <Title text={title} split />
+      )}
     </H>
   );
-  const fit = m && <FitBlock m={m} main={isMain} />;
+  const fit = m && (deck ? <FitLine m={m} /> : <FitBlock m={m} main={isMain} />);
   if (!info)
     return (
-      <div className={cn("flex min-h-full flex-col gap-3.5 p-5 pb-[22px]", !flat && "cursor-pointer")}>
+      <div
+        className={cn(
+          "flex min-h-full flex-col gap-3.5 p-5 pb-[22px]",
+          !flat && "cursor-pointer",
+          deck && "gap-3 pb-16" /* room for the way to the details on the card's edge */,
+        )}
+      >
         {tags}
         {heading}
         {fit ?? <p className="text-small text-ink-3">{t("d_custom")}</p>}
       </div>
     );
   return (
-    <div className={cn("flex min-h-full flex-col gap-3.5 p-5 pb-[22px]", !flat && "cursor-pointer")}>
+    <div
+      className={cn(
+        "flex min-h-full flex-col gap-3.5 p-5 pb-[22px]",
+        !flat && "cursor-pointer",
+        deck && "gap-3 pb-16" /* room for the way to the details on the card's edge */,
+      )}
+    >
       {tags}
       <div className="flex flex-col gap-1">
         {heading}
@@ -235,8 +269,8 @@ function CardFront({
         </p>
       )}
       {fit}
-      {flat && <SkillChips occ={occ} job={job} />}
-      {info.why.length > 0 && (
+      {flat && <SkillChips occ={occ} job={job} max={deck ? DECK_CHIPS : undefined} onMore={onMore} />}
+      {!deck && info.why.length > 0 && (
         <ul className="flex flex-col gap-1.5 text-small font-semibold text-ink-2">
           {info.why.map((w) => (
             <li key={w} className="flex items-start gap-2">
@@ -246,7 +280,7 @@ function CardFront({
           ))}
         </ul>
       )}
-      {info.dn && <p className="text-small font-semibold text-no">{info.dn}</p>}
+      {!deck && info.dn && <p className="text-small font-semibold text-no">{info.dn}</p>}
       {info.warn.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {info.warn.map((w) => (
@@ -257,7 +291,7 @@ function CardFront({
           ))}
         </div>
       )}
-      {m?.rough && <p className="text-small text-ink-3">{t("c_rough")}</p>}
+      {!deck && m?.rough && <p className="text-small text-ink-3">{t("c_rough")}</p>}
     </div>
   );
 }
@@ -298,7 +332,8 @@ function CardBack({ occ, job, main }: { occ: number; job: Job | null; main: bool
 }
 
 /* ---------- the skills as chips (job ideas: one side, nothing to turn over) ---------- */
-const CHIPS_SHOWN = 10;
+/** skills shown on a deck card; the rest are in the details sheet */
+const DECK_CHIPS = 6;
 const CHIP: Record<Tile["state"], string> = {
   have: "bg-have-bg text-have-ink",
   some: "bg-have-bg text-have-ink",
@@ -308,15 +343,27 @@ const CHIP: Record<Tile["state"], string> = {
 
 /** The job's core skills, each in its state (have, some, the course covers it, still to learn) and told apart
  *  by its mark as well as its colour. A chip opens the skill's sheet, where the person can rate it. */
-function SkillChips({ occ, job }: { occ: number; job: Job | null }) {
+function SkillChips({
+  occ,
+  job,
+  max,
+  onMore,
+}: {
+  occ: number;
+  job: Job | null;
+  /** show this many, then a link to all of them and the details (onMore) */
+  max?: number;
+  onMore?: () => void;
+}) {
   const t = useT(strings);
   const E = useEscoReady();
   const d = useDoc();
   const tiles = useMemo(() => jobCount(d, E, occ, job).tiles, [d, E, occ, job]);
-  const [all, setAll] = useState(false);
   if (!tiles.length) return null;
-  const shown = all ? tiles : tiles.slice(0, CHIPS_SHOWN);
+  const shown = max ? tiles.slice(0, max) : tiles;
   const jobId = job?.id ?? jobForOcc(d, occ)?.id ?? null;
+  /* in the details sheet, the skill's own sheet takes its place; closing it brings the details back */
+  const open = (x: Tile["x"]) => openSkill(x, occ, jobId, max ? undefined : onMore);
   return (
     <section className="flex flex-col gap-2" aria-label={t("c_skills_h")}>
       <p className="text-label font-extrabold">{t("c_skills_h")}</p>
@@ -330,7 +377,7 @@ function SkillChips({ occ, job }: { occ: number; job: Job | null }) {
                 "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1 text-left text-small leading-tight font-bold [&_svg]:size-3.5 [&_svg]:stroke-[2.8]",
                 CHIP[tile.state],
               )}
-              onClick={() => openSkill(tile.x, occ, jobId)}
+              onClick={() => open(tile.x)}
             >
               <span aria-hidden="true" className="flex">
                 {tile.state === "have" ? (
@@ -347,12 +394,39 @@ function SkillChips({ occ, job }: { occ: number; job: Job | null }) {
           </li>
         ))}
       </ul>
-      {tiles.length > shown.length && (
-        <LinkButton className="self-start text-small" onClick={() => setAll(true)}>
-          {t("c_more_sk", { n: tiles.length - shown.length })}
-        </LinkButton>
-      )}
-      <TileLegend className="mt-0.5" />
+      {/* on the deck the way to the rest sits on the card's edge (the deck draws it); here, the key */}
+      {!max && <TileLegend className="mt-0.5" />}
     </section>
+  );
+}
+
+/** The details of a job idea, for the sheet: everything the deck card leaves out (the score's reasons, every
+ *  skill, why it came up, every warning). */
+export function IdeaDetails({
+  occ,
+  idea,
+  mark,
+  onMore,
+}: {
+  occ: number;
+  idea: Idea | null;
+  mark: IdeaMark;
+  /** opens these details again (after a skill's own sheet) */
+  onMore: () => void;
+}) {
+  return (
+    <CardFront occ={occ} job={null} idea={idea} main={false} mark={mark} view="detail" onMore={onMore} />
+  );
+}
+
+/** The score in one line, for the deck: the number, its band and the two reasons. */
+function FitLine({ m }: { m: NonNullable<ReturnType<typeof useMatch>> }) {
+  const f = useFitText();
+  return (
+    <div className="flex items-center gap-3 rounded-card bg-surface-2 p-2.5">
+      <FitBadge score={m.score} />
+      <p className="min-w-0 text-small font-bold text-ink-2">{f.line(m)}</p>
+      <span className="sr-only">{f.sr(m, false)}</span>
+    </div>
   );
 }
