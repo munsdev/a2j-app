@@ -10,7 +10,8 @@ import type { InterestId } from "./items";
    - interests: how closely the job's interest profile matches the person's six interest scores. The raw
      correlation-based fit runs from about 0.35 to 0.95 with 0.5 meaning "no relationship", so it is rescaled:
      0.4 → 0, 0.9 → 100. Without enough interest answers (part 2) there is no interest score.
-   - skills: the share of the job's core skills the person has (level 1 or more).
+   - skills: the share of the job's core skills the person has: level 3 or more in full, level 1 or 2 half (as
+     the job ideas count them).
    The score is their average, or the skills alone when interests are missing. withCourses is the score once the
    course of the job's route is done (only when a course covers something). Bands: 75+ strong,
    55+ good, 35+ partial, below that low. This only describes; ranking job ideas keeps its own formula. */
@@ -28,6 +29,8 @@ export interface Match {
   rough: boolean;
   skills: number;
   have: number;
+  /** partly there (level 1 or 2) */
+  some: number;
   course: number;
   total: number;
   /** the score once the saved courses are done; null when no course covers a skill of this job */
@@ -54,14 +57,14 @@ export function matchOf(
   const c = jobCount(d, E, occ, job, course);
   const total = c.total || 1;
   /* average the unrounded halves, round once: 28.9 and 100 give 64, not 65 */
-  const skillsRaw = (c.have / total) * 100;
+  const skillsRaw = ((c.have + c.some / 2) / total) * 100;
   const fit = interestFit(O, occ, userInterests(d));
   const iRaw = fit == null ? null : interestRaw(fit);
   const combine = (sk: number) => Math.round(iRaw == null ? sk : (iRaw + sk) / 2);
   const skills = Math.round(skillsRaw);
   const interest = iRaw == null ? null : Math.round(iRaw);
   const score = combine(skillsRaw);
-  const withCourses = c.course > 0 ? combine(((c.have + c.course) / total) * 100) : null;
+  const withCourses = c.course > 0 ? combine(((c.have + c.course + c.some / 2) / total) * 100) : null;
   const mine = new Set(interestCode(d, "en").map((r) => r.id));
   return {
     score,
@@ -74,6 +77,7 @@ export function matchOf(
     rough: interest != null && quality(O, occ) === 0,
     skills,
     have: c.have,
+    some: c.some,
     course: c.course,
     total: c.total,
     withCourses,

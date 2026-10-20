@@ -241,7 +241,7 @@ export function RouteSheet({ id, jobId }: { id: RouteId | null; jobId: string | 
                   />
                 ))}
               </ul>
-              <QuiltKey cells={["have", "also", "course", "learn"]} />
+              <QuiltKey cells={["have", "also", "some", "course", "learn"]} />
               <Hint>{t("r_gives_p")}</Hint>
               {c && <Hint>{t("r_tap")}</Hint>}
             </section>

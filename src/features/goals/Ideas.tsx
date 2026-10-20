@@ -15,8 +15,8 @@ import { type DeckFilter, type Idea, READY, canRank, rankAll, setVote, voteOf } 
 import { useT } from "@/i18n";
 import { ActionBar, Button, EmptyState, Icon, Page, RunHeader, Select } from "@/ui";
 import { JobCard, type IdeaMark } from "./JobCard";
-import { DECK_SIZE, clampPos, dealHand, deckOrder, ideaSlots, markSeen, stepPos, unmarked } from "./layout";
-import { cardKey, ideaRanking, setFlip, toggleFlip, useFlipped, useGoals, useViewportWidth } from "./store";
+import { DECK_SIZE, clampPos, dealHand, deckOrder, markSeen, stepPos, unmarked } from "./layout";
+import { cardKey, ideaRanking, setFlip, toggleFlip, useFlipped, useGoals } from "./store";
 import { usePointerSwipe } from "./usePointerSwipe";
 import { strings } from "./strings";
 
@@ -49,7 +49,6 @@ export function Ideas() {
   const d = useDoc();
   const E = useEscoReady();
   const O = useOnet();
-  const w = useViewportWidth();
   const st = useGoals(
     useShallow((s) => ({
       zone: s.zone,
@@ -84,8 +83,8 @@ export function Ideas() {
   const order = useMemo(() => (ranking ? deckOrder(seen, ranking.ranked) : NONE), [ranking, seen]);
   const view = pass ?? order;
   const pos = clampPos(same ? st.pos : 0, view.length);
-  const n = ideaSlots(w);
-  const hand = dealHand(view, pos, n);
+  /* one card on the table at a time, on every screen */
+  const hand = dealHand(view, pos, 1);
   const cur = hand.length ? hand[0] : null;
   const ideaOf = (o: number): Idea | null => ranking?.rows.get(o) ?? null;
   const markOf = (o: number) => ideaMark(d, o);
@@ -143,7 +142,7 @@ export function Ideas() {
           ? ['[data-nav="back"]:not([aria-disabled="true"])', '[data-nav="next"]']
           : ['[data-nav="next"]'],
     );
-    if (n === 1 && to !== pos) window.scrollTo(0, 0);
+    if (to !== pos) window.scrollTo(0, 0);
   };
   const like = (occ: number) => {
     commit(); // thumbs on another card's skills are their own undo step
@@ -171,14 +170,14 @@ export function Ideas() {
         ? ['[data-end="go"]', '[data-end="goals"]']
         : ['[data-idea="no"]', '[data-nav="next"]'],
     );
-    if (n === 1) window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
     toastUndo(t("c_no_t"));
   };
   const unmark = (occ: number) => {
     commit();
     update((dr) => void setVote(dr, occ, 0));
     at({ rankVer: ver + 1 });
-    aimFocus([`[data-slot="${occ}"] [data-idea="no"]`, '[data-idea="no"]', '[data-nav="next"]']);
+    aimFocus(['[data-idea="no"]', '[data-nav="next"]']);
     toast(t("c_unmark_t"));
   };
   /* the reverse of "I like it" (a goal is changed on its own page, where its courses and ads are) */
@@ -190,19 +189,18 @@ export function Ideas() {
       setVote(dr, occ, 0);
     });
     at({ rating: st.rating === occ ? null : st.rating, rankVer: ver + 1 });
-    aimFocus([`[data-slot="${occ}"] [data-idea="yes"]`, '[data-idea="yes"]', '[data-nav="next"]']);
+    aimFocus(['[data-idea="yes"]', '[data-nav="next"]']);
     toast(t("c_off_t"));
   };
   const rate = (occ: number) => {
     commit();
     at({ rating: occ });
-    aimFocus([`[data-slot="${occ}"] [data-idea="done"]`, '[data-idea="done"]', '[data-nav="next"]']);
+    aimFocus(['[data-idea="done"]', '[data-nav="next"]']);
   };
   const done = () => {
-    const occ = st.rating;
     commit(); // the skill thumbs of this card become one undo step
     at({ rating: null, rankVer: ver + 1 });
-    aimFocus([`[data-slot="${occ}"] [data-idea="rate"]`, '[data-idea="rate"]', '[data-nav="next"]']);
+    aimFocus(['[data-idea="rate"]', '[data-nav="next"]']);
   };
   const undo = () => {
     const last = st.last;
@@ -215,7 +213,7 @@ export function Ideas() {
       if (last.jobId) removeJob(dr, last.jobId);
     });
     at({ rating: null, last: null, rankVer: ver + 1 });
-    aimFocus([`[data-slot="${last.occ}"] [data-idea="yes"]`, '[data-idea="yes"]', '[data-nav="next"]']);
+    aimFocus(['[data-idea="yes"]', '[data-nav="next"]']);
   };
   const startPass = () => {
     at({ pass: unmarked(order, (o) => markOf(o) !== null), pos: 0, rating: null });
@@ -321,8 +319,9 @@ export function Ideas() {
       </p>
     </div>
   );
+  /* one card at a time, in a reading-width column on every screen */
   const shell = (body: ReactNode) => (
-    <Page width="wide">
+    <Page>
       {head}
       {body}
     </Page>
@@ -378,7 +377,7 @@ export function Ideas() {
       rating={st.rating != null}
       onBack={() => step(-1)}
       onNext={() => step(1)}
-      className={n === 1 ? "flex basis-full!" : undefined}
+      className="flex basis-full!"
     />
   );
   if (cur == null)
@@ -428,28 +427,6 @@ export function Ideas() {
     step,
     canBack: pos > 0,
   };
-  if (n > 1)
-    return shell(
-      <div ref={deckRef} className="flex flex-col">
-        <div
-          className="grid items-stretch gap-[18px] pt-1.5"
-          style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}
-        >
-          {hand.map((o) => (
-            <Slot
-              key={o}
-              occ={o}
-              idea={ideaOf(o)}
-              mark={markOf(o)}
-              rating={st.rating === o}
-              canUndo={st.last?.occ === o}
-              {...handlers}
-            />
-          ))}
-        </div>
-        <ActionBar>{nav}</ActionBar>
-      </div>,
-    );
   return shell(
     <div ref={deckRef} className="flex flex-col">
       <Single
@@ -505,24 +482,11 @@ function Single(p: CardProps & { nav: ReactNode }) {
         </div>
         <JobCard occ={p.occ} idea={p.idea} rate={p.rating} mark={p.mark} deal />
       </div>
-      <ActionBar className="flex-wrap gap-y-2">
+      <ActionBar stretch className="flex-wrap gap-y-2">
         <Buttons {...p} />
         {p.nav}
       </ActionBar>
     </>
-  );
-}
-
-/** Tablets and computers: a card with its own buttons, two or three side by side; Back / Next under them. */
-function Slot(p: CardProps) {
-  const swipe = useDeckSwipe(p.step, p.canBack);
-  return (
-    <div className="flex min-w-0 flex-col" data-slot={p.occ} {...swipe}>
-      <JobCard occ={p.occ} idea={p.idea} rate={p.rating} mark={p.mark} fill deal />
-      <div className="flex flex-wrap gap-x-2 gap-y-1 pt-3 [&>*]:min-w-0 [&>*]:flex-1">
-        <Buttons {...p} />
-      </div>
-    </div>
   );
 }
 

@@ -34,7 +34,9 @@ describe("matchOf on the Holmes sample (the numbers in the approved mockup)", { 
 
   it("a past job: strong skills, weak interests → a good match", () => {
     const m = matchOf(d, E, O, job("Private investigator").occ!, job("Private investigator"));
-    expect([m.interest, m.skills, m.score, m.band]).toEqual([29, 100, 64, 2]);
+    /* 92, not 100: three of its skills are rated 1 or 2 (some, needs more), which count half */
+    expect([m.interest, m.skills, m.score, m.band]).toEqual([29, 92, 61, 2]);
+    expect(m.some).toBe(3);
     expect(m.withCourses).toBeNull();
   });
 
@@ -47,6 +49,6 @@ describe("matchOf on the Holmes sample (the numbers in the approved mockup)", { 
   it("without interest answers the score is the skills alone", () => {
     const bare = { ...d, assess: { ...d.assess, answers: {} } };
     const m = matchOf(bare, E, O, job("Private investigator").occ!, job("Private investigator"));
-    expect([m.interest, m.score]).toEqual([null, 100]);
+    expect([m.interest, m.score]).toEqual([null, 92]);
   });
 });

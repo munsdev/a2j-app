@@ -82,7 +82,8 @@ export interface PlanData {
   intCode: string;
   vals: string[];
   skills: string[];
-  gaps: { name: string; via: string }[];
+  /** what is missing: still to learn, or there in part (level 1 or 2), and the course that covers it */
+  gaps: { name: string; via: string; part: boolean }[];
   cnt: JobCount | null;
   course: Course | null;
   ads: JobAd[];
@@ -123,6 +124,7 @@ export function planData(d: Doc, E: Esco, s: PlanState): PlanData {
       .map((t) => ({
         name: typeof t.x === "number" ? skn(t.x) : t.name,
         via: t.course ? t.course.name : "",
+        part: t.level > 0,
       }));
   }
   const ads = goal ? d.jobads.filter((j) => j.goals.includes(goal.id)).slice(0, 5) : [];
@@ -213,11 +215,12 @@ export function pageModel(x: PlanData, why: string, now: Date): PageModel {
     if (x.cnt && x.cnt.total)
       goal.push({
         t: "p",
-        text: T(x.cnt.course ? "sm_progress" : "sm_progress0", {
-          h: x.cnt.have,
-          t: x.cnt.total,
-          c: x.cnt.course,
-        }),
+        text:
+          T(x.cnt.course ? "sm_progress" : "sm_progress0", {
+            h: x.cnt.have,
+            t: x.cnt.total,
+            c: x.cnt.course,
+          }) + (x.cnt.some ? T("sm_progress_some", { n: x.cnt.some }) : ""),
         tone: "note",
       });
     if (why) goal.push({ t: "p", text: why });
@@ -248,7 +251,12 @@ export function pageModel(x: PlanData, why: string, now: Date): PageModel {
           {
             t: "list",
             cols: true,
-            items: x.gaps.map((g) => ({ name: g.name, via: g.via ? T("sm_via", { x: g.via }) : "" })),
+            items: x.gaps.map((g) => ({
+              name: g.name,
+              via: [g.part ? T("sm_part") : "", g.via ? T("sm_via", { x: g.via }) : ""]
+                .filter(Boolean)
+                .join(", "),
+            })),
           },
         ]
       : [],

@@ -4,8 +4,9 @@ import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Icon } from "./Icon";
 
-/* A skill as a tile. Three states, told apart by shape as well as colour:
-   have = green fill + check · course = blue tint + solid outline + book · learn = dashed outline. */
+/* A skill as a tile. Four states, told apart by shape as well as colour:
+   have = green fill + check · some = green tint + half-filled circle · course = blue tint + solid outline + book
+   · learn = dashed outline. */
 export function SkillTile({
   name,
   state,
@@ -18,7 +19,7 @@ export function SkillTile({
       type="button"
       className={cn(
         "relative flex min-h-[58px] items-center rounded-[14px] py-2.5 pr-2.5 pl-[34px] text-left text-[0.84rem] leading-tight font-bold transition-transform active:scale-[.97]",
-        state === "have" && "bg-have-bg text-have-ink",
+        (state === "have" || state === "some") && "bg-have-bg text-have-ink",
         state === "course" && "bg-course-bg text-course-ink shadow-[inset_0_0_0_1.5px_var(--course)]",
         state === "learn" &&
           "bg-surface text-ink-2 shadow-[inset_0_0_0_1.5px_var(--line-2)] outline-[1.5px] -outline-offset-[5px] outline-learn outline-dashed",
@@ -31,6 +32,8 @@ export function SkillTile({
         className={cn(
           "absolute top-1/2 left-[9px] -mt-2.5 flex size-5 items-center justify-center rounded-full [&_svg]:size-3.5 [&_svg]:stroke-[2.6]",
           state === "have" && "bg-have text-on-accent",
+          state === "some" &&
+            "bg-[linear-gradient(90deg,var(--have)_50%,transparent_50%)] shadow-[inset_0_0_0_2px_var(--have)]",
           state === "course" && "bg-course text-white",
           state === "learn" && "shadow-[inset_0_0_0_2px_var(--line-2)]",
         )}
@@ -42,7 +45,7 @@ export function SkillTile({
       </span>
       <span className="sr-only">
         {", "}
-        {t(state === "have" ? "c_legend_have" : state === "course" ? "c_legend_course" : "c_legend_learn")}
+        {t(`c_legend_${state}`)}
       </span>
     </button>
   );
@@ -57,6 +60,16 @@ export function TileLegend({ className }: { className?: string }) {
       <span className="inline-flex items-center gap-1.5">
         <i className={cn(sw, "bg-have")} />
         {t("c_legend_have")}
+      </span>
+      <span className="inline-flex items-center gap-1.5">
+        <i
+          className={cn(
+            sw,
+            "rounded-full",
+            "bg-[linear-gradient(90deg,var(--have)_50%,transparent_50%)] shadow-[inset_0_0_0_2px_var(--have)]",
+          )}
+        />
+        {t("c_legend_some")}
       </span>
       <span className="inline-flex items-center gap-1.5">
         <i className={cn(sw, "bg-course-bg shadow-[inset_0_0_0_2px_var(--course)]")} />

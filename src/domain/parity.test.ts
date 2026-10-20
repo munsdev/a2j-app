@@ -67,7 +67,11 @@ describe.each(["en", "de"] as const)("parity with the previous app (%s)", { time
       jobs.forEach((j, k) => {
         /* the previous app let every saved course count for every job; routes count one course */
         const a = jobCount(d, E, j.occ, j, anyCourse(d));
-        expect([a.have, a.course, a.total]).toEqual(theirs.jobs[k]);
+        /* the previous app counted any rating from 1 as "have"; now 1 and 2 are "some, needs more" (or "course"
+           when the course covers them), so count them the old way here */
+        const had = a.tiles.filter((x) => x.level >= 1).length;
+        const course = a.tiles.filter((x) => x.state === "course" && x.level < 1).length;
+        expect([had, course, a.total]).toEqual(theirs.jobs[k]);
       });
       expect(strongest(d, lang).map((r) => r.id)).toEqual(theirs.strongest);
       expect(interestCode(d, lang).map((r) => r.id)).toEqual(theirs.interestCode);

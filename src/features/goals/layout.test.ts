@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Tile, TileState } from "@/domain/skills";
 import {
-  bandWidth,
   boardPath,
   compareRows,
   DECK_SIZE,
@@ -11,29 +10,13 @@ import {
   markSeen,
   stepPos,
   unmarked,
-  ideaSlots,
   slashParts,
   titleForms,
   pickDroppingOldest,
-  widthBand,
   boardLine,
   courseBadges,
   type Zone,
 } from "./layout";
-
-describe("widths", () => {
-  it("bands round-trip to the same layout decisions", () => {
-    for (const w of [320, 390, 559, 560, 759, 760, 899, 900, 999, 1000, 1179, 1180, 1440]) {
-      const b = bandWidth(widthBand(w));
-      expect(ideaSlots(b)).toBe(ideaSlots(w));
-    }
-  });
-  it("deals one, two or three idea cards", () => {
-    expect(ideaSlots(390)).toBe(1);
-    expect(ideaSlots(768)).toBe(2);
-    expect(ideaSlots(1280)).toBe(3);
-  });
-});
 
 describe("the board's line", () => {
   const course = (id: string) => ({ id, name: "Course " + id, goals: [], covers: [] });
@@ -44,7 +27,7 @@ describe("the board's line", () => {
     state,
     also: false,
     course: c ? course(c) : null,
-    level: state === "have" ? 2 : 0,
+    level: state === "have" ? 4 : state === "some" ? 2 : 0,
     extra: true,
   });
   /** the line as words: stops by key, zones by name, lit rows in capitals */
@@ -79,19 +62,33 @@ describe("the board's line", () => {
       ["c1", "bd"],
       ["c2", "c"],
     ]);
-    expect(p.next).toEqual({ kind: "skill", tile: p.learn[0] });
-    expect(line(p)).toBe("START HAVE1 A HERE courses3 b c d learn2 next f job");
+    /* the route's course is the next stop, with what it leaves open; never one skill at a time */
+    expect(p.next).toMatchObject({ kind: "course", course: { id: "c1" }, open: p.learn });
+    expect(line(p)).toBe("START HAVE1 A HERE courses3 b c d next learn2 e f job");
+  });
+
+  it("no course yet: the next stop is one course for all the gaps, the partly-had ones included", () => {
+    const p = boardPath([tile("a", "have"), tile("b", "some"), tile("c", "learn"), tile("d", "learn")], []);
+    expect(p.some.map((x) => x.key)).toEqual(["b"]);
+    expect(p.next).toEqual({ kind: "find", gaps: [p.some[0], ...p.learn] });
+    expect(line(p)).toBe("START HAVE1 A SOME1 B HERE next learn2 c d job");
+  });
+
+  it("a route that needs no course: the next stop is applying", () => {
+    const p = boardPath([tile("a", "have"), tile("b", "learn")], [], true);
+    expect(p.next).toEqual({ kind: "apply", gaps: p.learn });
+    expect(line(p)).toBe("START HAVE1 A HERE next learn1 b job");
   });
 
   it("nothing had yet: you are at the start, the line lit only up to you", () => {
     const p = boardPath([tile("a", "learn"), tile("b", "learn")], []);
-    expect(line(p)).toBe("START HERE learn2 next b job");
+    expect(line(p)).toBe("START HERE next learn2 a b job");
   });
 
   it("a course saved for the job that covers none of its skills is still listed", () => {
     const p = boardPath([tile("a", "learn")], [{ id: "c9", name: "Course c9" }]);
     expect(p.courses).toEqual([{ id: "c9", name: "Course c9", skills: [] }]);
-    expect(line(p)).toBe("START HERE courses0 learn1 next job");
+    expect(line(p)).toBe("START HERE courses0 next learn1 a job");
   });
 
   it("everything covered: the next stop is starting the first course, after the courses", () => {
@@ -113,9 +110,9 @@ describe("the board's line", () => {
         .concat(["e", "f", "g", "h"].map((k) => tile(k, "learn"))),
       [],
     );
-    expect(line(p, 3)).toBe("START HAVE4 A B C +1 HERE learn4 next f g +1 job");
+    expect(line(p, 3)).toBe("START HAVE4 A B C +1 HERE next learn4 e f g +1 job");
     expect(line(p, 3, new Set<Zone>(["learn"]))).toBe(
-      "START HAVE4 A B C +1 HERE learn4 next f g h +1open job",
+      "START HAVE4 A B C +1 HERE next learn4 e f g h +1open job",
     );
   });
 });

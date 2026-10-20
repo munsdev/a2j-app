@@ -6,11 +6,13 @@ import { type Esco, normTxt, searchOcc, searchSkillScored, skLabel } from "./cat
 /* =================== SKILLS, RATINGS, COVERAGE ===================
    Ratings (0 to 5) are the only record of what someone can do. Skills typed in plain words are kept as own
    skills and linked to a catalogue skill when the match is clear. A job's skills are shown as tiles:
-   have, the route's course covers it, still to learn. Only the course of the job's route counts: courses
+   have (level 3 or more), some but needs more (level 1 or 2), the route's course covers it, still to learn. Only the course of the job's route counts: courses
    saved for other routes cover nothing here. */
 
-/** From this level on a skill counts as "have" (half on coverage below level 3). */
+/** From this level on a skill counts as "some": partly there, needs more (half on coverage). */
 export const LV_SOME = 1;
+/** From this level on a skill counts as "have": you can do it on your own (in full on coverage). */
+export const LV_FULL = 3;
 
 /** The level of a skill, or null when it was never rated. Own skills linked to a catalogue skill count too. */
 export function level(d: Doc, x: SkillRef): number | null {
@@ -76,7 +78,7 @@ export function skillSources(d: Doc, E: Esco, x: SkillRef): string[] {
 }
 
 /* ---------- a job's skills as tiles ---------- */
-export type TileState = "have" | "course" | "learn";
+export type TileState = "have" | "some" | "course" | "learn";
 export interface Tile {
   x: SkillRef;
   key: string;
@@ -84,7 +86,8 @@ export interface Tile {
   state: TileState;
   /** the course that covers it (also on a skill you have: it teaches it again) */
   course: Course | null;
-  /** you have it and the course teaches it again: the overlap */
+  /** you have it (level 3+) and the course teaches it again: the overlap. A skill you have some of that the
+   *  course covers is "course": the course takes it further. */
   also: boolean;
   level: number;
   /** a need outside the catalogue */
@@ -103,7 +106,7 @@ export function coursesCovering(d: Doc, x: SkillRef, jobId?: string | null): Cou
     .sort((a, b) => (jobId && b.goals.includes(jobId) ? 1 : 0) - (jobId && a.goals.includes(jobId) ? 1 : 0));
 }
 
-const RANK: Record<TileState, number> = { have: 0, course: 1, learn: 2 };
+const RANK: Record<TileState, number> = { have: 0, some: 1, course: 2, learn: 3 };
 /** A job's skills as tiles. course: the course to count (a route being compared or planned); left out, the
  *  course of the job's route. */
 export function jobTiles(
@@ -120,13 +123,14 @@ export function jobTiles(
     if (!list.some((x) => skKey(x) === skKey(n))) list.push(n);
   });
   const tiles = list.map<Tile>((x) => {
-    const have = (level(d, x) || 0) >= LV_SOME;
+    const l = level(d, x) || 0;
+    const have = l >= LV_FULL;
     const c = covered.has(skKey(x)) ? via : null;
     return {
       x,
       key: skKey(x),
       name: skName(E, x),
-      state: have ? "have" : c ? "course" : "learn",
+      state: have ? "have" : c ? "course" : l >= LV_SOME ? "some" : "learn",
       course: c,
       also: have && !!c,
       level: level(d, x) || 0,
@@ -136,7 +140,10 @@ export function jobTiles(
   return tiles.sort((a, b) => RANK[a.state] - RANK[b.state]);
 }
 export interface JobCount {
+  /** level 3 or more */
   have: number;
+  /** level 1 or 2, not covered by the course */
+  some: number;
   course: number;
   total: number;
   tiles: Tile[];
@@ -151,6 +158,7 @@ export function jobCount(
   const t = jobTiles(d, E, occ, job, course);
   return {
     have: t.filter((x) => x.state === "have").length,
+    some: t.filter((x) => x.state === "some").length,
     course: t.filter((x) => x.state === "course").length,
     total: t.length,
     tiles: t,

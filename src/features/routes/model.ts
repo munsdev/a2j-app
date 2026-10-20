@@ -5,9 +5,9 @@ import type { Tile } from "@/domain/skills";
 /* The quilt: one row per skill any of the compared routes needs, one square per route. Pure, so it is
    unit-tested (model.test.ts). */
 
-/** What a skill is on a route: you have it, you have it and the course repeats it, the course covers it,
- *  still to learn, or the route's job does not need it. */
-export type Cell = "have" | "also" | "course" | "learn" | "none";
+/** What a skill is on a route: you have it, you have it and the course repeats it, you have some of it (needs
+ *  more), the course covers it, still to learn, or the route's job does not need it. */
+export type Cell = "have" | "also" | "some" | "course" | "learn" | "none";
 export interface QuiltCell {
   c: Cell;
   /** how well you can do it, 0 to 5 */
@@ -22,7 +22,7 @@ export interface QuiltRow {
 
 export const cellOf = (t: Tile): Cell => (t.also ? "also" : t.state);
 
-const RANK: Record<Cell, number> = { have: 0, also: 0, course: 1, learn: 2, none: 3 };
+const RANK: Record<Cell, number> = { have: 0, also: 0, some: 1, course: 2, learn: 3, none: 4 };
 const NONE: QuiltCell = { c: "none", level: 0 };
 
 /** The rows: skills most routes need first, then the ones you are furthest along on, then by name. */
@@ -60,6 +60,7 @@ export function bar(cell: QuiltCell): Part[] {
 const CELL_KEY = {
   have: "q_k_have",
   also: "q_k_also",
+  some: "q_k_some",
   course: "q_k_course",
   learn: "q_k_learn",
   none: "q_k_none",

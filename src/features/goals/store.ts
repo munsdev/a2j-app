@@ -1,10 +1,8 @@
-import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import type { Vote } from "@/data/types";
 import { READY, type DeckFilter, type Idea } from "@/domain/rank";
 import { useProfileEpoch } from "@/app/samples";
 import { storage } from "@/lib/storage";
-import { bandWidth, widthBand } from "./layout";
 
 /* =================== PER-VISIT STATE OF THE GOALS SCREENS ===================
    Which cards are turned over, where the idea deck stands, what is being compared. Only the place in the idea
@@ -129,26 +127,3 @@ export function setFlip(key: string, on: boolean): void {
   });
 }
 export const toggleFlip = (key: string): void => setFlip(key, !useGoals.getState().flipped[key]);
-
-/* ---------- the viewport width band (layouts change at 560 / 760 / 900 / 1000 / 1180px) ---------- */
-function subscribeWidth(cb: () => void) {
-  let raf = 0;
-  const on = () => {
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(cb);
-  };
-  window.addEventListener("resize", on);
-  return () => {
-    cancelAnimationFrame(raf);
-    window.removeEventListener("resize", on);
-  };
-}
-/** A width standing for the current band: re-renders only when a breakpoint is crossed. */
-export function useViewportWidth(): number {
-  const band = useSyncExternalStore(
-    subscribeWidth,
-    () => widthBand(window.innerWidth),
-    () => 0,
-  );
-  return bandWidth(band);
-}

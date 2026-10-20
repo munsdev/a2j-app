@@ -330,7 +330,7 @@ function VoteRow({ occ, tile }: { occ: number; tile: Tile }) {
     <li
       className={cn(
         "grid min-h-[60px] grid-cols-[20px_minmax(0,1fr)_auto_auto] items-center gap-2 rounded-control py-2 pr-2 pl-2.5",
-        tile.state === "have" && "bg-have-bg text-have-ink",
+        (tile.state === "have" || tile.state === "some") && "bg-have-bg text-have-ink",
         tile.state === "course" && "bg-course-bg text-course-ink shadow-[inset_0_0_0_1.5px_var(--course)]",
         tile.state === "learn" &&
           "bg-surface text-ink-2 outline-[1.5px] -outline-offset-[1.5px] outline-learn outline-dashed",
@@ -341,6 +341,8 @@ function VoteRow({ occ, tile }: { occ: number; tile: Tile }) {
         className={cn(
           "flex size-5 items-center justify-center rounded-full [&_svg]:size-3.5 [&_svg]:stroke-[2.6]",
           tile.state === "have" && "bg-have text-on-accent",
+          tile.state === "some" &&
+            "bg-[linear-gradient(90deg,var(--have)_50%,transparent_50%)] shadow-[inset_0_0_0_2px_var(--have)]",
           tile.state === "course" && "bg-course text-white",
           tile.state === "learn" && "shadow-[inset_0_0_0_2px_var(--line-2)]",
         )}
@@ -355,13 +357,7 @@ function VoteRow({ occ, tile }: { occ: number; tile: Tile }) {
         {tile.name}
         <span className="sr-only">
           {", "}
-          {t(
-            tile.state === "have"
-              ? "c_legend_have"
-              : tile.state === "course"
-                ? "c_legend_course"
-                : "c_legend_learn",
-          )}
+          {t(`c_legend_${tile.state}`)}
         </span>
       </span>
       {typeof x === "number" && (

@@ -6,8 +6,8 @@ import { canRank } from "@/domain/rank";
 import { useEsco } from "@/app/catalog";
 import { go } from "@/app/router";
 import { jobCount } from "@/domain/skills";
-import { courseForJob } from "@/data/routes";
-import { coversThis } from "@/features/routes/actions";
+import { DIRECT, courseForJob, isDirect, routeForJob } from "@/data/routes";
+import { saveRoute } from "@/features/routes/actions";
 import { strings as routeStrings } from "@/features/routes/strings";
 import { openFinder, openItem } from "@/features/courses/api";
 import { useLang, useT } from "@/i18n";
@@ -52,7 +52,8 @@ export function Board({ job }: { job: Job }) {
   const tiles = useMemo(() => jobCount(d, E, job.occ, job).tiles, [d, E, job]);
   /* only the course of the job's route counts on its line */
   const rc = courseForJob(d, job.id);
-  const p = useMemo(() => boardPath(tiles, rc ? [rc] : []), [tiles, rc]);
+  const direct = isDirect(routeForJob(d, job.id));
+  const p = useMemo(() => boardPath(tiles, rc ? [rc] : [], direct), [tiles, rc, direct]);
   const [open, setOpen] = useState<ReadonlySet<Zone>>(() => new Set());
   const rows = useMemo(() => boardLine(p, CAP, open), [p, open]);
   const badges = useMemo(() => courseBadges(p.courses), [p.courses]);
@@ -94,11 +95,13 @@ export function Board({ job }: { job: Job }) {
               <h3 className="lr-zone">
                 {r.zone === "have"
                   ? t("b_have", { n: r.n })
-                  : r.zone === "learn"
-                    ? t("b_learn", { n: r.n })
-                    : r.n
-                      ? t("b_courses", { n: r.n })
-                      : t("b_courses0")}
+                  : r.zone === "some"
+                    ? t("b_some", { n: r.n })
+                    : r.zone === "learn"
+                      ? t("b_learn", { n: r.n })
+                      : r.n
+                        ? t("b_courses", { n: r.n })
+                        : t("b_courses0")}
               </h3>
               {r.zone === "courses" && <CourseKey courses={p.courses} badges={badges} jobId={job.id} />}
             </div>
@@ -133,7 +136,7 @@ export function Board({ job }: { job: Job }) {
                   ? t("b_covered_by", { x: x.course.name })
                   : x.also && x.course
                     ? t("b_also", { x: x.course.name })
-                    : t(x.state === "have" ? "c_legend_have" : "c_legend_learn")}
+                    : t(`c_legend_${x.state}`)}
               </span>
             </button>
           </Row>
@@ -154,14 +157,14 @@ export function Board({ job }: { job: Job }) {
               <span className="lr-here-me" aria-hidden="true">
                 {me ?? <Icon name="person" />}
               </span>
-              {p.have.length ? t("b_you_here") : t("b_at_start")}
+              {p.have.length || p.some.length ? t("b_you_here") : t("b_at_start")}
             </span>
           </Row>
         );
       case "next":
         return (
           <Row r={r} kind="next" dot={<span className="lr-dot lr-dot-next" />}>
-            <NextStop p={p} job={job} badge={rc ? badges.get(rc.id) : undefined} />
+            <NextStop p={p} job={job} />
           </Row>
         );
       case "job":
@@ -253,38 +256,35 @@ function CourseKey({
   );
 }
 
-/** The next stop, highlighted: the first skill still to learn (find a course, or say you can do it), starting
- *  your course once every skill is covered, or job ads once you have them all. */
-function NextStop({ p, job, badge }: { p: BoardPath; job: Job; badge?: string }) {
+/** The next stop, highlighted: one course for all the gaps (never one skill at a time), the route's course and
+ *  what it leaves open, applying on a route that needs no course, or job ads once every skill is had. */
+function NextStop({ p, job }: { p: BoardPath; job: Job }) {
   const t = useT(strings);
   const tr = useT(routeStrings);
-  const rc = courseForJob(useDoc(), job.id);
+  const d = useDoc();
+  const r = routeForJob(d, job.id);
   const n = p.next;
-  if (n.kind === "skill")
+  if (n.kind === "find") {
+    const some = n.gaps.filter((x) => x.state === "some").length;
     return (
-      <NextCard
-        key={"s" + n.tile.key}
-        eyebrow={t("b_next")}
-        title={n.tile.name}
-        onTitle={() => openSkill(n.tile.x, job.occ, job.id)}
-      >
-        <Button size="sm" variant="primary" onClick={() => openFinder("course", job.id, n.tile.x)}>
+      <NextCard key="find" eyebrow={t("b_next")} title={t("b_find_h", { n: n.gaps.length })}>
+        <p className="w-full text-small text-ink-2">
+          {t("b_find_p")} {some > 0 && t("b_find_some", { n: some })}
+        </p>
+        <Button size="sm" variant="primary" onClick={() => openFinder("course", job.id)}>
           <Icon name="search" />
           {t("d_find_course")}
         </Button>
-        <Button size="sm" onClick={() => openSkill(n.tile.x, job.occ, job.id)}>
-          {t("b_can")}
-        </Button>
-        {/* the route's course teaches it after all (it was missed when the course was saved) */}
-        {rc && (
-          <Button size="sm" variant="ghost" onClick={() => coversThis(rc.id, n.tile.x, n.tile.name)}>
-            <Icon name="book" />
-            {tr("r_covers_this", { c: badge ?? rc.name })}
+        {r && (
+          <Button size="sm" variant="ghost" onClick={() => saveRoute(r.id, job.id, DIRECT)}>
+            {tr("r_direct")}
           </Button>
         )}
       </NextCard>
     );
-  if (n.kind === "course")
+  }
+  if (n.kind === "course") {
+    const covers = n.course.skills.length;
     return (
       <NextCard
         key={"c" + n.course.id}
@@ -292,9 +292,26 @@ function NextStop({ p, job, badge }: { p: BoardPath; job: Job; badge?: string })
         title={n.course.name}
         onTitle={() => openItem("course", n.course.id, job.id)}
       >
+        <p className="w-full text-small text-ink-2">
+          {t("b_course_covers", { c: covers, t: covers + n.open.length })}
+          {n.open.length > 0 && " " + t("b_course_open", { n: n.open.length })}
+        </p>
         <Button size="sm" variant="primary" onClick={() => openItem("course", n.course.id, job.id)}>
           <Icon name="book" />
           {t("b_open_course")}
+        </Button>
+      </NextCard>
+    );
+  }
+  if (n.kind === "apply")
+    return (
+      <NextCard key="apply" eyebrow={t("b_next")} title={t("b_apply_h")}>
+        <p className="w-full text-small text-ink-2">
+          {n.gaps.length ? t("b_apply_p", { n: n.gaps.length }) : t("b_all_p")}
+        </p>
+        <Button size="sm" variant="primary" onClick={() => openFinder("jobad", job.id)}>
+          <Icon name="bag" />
+          {t("d_find_ads")}
         </Button>
       </NextCard>
     );
@@ -323,21 +340,23 @@ function NextCard({
 }: {
   eyebrow: string;
   title: string;
-  onTitle: () => void;
+  /** the title opens what it names (a course); without it, the title is plain text */
+  onTitle?: () => void;
   children: ReactNode;
 }) {
+  const cls = "min-h-11 self-start text-left font-display text-heading leading-tight font-extrabold";
   return (
     <div className="lr-next animate-deal-in">
       <span className="font-display text-caption font-bold tracking-[.08em] text-have-ink uppercase">
         {eyebrow}
       </span>
-      <button
-        type="button"
-        className="min-h-11 self-start text-left font-display text-heading leading-tight font-extrabold underline-offset-4 hover:underline"
-        onClick={onTitle}
-      >
-        {title}
-      </button>
+      {onTitle ? (
+        <button type="button" className={cn(cls, "underline-offset-4 hover:underline")} onClick={onTitle}>
+          {title}
+        </button>
+      ) : (
+        <p className={cn(cls, "flex items-center")}>{title}</p>
+      )}
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   );

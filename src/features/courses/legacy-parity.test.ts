@@ -80,6 +80,13 @@ describe.each(["en", "de"] as const)("courses, prompts and plan match the previo
       });
       d.route = null;
     }
+    /* the previous app counted any rating from 1 as a skill you have: ratings of 1 and 2 ("some, needs more")
+       came later, so they count as had here */
+    for (const k of Object.keys(d.esco.rated))
+      if (d.esco.rated[k] > 0 && d.esco.rated[k] < 3) d.esco.rated[k] = 3;
+    d.esco.own.forEach((o) => {
+      if (o.level > 0 && o.level < 3) o.level = 3;
+    });
     return shape(d);
   };
 
@@ -129,7 +136,7 @@ describe.each(["en", "de"] as const)("courses, prompts and plan match the previo
       expect(x.ints).toEqual(y.ints);
       expect(x.vals).toEqual(y.vals);
       expect(x.skills).toEqual(y.skills);
-      expect(x.gaps).toEqual(y.gaps);
+      expect(x.gaps.map(({ name, via }) => ({ name, via }))).toEqual(y.gaps);
       expect(x.others).toEqual(y.others);
       expect(x.wantMore).toEqual(y.wantMore);
       expect(x.course?.id ?? null).toBe(y.course);
@@ -141,7 +148,7 @@ describe.each(["en", "de"] as const)("courses, prompts and plan match the previo
       const y2 = L[lang][id].planOther;
       expect(x2.L).toBe(other);
       expect(x2.skills).toEqual(y2.skills);
-      expect(x2.gaps).toEqual(y2.gaps);
+      expect(x2.gaps.map(({ name, via }) => ({ name, via }))).toEqual(y2.gaps);
       expect(suggestWhy(x2)).toBe(y2.suggest);
     });
   }

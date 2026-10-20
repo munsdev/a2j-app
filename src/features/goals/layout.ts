@@ -3,17 +3,6 @@ import type { Tile, TileState } from "@/domain/skills";
 /* Pure layout helpers for the Goals screens: the board's path, the compare quilt, the idea deck.
    No React and no DOM, so they are unit-tested (layout.test.ts). */
 
-/* ---------- widths ---------- */
-/** The breakpoints the Goals screens lay out by (the previous app re-rendered when one was crossed). */
-export const BREAKS = [560, 760, 900, 1000, 1180] as const;
-/** Which band a viewport width falls in: 0 (< 560) … 5 (≥ 1180). */
-export const widthBand = (w: number): number => BREAKS.filter((b) => w >= b).length;
-/** A width inside a band, so layout helpers can take a plain number. */
-export const bandWidth = (band: number): number => [400, 600, 800, 950, 1100, 1280][band] ?? 1280;
-
-/** Cards side by side on the idea deck: one on phones, two on tablets, three on computers. */
-export const ideaSlots = (w: number): 1 | 2 | 3 => (w >= 1180 ? 3 : w >= 760 ? 2 : 1);
-
 /* ---------- the board: the line ---------- */
 export interface PathCourse {
   id: string;
@@ -21,13 +10,18 @@ export interface PathCourse {
   /** the skills of this job it is the course for (none: saved for the job, but no skill ticked) */
   skills: Tile[];
 }
+/** The one next step: find one course for all the gaps; the route's course (and the gaps it leaves open);
+ *  apply (the route needs no course); job ads (every skill had). */
 export type PathNext =
-  | { kind: "skill"; tile: Tile }
-  | { kind: "course"; course: PathCourse }
+  | { kind: "find"; gaps: Tile[] }
+  | { kind: "course"; course: PathCourse; open: Tile[] }
+  | { kind: "apply"; gaps: Tile[] }
   | { kind: "done" }
   | { kind: "none" };
 export interface BoardPath {
   have: Tile[];
+  /** skills you have some of (level 1 or 2) that no course covers */
+  some: Tile[];
   /** skills a saved course covers */
   course: Tile[];
   learn: Tile[];
@@ -37,10 +31,16 @@ export interface BoardPath {
 }
 
 /** The goal's skills grouped by state, the saved courses with the skills they cover, and the one next step:
- *  the first skill no course covers; when every one is covered, starting the first course; when you have
- *  them all, job ads. saved = courses saved for this job, in order. */
-export function boardPath(tiles: readonly Tile[], saved: readonly { id: string; name: string }[]): BoardPath {
+ *  with every skill had, job ads; on a route that needs no course (direct), applying; with the route's course,
+ *  that course (and the gaps it leaves); else finding one course for all the gaps (some and still to learn),
+ *  never one skill at a time. saved = the course of the route, if any. */
+export function boardPath(
+  tiles: readonly Tile[],
+  saved: readonly { id: string; name: string }[],
+  direct = false,
+): BoardPath {
   const have = tiles.filter((x) => x.state === "have");
+  const some = tiles.filter((x) => x.state === "some");
   const course = tiles.filter((x) => x.state === "course");
   const learn = tiles.filter((x) => x.state === "learn");
   const byId = new Map<string, PathCourse>();
@@ -55,17 +55,20 @@ export function boardPath(tiles: readonly Tile[], saved: readonly { id: string; 
   });
   const courses = [...byId.values()];
   const all = tiles.length > 0 && have.length === tiles.length;
-  const next: PathNext = learn.length
-    ? { kind: "skill", tile: learn[0] }
-    : course.length
-      ? { kind: "course", course: courses[0] }
-      : all
-        ? { kind: "done" }
-        : { kind: "none" };
-  return { have, course, learn, courses, next };
+  const gaps = [...some, ...learn];
+  const next: PathNext = all
+    ? { kind: "done" }
+    : direct
+      ? { kind: "apply", gaps }
+      : courses.length
+        ? { kind: "course", course: courses[0], open: gaps }
+        : gaps.length
+          ? { kind: "find", gaps }
+          : { kind: "none" };
+  return { have, some, course, learn, courses, next };
 }
 
-export type Zone = "have" | "courses" | "learn";
+export type Zone = "have" | "some" | "courses" | "learn";
 type LineItem =
   | { kind: "start" }
   | { kind: "zone"; zone: Zone; n: number }
@@ -79,9 +82,10 @@ export type LineRow = LineItem & {
   lit: boolean;
 };
 
-/** The line from You to the job, one row per stop, in reading order: You; the skills you have; where you
- *  are; the skills your courses cover; the next stop and the rest still to learn; the job (with every
- *  skill had, the next stop is job ads, just before it). Long groups show
+/** The line from You to the job, one row per stop, in reading order: You; the skills you have and the ones
+ *  you have some of; where you are; the skills your course covers; the next stop (one course for the gaps,
+ *  your course, or applying); the rest still to learn; the job (with every skill had, the next stop is job
+ *  ads, just before it). Long groups show
  *  the first `cap` stops and a "+N more" row (open = the groups shown in full). The line is lit up to
  *  where you are, all the way when you have every skill. */
 export function boardLine(p: BoardPath, cap = 8, open: ReadonlySet<Zone> = new Set()): LineRow[] {
@@ -95,19 +99,21 @@ export function boardLine(p: BoardPath, cap = 8, open: ReadonlySet<Zone> = new S
     rows.push({ kind: "zone", zone: "have", n: p.have.length });
     group("have", p.have);
   }
+  if (p.some.length) {
+    rows.push({ kind: "zone", zone: "some", n: p.some.length });
+    group("some", p.some);
+  }
   rows.push({ kind: "here" });
   const here = rows.length - 1;
   if (p.courses.length) {
     rows.push({ kind: "zone", zone: "courses", n: p.course.length });
     group("courses", p.course);
   }
-  if (p.next.kind === "course") rows.push({ kind: "next" });
+  if (p.next.kind !== "none") rows.push({ kind: "next" });
   if (p.learn.length) {
     rows.push({ kind: "zone", zone: "learn", n: p.learn.length });
-    rows.push({ kind: "next" });
-    group("learn", p.learn.slice(1), cap - 1);
+    group("learn", p.learn);
   }
-  if (p.next.kind === "done") rows.push({ kind: "next" });
   rows.push({ kind: "job" });
   const done = p.next.kind === "done";
   return rows.map((r, i) => ({ ...r, lit: done || i <= here }));
@@ -162,7 +168,7 @@ export interface CompareRow {
   /** which of the compared jobs need this skill (column indexes) */
   cols: number[];
 }
-const RANK: Record<TileState, number> = { have: 0, course: 1, learn: 2 };
+const RANK: Record<TileState, number> = { have: 0, some: 1, course: 2, learn: 3 };
 /** The skills of the compared jobs, one row each: shared by most jobs first, then have → course → learn,
  *  then by name. */
 export function compareRows(jobs: readonly (readonly Tile[])[]): CompareRow[] {

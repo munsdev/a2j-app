@@ -55,6 +55,8 @@ export const strings = defineStrings(
     sm_via: "via {x}",
     sm_progress: "{h} of {t} core skills, {c} more with the course",
     sm_progress0: "{h} of {t} core skills",
+    sm_progress_some: ", {n} more in part",
+    sm_part: "some already",
     sm_direct: "No course needed: I am applying for this job directly.",
   },
   {
@@ -111,6 +113,8 @@ export const strings = defineStrings(
     sm_via: "über {x}",
     sm_progress: "{h} von {t} Kernfähigkeiten, {c} weitere mit dem Kurs",
     sm_progress0: "{h} von {t} Kernfähigkeiten",
+    sm_progress_some: ", {n} weitere teilweise",
+    sm_part: "teilweise vorhanden",
     sm_direct: "Kein Kurs nötig: Ich bewerbe mich direkt auf diese Stelle.",
   },
 );

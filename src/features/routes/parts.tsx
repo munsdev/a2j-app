@@ -64,10 +64,12 @@ export function Score({ m, className }: { m: Match; className?: string }) {
 }
 
 /** The look of each state, told apart by shape as well as colour: have a green fill and a check; also the
- *  same with a blue ring around it; course a blue ring and a book; learn a dashed outline; none a dot. */
+ *  same with a blue ring around it; some a green tint and a half-filled circle; course a blue ring and a book;
+ *  learn a dashed outline; none a dot. */
 const LOOK: Record<Cell, string> = {
   have: "bg-have text-on-accent",
   also: "bg-have text-on-accent shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--course)]",
+  some: "bg-have-bg text-have-ink",
   course: "bg-surface text-course-ink shadow-[inset_0_0_0_2px_var(--course)]",
   learn: "bg-transparent text-ink-2 outline-2 -outline-offset-2 outline-learn outline-dashed",
   none: "bg-transparent text-ink-3",
@@ -77,9 +79,21 @@ const MARK = (c: Cell) =>
     <Icon name="check" />
   ) : c === "course" ? (
     <Icon name="book" />
+  ) : c === "some" ? (
+    <HalfMark />
   ) : c === "none" ? (
     <i className="size-1.5 rounded-full bg-line-2" />
   ) : null;
+
+/** The mark of a skill you have some of: a half-filled circle. */
+export const HalfMark = ({ className }: { className?: string }) => (
+  <i
+    className={cn(
+      "block size-3 flex-none rounded-full bg-[linear-gradient(90deg,currentColor_50%,transparent_50%)] shadow-[inset_0_0_0_1.5px_currentColor]",
+      className,
+    )}
+  />
+);
 
 /** A square of the quilt (or a swatch of its key, with `small`). The words are for screen readers. */
 export function Patch({ cell, small, className }: { cell: Cell; small?: boolean; className?: string }) {

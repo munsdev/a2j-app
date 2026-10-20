@@ -84,6 +84,11 @@
 .lr-dot-have {
   @apply bg-have text-on-accent;
 }
+/* you have some of it, needs more: half filled, so it reads without colour too */
+.lr-dot-some {
+  background: linear-gradient(90deg, var(--have) 50%, var(--surface) 50%);
+  box-shadow: inset 0 0 0 3px var(--have);
+}
 /* you have it and the route's course teaches it again: a blue ring around the filled stop */
 .lr-dot-also {
   box-shadow:

@@ -36,7 +36,8 @@ export function useFitText() {
     };
     const risesX = (m: Match) =>
       t("m_rises_x", { n: m.withCourses ?? m.score, band: t(`mb${m.withCoursesBand ?? m.band}`) });
-    const core = (m: Match) => t("m_core", { h: m.have, t: m.total });
+    const core = (m: Match) =>
+      t("m_core", { h: m.have, t: m.total }) + (m.some ? t("m_core_some", { n: m.some }) : "");
     const course = (m: Match) => (m.course > 0 ? t("c_course_n", { n: m.course }) : "");
     return {
       t,
