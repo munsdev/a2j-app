@@ -121,3 +121,9 @@
   @apply absolute inset-x-0 bottom-0 z-[1] flex min-h-14 items-end justify-center gap-1 rounded-b-panel pb-3 text-small font-extrabold text-ink underline-offset-4 hover:underline;
   background: linear-gradient(to top, var(--surface) 55%, transparent);
 }
+
+/* a card flying out (or dealt in) must not reach past the window: that would add a scrollbar for a moment and
+   shift the layout. clip, not hidden: no scroll container, so the sticky top bar keeps working */
+main:has([data-swipe]) {
+  overflow: clip;
+}
