@@ -100,7 +100,7 @@ export interface FoundMatch {
   item: FoundItem;
 }
 
-/** Save the chosen items. Those that match a saved one (the same link, or the same name and provider; see
+/** Save the chosen items. Those that match a saved one (the same link, or the same name; see
  *  data/dupes.ts) are not saved: they come back as matches, for the person to compare. Returns the new ids. */
 export function keepFound(
   d: Draft<Doc>,

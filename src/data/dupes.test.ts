@@ -28,7 +28,7 @@ function doc(): Doc {
 }
 
 describe("duplicates", () => {
-  it("are strict: the same link, or the same name with the same (or no) provider", () => {
+  it("are strict: the same link, or the same name, whatever the provider", () => {
     expect(normUrl("https://www.Example.org/kurs/?id=2#top")).toBe("example.org/kurs?id=2");
     expect(sameItem("course", { url: "http://example.org/a/" }, { url: "example.org/a", name: "x" })).toBe(
       true,
@@ -36,20 +36,21 @@ describe("duplicates", () => {
     expect(sameItem("course", { name: "SQL basics" }, { name: "sql  Basics!" })).toBe(true);
     expect(
       sameItem("course", { name: "SQL basics", provider: "VHS" }, { name: "SQL basics", provider: "IHK" }),
-    ).toBe(false);
+    ).toBe(true);
     expect(sameItem("course", { name: "SQL basics" }, { name: "SQL basics 2" })).toBe(false);
   });
 
   it("finds saved pairs, past jobs aside, and forgets a pair said to differ", () => {
     const d = doc();
-    /* c1 and c3 name different providers; c2 names none, so it could be either */
+    /* the same name: compared, whatever the provider */
     expect(dupePairs(d)).toEqual([
       { kind: "course", a: "c1", b: "c2" },
+      { kind: "course", a: "c1", b: "c3" },
       { kind: "course", a: "c2", b: "c3" },
       { kind: "job", a: "j1", b: "j2" },
     ]);
     const after = produce(d, (x) => notDupe(x as Doc, { kind: "job", a: "j2", b: "j1" }));
-    expect(dupePairs(after).map((p) => p.kind)).toEqual(["course", "course"]);
+    expect(dupePairs(after).map((p) => p.kind)).toEqual(["course", "course", "course"]);
   });
 
   it("lists only the fields that differ; an empty saved field takes the new value", () => {

@@ -2,8 +2,9 @@ import type { Course, Doc, Job, JobAd } from "./types";
 
 /* =================== DUPLICATES ===================
    Strict on purpose: a false alarm annoys faster than a missed duplicate helps. Two courses (or job ads) are
-   the same when they have the same link, or the same name and the same provider (employer), or the same name
-   where one of them has no provider. Two jobs are the same when they are the same catalogue occupation or have
+   the same when they have the same link or the same name. A different provider (employer) does not settle
+   it: the same course is often saved once under the school and once under the platform that lists it, so
+   the person compares (the provider shows as a difference) and can keep both. Two jobs are the same when they are the same catalogue occupation or have
    the same title; only goals and the shortlist count, since past jobs can rightly repeat.
    Merging keeps one record: the fields the person picked, the covered skills and linked jobs of both, and
    everything that pointed at the other (routes, courses, job ads) now pointing at it. Pure; the changing
@@ -34,8 +35,6 @@ export function normUrl(u: unknown): string {
 }
 
 const sameText = (a: unknown, b: unknown) => !!normName(a) && normName(a) === normName(b);
-/** Both say the same, or one says nothing. */
-const fits = (a: unknown, b: unknown) => !normName(a) || !normName(b) || normName(a) === normName(b);
 
 interface ItemLike {
   name?: string;
@@ -44,11 +43,10 @@ interface ItemLike {
   org?: string;
 }
 /** Whether two courses or job ads are the same one. */
-export function sameItem(kind: ItemKind, a: ItemLike, b: ItemLike): boolean {
+export function sameItem(_kind: ItemKind, a: ItemLike, b: ItemLike): boolean {
   const ua = normUrl(a.url);
   if (ua && ua === normUrl(b.url)) return true;
-  const who = kind === "course" ? "provider" : "org";
-  return sameText(a.name, b.name) && fits(a[who], b[who]);
+  return sameText(a.name, b.name);
 }
 
 /** The saved course or job ad a new one matches, if any. */
