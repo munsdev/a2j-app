@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 import "./styles/index.css";
 import { App } from "./app/App";
-import { initRouter } from "./app/router";
+import { initRouter, onRouteChange } from "./app/router";
 import { initSettings, useSettings } from "./app/settings";
 import { initCatalogSync } from "./app/catalog";
 import { initInstall } from "./app/install";
@@ -38,17 +38,24 @@ if (session.get("a2j:finished")) {
 }
 
 /* installable app: an offline copy of the app files (never of the person's data). The browser only looks for a
-   new version when a page is opened, and a phone keeps the app open for days, so also look when the app comes
-   back to the front and once an hour; a new version then takes over (the data stays, it is in localStorage). */
+   new version when a page is opened, and a phone or a browser tab keeps the app open for days, so also look when
+   the app comes back to the front or the window gets focus, on every screen change, and once an hour, at most
+   once a minute; a new version then takes over (the data stays, it is in localStorage). */
 if ("serviceWorker" in navigator && location.protocol !== "file:")
   registerSW({
     immediate: true,
     onRegisteredSW(_url, reg) {
       if (!reg) return;
+      let last = Date.now();
       const check = () => {
-        if (document.visibilityState === "visible" && navigator.onLine) void reg.update();
+        if (document.visibilityState !== "visible" || !navigator.onLine || Date.now() - last < 60 * 1000)
+          return;
+        last = Date.now();
+        void reg.update();
       };
       document.addEventListener("visibilitychange", check);
+      window.addEventListener("focus", check);
+      onRouteChange(check);
       setInterval(check, 60 * 60 * 1000);
     },
   });

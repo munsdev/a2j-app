@@ -46,6 +46,9 @@ function subscribe(l: () => void) {
   return () => listeners.delete(l);
 }
 
+/** Call l on every screen change. Returns the unsubscribe. */
+export const onRouteChange = (l: () => void): (() => void) => subscribe(l);
+
 /** The current route. Re-renders on every screen change. */
 export const useRoute = (): Route => useSyncExternalStore(subscribe, () => current);
 export const getRoute = (): Route => current;
