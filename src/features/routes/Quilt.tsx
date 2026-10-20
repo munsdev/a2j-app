@@ -9,7 +9,8 @@ import { jobTiles } from "@/domain/skills";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Button, Hint, Icon, Lede, Page, RunHeader, ToggleChip } from "@/ui";
-import { goRoute, openRouteSheet, toggleCovers } from "./actions";
+import { goRoute, openRouteSheet } from "./actions";
+import { openSkillChoice } from "./openSkillChoice";
 import { differs, quiltRows, routeWords } from "./model";
 import { Bar, BarKey, RouteDisc, Score } from "./parts";
 import { strings } from "./strings";
@@ -167,19 +168,33 @@ export function Quilt() {
                 </span>
                 {row.cells.map((c, i) => {
                   const course = cols[i].w.course;
-                  /* tap: the route's course covers this skill, or not (only where the job needs it) */
+                  const job = jobById(d, cols[i].r.job);
+                  /* tap: a sheet to set your level or say the route's course covers it (only where the job
+                     needs the skill); never changed by the tap itself */
                   return (
                     <span role="cell" key={cols[i].r.id} className="flex px-0.5">
-                      {course && c.c !== "none" ? (
+                      {c.c !== "none" ? (
                         <button
                           type="button"
-                          aria-pressed={c.c === "course" || c.c === "also"}
-                          onClick={() => toggleCovers(course.id, row.x, row.name)}
+                          aria-haspopup="dialog"
+                          onClick={() =>
+                            openSkillChoice({
+                              x: row.x,
+                              name: row.name,
+                              courseId: course?.id ?? null,
+                              occ: job?.occ ?? null,
+                              jobId: job?.id ?? null,
+                              eyebrow: [t("r_route", { x: cols[i].r.id }), job?.title]
+                                .filter(Boolean)
+                                .join(" · "),
+                            })
+                          }
                           className="w-full rounded-tile px-1 transition-colors hover:bg-surface-2"
                         >
                           <Bar cell={c} />
                           <span className="sr-only">
-                            , {t("r_route", { x: cols[i].r.id })}: {course.name}
+                            , {t("r_route", { x: cols[i].r.id })}
+                            {course ? ": " + course.name : ""}
                           </span>
                         </button>
                       ) : (

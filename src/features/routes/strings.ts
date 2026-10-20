@@ -68,7 +68,7 @@ export const strings = defineStrings(
     q_you: "you {n} of 5",
     q_b_have: "What you can do (of 5)",
     q_b_course: "What the course adds",
-    q_tap: "Tap a square to say whether that route's course covers the skill.",
+    q_tap: "Tap a square to set your level for the skill, or to say that route's course covers it.",
     q_covers_on: "{c} covers {x} now",
     q_covers_off: "{c} no longer covers {x}",
     q_same: "These routes need the same from you on every skill.",
@@ -141,7 +141,8 @@ export const strings = defineStrings(
     q_you: "Sie {n} von 5",
     q_b_have: "Was Sie können (von 5)",
     q_b_course: "Was der Kurs dazugibt",
-    q_tap: "Tippen Sie auf ein Feld, um festzulegen, ob der Kurs dieser Route die Fähigkeit abdeckt.",
+    q_tap:
+      "Tippen Sie auf ein Feld, um Ihr Niveau festzulegen oder anzugeben, dass der Kurs dieser Route die Fähigkeit abdeckt.",
     q_covers_on: "{c} deckt jetzt {x} ab",
     q_covers_off: "{c} deckt {x} nicht mehr ab",
     q_same: "Diese Routen verlangen bei jeder Fähigkeit dasselbe von Ihnen.",

@@ -1,18 +1,19 @@
 import { Fragment, useMemo, useState, type ReactNode } from "react";
 import type { Course, Job } from "@/data/types";
 import { jobsIn } from "@/data/doc";
-import { update, useDoc } from "@/data/store";
+import { useDoc } from "@/data/store";
 import { canRank } from "@/domain/rank";
 import { useEsco } from "@/app/catalog";
 import { go } from "@/app/router";
-import { jobCount, level, setLevel, skKey, type Tile } from "@/domain/skills";
+import { jobCount, skKey, type Tile } from "@/domain/skills";
 import { DIRECT, courseForJob, isDirect, routeForJob } from "@/data/routes";
-import { saveRoute, toggleCovers } from "@/features/routes/actions";
+import { saveRoute } from "@/features/routes/actions";
+import { SkillChoice } from "@/features/routes/SkillChoice";
 import { strings as routeStrings } from "@/features/routes/strings";
 import { openFinder, openItem } from "@/features/courses/api";
 import { useLang, useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { Button, Checkbox, Icon, LevelPicker, LineMark, LinkButton } from "@/ui";
+import { Button, Icon, LineMark, LinkButton } from "@/ui";
 import {
   boardLine,
   boardPath,
@@ -22,7 +23,6 @@ import {
   type PathCourse,
   type Zone,
 } from "./layout";
-import { openSkill } from "./openSkill";
 import { strings } from "./strings";
 import "./board.css";
 
@@ -579,39 +579,12 @@ export function BoardSkeleton() {
   );
 }
 
-/** A skill opened on the line: how well you can do it (saved as you pick), whether the route's course covers it,
- *  and the way to everything else about it (the skill's sheet). */
+/** A skill opened on the line: how well you can do it, whether the route's course covers it, and the way to
+ *  everything else about it (SkillChoice). */
 function StopPanel({ id, tile, job, course }: { id: string; tile: Tile; job: Job; course: Course | null }) {
-  const t = useT(strings);
-  const tr = useT(routeStrings);
-  const rated = useDoc((d) => level(d, tile.x));
-  const covered = !!course?.covers.some((v) => skKey(v) === tile.key);
   return (
     <div id={id} className="my-1.5 flex animate-fade-in flex-col gap-3 rounded-option bg-surface-2 p-3">
-      <div className="flex flex-col gap-1.5">
-        <p className="text-small font-extrabold" aria-hidden="true">
-          {t("k_level")}
-        </p>
-        <LevelPicker
-          size="sm"
-          label={t("k_level")}
-          value={rated}
-          onChange={(n) => update((dr) => setLevel(dr, tile.x, n))}
-        />
-      </div>
-      {course ? (
-        <Checkbox
-          className="text-small"
-          label={tr("r_covers_this", { c: course.name })}
-          checked={covered}
-          onChange={() => toggleCovers(course.id, tile.x, tile.name)}
-        />
-      ) : (
-        <p className="text-small text-ink-3">{tr("r_no_course")}</p>
-      )}
-      <LinkButton className="self-start text-small" onClick={() => openSkill(tile.x, job.occ, job.id)}>
-        {t("b_skill_more")}
-      </LinkButton>
+      <SkillChoice x={tile.x} name={tile.name} courseId={course?.id ?? null} occ={job.occ} jobId={job.id} />
     </div>
   );
 }

@@ -366,3 +366,28 @@ test("a crash shows a way back and a crash report to copy, without the person's 
   await page.goto("#home");
   await expect(page.getByRole("alert")).toHaveCount(0);
 });
+
+test("compare: a tap on a skill opens a choice, it never changes anything by itself", async ({ page }) => {
+  await seed(page, { sample: "holmes" });
+  const errors = watchErrors(page);
+  await page.goto("#goals/compare");
+  const cell = page.locator('[role="cell"] button[aria-haspopup="dialog"]').first();
+  await expect(cell).toBeVisible({ timeout: 30000 });
+  const before = await page.evaluate(() => localStorage.getItem("a2j:v2"));
+  await cell.click();
+  const sheet = page.getByRole("dialog");
+  await expect(sheet.getByRole("radiogroup").or(sheet.getByRole("group")).first()).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("a2j:v2"))).toBe(before);
+  // the course can be said to cover it, and taken back
+  const covers = sheet.getByRole("checkbox");
+  if (await covers.count()) {
+    const was = await covers.isChecked();
+    await covers.click();
+    await expect(covers).toBeChecked({ checked: !was });
+    await covers.click();
+    await expect(covers).toBeChecked({ checked: was });
+  }
+  await page.keyboard.press("Escape");
+  await expect(sheet).toBeHidden();
+  expect(errors).toEqual([]);
+});
