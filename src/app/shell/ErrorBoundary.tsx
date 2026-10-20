@@ -10,6 +10,7 @@ const S = defineStrings(
     err_p: "Your data is safe in this browser. Go back to the start, or reload the page.",
     err_home: "Back to the start",
     err_reload: "Reload",
+    err_details: "Technical details (to report the problem)",
   },
   {
     err_h: "Auf dieser Seite ist etwas schiefgegangen",
@@ -17,6 +18,7 @@ const S = defineStrings(
       "Ihre Daten sind in diesem Browser sicher. Gehen Sie zurück zum Start oder laden Sie die Seite neu.",
     err_home: "Zurück zum Start",
     err_reload: "Neu laden",
+    err_details: "Technische Details (um das Problem zu melden)",
   },
 );
 
@@ -61,6 +63,16 @@ export class ErrorBoundary extends Component<
             {t("err_reload")}
           </button>
         </div>
+        {/* what went wrong, in words someone can copy into a message: only the error, never the person's data */}
+        <details className="mt-2 w-full text-left text-small text-ink-3">
+          <summary className="cursor-pointer text-center font-bold">{t("err_details")}</summary>
+          <pre className="mt-2 max-h-48 overflow-auto rounded-tile bg-surface-2 p-3 text-caption break-words whitespace-pre-wrap select-all">
+            {[this.state.error.name + ": " + this.state.error.message]
+              .concat((this.state.error.stack ?? "").split("\n").slice(1, 6))
+              .concat(["", location.hash.split("/")[0], navigator.userAgent])
+              .join("\n")}
+          </pre>
+        </details>
       </div>
     );
   }
