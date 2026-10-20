@@ -51,6 +51,10 @@ export const strings = defineStrings(
     b_learn: "Still to learn {n}",
     b_some: "Some, needs more {n}",
     b_skill_more: "More about this skill",
+    b_change: "Change course",
+    b_change_take: "Take a course after all",
+    b_change_h: "Which course for this route?",
+    b_pick_now: "Your course now",
     b_pick_h: "Choose your course",
     b_pick_p:
       "You saved these for this job. Take the one that covers most of your {n} gaps: it goes on your route.",
@@ -280,6 +284,10 @@ export const strings = defineStrings(
     b_learn: "Noch zu lernen: {n}",
     b_some: "Etwas da, braucht mehr: {n}",
     b_skill_more: "Mehr zu dieser Fähigkeit",
+    b_change: "Kurs ändern",
+    b_change_take: "Doch einen Kurs machen",
+    b_change_h: "Welcher Kurs für diese Route?",
+    b_pick_now: "Ihr Kurs jetzt",
     b_pick_h: "Ihren Kurs wählen",
     b_pick_p:
       "Diese haben Sie für diesen Beruf gespeichert. Nehmen Sie den, der die meisten Ihrer {n} Lücken abdeckt: Er kommt auf Ihre Route.",

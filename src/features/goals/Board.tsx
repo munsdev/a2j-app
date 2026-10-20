@@ -279,44 +279,29 @@ function NextStop({ p, job }: { p: BoardPath; job: Job }) {
   const d = useDoc();
   const r = routeForJob(d, job.id);
   const n = p.next;
+  const [changing, setChanging] = useState(false);
   /* courses already saved for this job: choose one of them, rather than search again */
-  const saved = n.kind === "find" ? d.courses.filter((c) => c.goals.includes(job.id)) : [];
-  if (n.kind === "find" && saved.length) {
-    const gaps = new Set(n.gaps.map((x) => x.key));
-    const fits = saved
-      .map((c) => ({ c, n: new Set(c.covers.map(skKey).filter((k) => gaps.has(k))).size }))
-      .sort((a, b) => b.n - a.n);
+  const saved = d.courses.filter((c) => c.goals.includes(job.id));
+  if (n.kind === "find" && saved.length)
     return (
       <NextCard key="pick" eyebrow={t("b_next")} title={t("b_pick_h")}>
         <p className="w-full text-small text-ink-2">{t("b_pick_p", { n: n.gaps.length })}</p>
-        <ul className="flex w-full flex-col gap-2" data-pick>
-          {fits.map(({ c, n: k }, i) => (
-            <li key={c.id} className="flex flex-col items-start gap-2 rounded-card bg-surface-2 p-3">
-              <button
-                type="button"
-                className="min-w-0 self-stretch text-left underline-offset-4 hover:underline"
-                onClick={() => openItem("course", c.id, job.id)}
-              >
-                <b className="block">{c.name}</b>
-                <span className="text-caption text-ink-3">
-                  {[c.provider, t("b_pick_covers", { c: k, t: n.gaps.length })].filter(Boolean).join(" · ")}
-                </span>
-              </button>
-              <Button
-                size="sm"
-                /* one dark button: the course that covers the most */
-                variant={i === 0 ? "primary" : "soft"}
-                onClick={() => (r ? saveRoute(r.id, job.id, c.id) : openItem("course", c.id, job.id))}
-              >
-                <Icon name="check" />
-                {t("b_pick_take")}
-              </Button>
-            </li>
-          ))}
-        </ul>
-        <Button size="sm" variant="ghost" onClick={() => openFinder("course", job.id)}>
-          <Icon name="search" />
-          {t("b_pick_more")}
+        <CoursePick job={job} gaps={n.gaps} />
+      </NextCard>
+    );
+  /* the route's course, or no course: another of the saved ones, a new one, or none */
+  if (changing && (n.kind === "course" || n.kind === "apply")) {
+    const gaps = n.kind === "course" ? [...n.course.skills, ...n.open] : n.gaps;
+    return (
+      <NextCard key="change" eyebrow={t("b_next")} title={t("b_change_h")}>
+        <CoursePick
+          job={job}
+          gaps={gaps}
+          current={n.kind === "course" ? n.course.id : DIRECT}
+          onDone={() => setChanging(false)}
+        />
+        <Button size="sm" variant="ghost" onClick={() => setChanging(false)}>
+          {t("cancel")}
         </Button>
       </NextCard>
     );
@@ -357,6 +342,12 @@ function NextStop({ p, job }: { p: BoardPath; job: Job }) {
           <Icon name="book" />
           {t("b_open_course")}
         </Button>
+        {r && (
+          <Button size="sm" variant="ghost" onClick={() => setChanging(true)}>
+            <Icon name="edit" />
+            {t("b_change")}
+          </Button>
+        )}
       </NextCard>
     );
   }
@@ -370,6 +361,12 @@ function NextStop({ p, job }: { p: BoardPath; job: Job }) {
           <Icon name="bag" />
           {t("d_find_ads")}
         </Button>
+        {r && (
+          <Button size="sm" variant="ghost" onClick={() => setChanging(true)}>
+            <Icon name="book" />
+            {t("b_change_take")}
+          </Button>
+        )}
       </NextCard>
     );
   if (n.kind === "done")
@@ -387,6 +384,81 @@ function NextStop({ p, job }: { p: BoardPath; job: Job }) {
       </div>
     );
   return null;
+}
+
+/** The courses saved for a job, the one that covers most of the gaps first, to take one for the route; a
+ *  search for another; and, when changing, "no course needed". current: the route's course now (or DIRECT). */
+function CoursePick({
+  job,
+  gaps,
+  current,
+  onDone,
+}: {
+  job: Job;
+  gaps: readonly Tile[];
+  current?: string;
+  onDone?: () => void;
+}) {
+  const t = useT(strings);
+  const tr = useT(routeStrings);
+  const d = useDoc();
+  const r = routeForJob(d, job.id);
+  const keys = new Set(gaps.map((x) => x.key));
+  const fits = d.courses
+    .filter((c) => c.goals.includes(job.id))
+    .map((c) => ({ c, n: new Set(c.covers.map(skKey).filter((k) => keys.has(k))).size }))
+    .sort((a, b) => +(b.c.id === current) - +(a.c.id === current) || b.n - a.n);
+  const take = (course: string) => {
+    if (r ? saveRoute(r.id, job.id, course) : (openItem("course", course, job.id), true)) onDone?.();
+  };
+  const best = fits.find((x) => x.c.id !== current)?.c.id;
+  return (
+    <>
+      {fits.length > 0 && (
+        <ul className="flex w-full flex-col gap-2" data-pick>
+          {fits.map(({ c, n }) => (
+            <li key={c.id} className="flex flex-col items-start gap-2 rounded-card bg-surface-2 p-3">
+              <button
+                type="button"
+                className="min-w-0 self-stretch text-left underline-offset-4 hover:underline"
+                onClick={() => openItem("course", c.id, job.id)}
+              >
+                <b className="block">{c.name}</b>
+                <span className="text-caption text-ink-3">
+                  {[c.provider, t("b_pick_covers", { c: n, t: gaps.length })].filter(Boolean).join(" · ")}
+                </span>
+              </button>
+              {c.id === current ? (
+                <span className="flex items-center gap-1.5 text-small font-bold text-have-ink">
+                  <Icon name="check" className="size-4" />
+                  {t("b_pick_now")}
+                </span>
+              ) : (
+                <Button
+                  size="sm"
+                  /* one dark button: the course that covers the most */
+                  variant={c.id === best ? "primary" : "soft"}
+                  onClick={() => take(c.id)}
+                >
+                  <Icon name="check" />
+                  {t("b_pick_take")}
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+      <Button size="sm" variant="ghost" onClick={() => openFinder("course", job.id)}>
+        <Icon name="search" />
+        {fits.length ? t("b_pick_more") : t("d_find_course")}
+      </Button>
+      {r && current && current !== DIRECT && (
+        <Button size="sm" variant="ghost" onClick={() => take(DIRECT)}>
+          {tr("r_direct")}
+        </Button>
+      )}
+    </>
+  );
 }
 
 function NextCard({

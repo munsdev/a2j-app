@@ -146,6 +146,15 @@ test("a course already saved for the goal: the board offers it, not a search", a
   await expect(pick).toHaveCount(2);
   await pick.first().getByRole("button", { name: "Take this one" }).click();
   await expect(page.getByText("Next: start your course")).toBeVisible();
+  // the chosen course can be changed: the other one, or none
+  await page.getByRole("button", { name: "Change course" }).click();
+  await expect(page.getByText("Your course now")).toBeVisible();
+  await expect(page.getByRole("button", { name: "No course needed" })).toBeVisible();
+  await pick.nth(1).getByRole("button", { name: "Take this one" }).click();
+  await expect(page.getByText("Next: start your course")).toBeVisible();
+  await page.getByRole("button", { name: "Change course" }).click();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByRole("button", { name: "Change course" })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
