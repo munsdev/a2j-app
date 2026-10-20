@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import examples from "@/data/examples.json";
 import { shape } from "@/data/doc";
+import { DIRECT } from "@/data/routes";
 import type { Doc, Lang, SkillRef } from "@/data/types";
 import { loadCatalog, type Esco } from "@/domain/catalog";
 import { profileFacts } from "@/features/prompts/facts";
@@ -68,7 +69,19 @@ describe.each(["en", "de"] as const)("courses, prompts and plan match the previo
     vi.stubGlobal("fetch", fakeFetch);
     E = (await loadCatalog(lang))!;
   }, 60000);
-  const load = (id: string): Doc => shape(structuredClone(EX[id][lang]));
+  /* the samples as the previous app knew them: routes that need no course came later, so they go, and a job
+     only they aimed at goes back to the shortlist (shape then rebuilds the routes) */
+  const load = (id: string): Doc => {
+    const d = structuredClone(EX[id][lang]) as Doc;
+    if (d.routes) {
+      d.routes = d.routes.filter((r) => r.course !== DIRECT);
+      d.jobs.forEach((j) => {
+        if (j.role === "goal" && !d.routes.some((r) => r.job === j.id)) j.role = "maybe";
+      });
+      d.route = null;
+    }
+    return shape(d);
+  };
 
   for (const id of IDS) {
     it(`${id}: search words and AI prompts`, () => {

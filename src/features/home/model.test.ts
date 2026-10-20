@@ -120,3 +120,26 @@ describe("appSteps: a route ready to apply on", () => {
     expect(appSteps(withAd(direct(), "applied"))).not.toContain("apply");
   });
 });
+
+describe("the samples", () => {
+  const sample = (id: "robin" | "geppetto"): Doc => ({
+    ...shape(structuredClone(examples.examples[id].en)),
+    example: id,
+  });
+  it("Robin is on route A to Fundraiser with no course needed, route B takes the course", () => {
+    const d = sample("robin");
+    expect(d.route).toBe("A");
+    expect(d.routes.map((r) => [r.id, r.job, r.course])).toEqual([
+      ["A", "j4", DIRECT],
+      ["B", "j4", "c1"],
+    ]);
+    expect(appSteps(d)).not.toContain("course");
+    /* applying, not arrived: most core skills are still to get and there is no offer yet */
+    expect(lineStop(d, false)).toBe("plan");
+  });
+  it("Geppetto is on the CNC course route, with route B to quality inspector for toys and no course", () => {
+    const d = sample("geppetto");
+    expect(d.route).toBe("A");
+    expect(d.routes.find((r) => r.id === "B")).toEqual({ id: "B", job: "j6", course: DIRECT });
+  });
+});

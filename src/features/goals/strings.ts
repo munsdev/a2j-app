@@ -5,7 +5,7 @@ import { defineStrings } from "@/i18n";
 export const strings = defineStrings(
   {
     g_title: "Your goals",
-    g_lede: "Collect jobs you like and try up to three routes: a job and a course each.",
+    g_lede: "Collect jobs you like and try up to three routes: a job each, with a course if you need one.",
     g_way: "Your line to",
     g_main: "You're on this route",
     g_goal: "On a route",
@@ -187,7 +187,7 @@ export const strings = defineStrings(
   {
     g_title: "Ihre Ziele",
     g_lede:
-      "Sammeln Sie Berufe, die Ihnen gefallen, und probieren Sie bis zu drei Routen aus: je ein Beruf und ein Kurs.",
+      "Sammeln Sie Berufe, die Ihnen gefallen, und probieren Sie bis zu drei Routen aus: je ein Beruf, mit Kurs, wenn Sie einen brauchen.",
     g_way: "Ihre Linie zum Ziel",
     g_main: "Hier sind Sie",
     g_goal: "Auf einer Route",

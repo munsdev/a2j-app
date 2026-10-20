@@ -1200,7 +1200,7 @@
             "deadline": "20 November 2026",
             "reqs": "Experience with donors or sponsors, events, confident communication. Fundraising training welcome.",
             "notes": "Mention the 400 kids and the sponsors.",
-            "status": "applied",
+            "status": "interview",
             "goals": ["j4"]
           },
           {
@@ -1243,12 +1243,25 @@
             "next": true
           },
           "goal": "j4",
-          "course": "c1",
+          "course": "direct",
           "why": "It matches my interests (Helping, Leading and selling). My strengths include leading, meeting new people and staying calm under pressure. I have already raised money from local businesses for free archery days.",
           "other": "Backup: procurement for a food bank network. Long term: forest manager.",
-          "next": "Bildungsgutschein for the fundraising course\nApply to two more charities in Kassel\nAsk the club for a reference about the kids' days"
+          "next": "Interview with the Kassel children's charity on 4 November\nApply to two more charities in Kassel\nAsk the club for a reference about the kids' days\nIf there is no offer by January: Bildungsgutschein for the fundraising course (route B)"
         },
-        "seen": {}
+        "seen": {},
+        "routes": [
+          {
+            "id": "A",
+            "job": "j4",
+            "course": "direct"
+          },
+          {
+            "id": "B",
+            "job": "j4",
+            "course": "c1"
+          }
+        ],
+        "route": "A"
       },
       "de": {
         "app": "a2j",
@@ -1615,7 +1628,7 @@
             "deadline": "20. November 2026",
             "reqs": "Erfahrung mit Spendern oder Sponsoren, Events, sicheres Auftreten. Fundraising-Weiterbildung erwünscht.",
             "notes": "Die 400 Kinder und die Sponsoren erwähnen.",
-            "status": "applied",
+            "status": "interview",
             "goals": ["j4"]
           },
           {
@@ -1658,12 +1671,25 @@
             "next": true
           },
           "goal": "j4",
-          "course": "c1",
+          "course": "direct",
           "why": "Es passt zu meinen Interessen (Helfen, Führen und Verkaufen). Zu meinen Stärken gehören Führen, neue Menschen kennenlernen und Ruhe unter Druck. Ich habe schon Geld bei lokalen Firmen für kostenlose Bogentage gesammelt.",
           "other": "Plan B: Einkauf für ein Tafel-Netzwerk. Langfristig: Forstwirtschaftsmeister.",
-          "next": "Bildungsgutschein für den Fundraising-Kurs\nBei zwei weiteren Vereinen in Kassel bewerben\nDen Verein um ein Zeugnis für die Kindertage bitten"
+          "next": "Vorstellungsgespräch beim Kasseler Kinderhilfswerk am 4. November\nBei zwei weiteren Vereinen in Kassel bewerben\nDen Verein um ein Zeugnis zu den Kindertagen bitten\nWenn bis Januar keine Zusage kommt: Bildungsgutschein für den Fundraising-Kurs (Route B)"
         },
-        "seen": {}
+        "seen": {},
+        "routes": [
+          {
+            "id": "A",
+            "job": "j4",
+            "course": "direct"
+          },
+          {
+            "id": "B",
+            "job": "j4",
+            "course": "c1"
+          }
+        ],
+        "route": "A"
       }
     },
     "geppetto": {
@@ -1739,7 +1765,7 @@
             "id": "j6",
             "title": "Quality inspector for toys",
             "occ": 1220,
-            "role": "maybe",
+            "role": "goal",
             "org": "",
             "when": "",
             "current": false,
@@ -2085,7 +2111,20 @@
           "other": "Backup: quality inspector for toys. Also possible: cabinet maker, if the work is light enough.",
           "next": "Computer course from 16 November\nBildungsgutschein for the CNC course\nGerman B1 course in the afternoons"
         },
-        "seen": {}
+        "seen": {},
+        "routes": [
+          {
+            "id": "A",
+            "job": "j5",
+            "course": "c1"
+          },
+          {
+            "id": "B",
+            "job": "j6",
+            "course": "direct"
+          }
+        ],
+        "route": "A"
       },
       "de": {
         "app": "a2j",
@@ -2159,7 +2198,7 @@
             "id": "j6",
             "title": "Qualitätsprüfer für Spielzeug",
             "occ": 1220,
-            "role": "maybe",
+            "role": "goal",
             "org": "",
             "when": "",
             "current": false,
@@ -2505,7 +2544,20 @@
           "other": "Plan B: Qualitätsprüfer für Spielzeug. Auch möglich: Tischler, wenn die Arbeit leicht genug ist.",
           "next": "Computerkurs ab 16. November\nBildungsgutschein für den CNC-Kurs\nNachmittags Deutschkurs B1"
         },
-        "seen": {}
+        "seen": {},
+        "routes": [
+          {
+            "id": "A",
+            "job": "j5",
+            "course": "c1"
+          },
+          {
+            "id": "B",
+            "job": "j6",
+            "course": "direct"
+          }
+        ],
+        "route": "A"
       }
     }
   }

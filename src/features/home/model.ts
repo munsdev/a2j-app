@@ -86,11 +86,14 @@ export const LINE_STOPS: readonly LineStop[] = ["start", "profile", "goals", "pl
 
 /** Where the person is on Home's line: on the profile until it is done or there is a goal, then on the
  *  goals while skills are left to get, then on the plan, then at the job. allHad: every skill of the main
- *  goal is had. */
+ *  goal is had. A route that needs no course is on the plan (applying) until every skill is had or an ad
+ *  for the job was accepted. */
 export function lineStop(d: Doc, allHad: boolean): Exclude<LineStop, "start"> {
-  if (!mainGoal(d)) return partsDone(d) < 6 ? "profile" : "goals";
+  const g = mainGoal(d);
+  if (!g) return partsDone(d) < 6 ? "profile" : "goals";
   if (!readyToApply(d, allHad)) return "goals";
-  return planStarted(d) ? "job" : "plan";
+  const offer = d.jobads.some((a) => a.goals.includes(g.id) && a.status === "accepted");
+  return planStarted(d) && (allHad || offer) ? "job" : "plan";
 }
 
 /** A count as a word, up to twelve ("four", "elf"), else as digits. words: the words from zero, comma-separated. */
