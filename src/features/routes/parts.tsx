@@ -117,7 +117,8 @@ export function Patch({ cell, small, className }: { cell: Cell; small?: boolean;
 
 /** A skill as a chip, in its state on the route. With onToggle it is a button that says whether the course
  *  covers it. */
-export function SkillChip({ tile, onToggle }: { tile: Tile; onToggle?: () => void }) {
+/** A skill as a chip. With onOpen, a button that opens its choice (your level, the course covers it). */
+export function SkillChip({ tile, onOpen, open }: { tile: Tile; onOpen?: () => void; open?: boolean }) {
   const t = useT(strings);
   const c = cellOf(tile);
   const look = cn(
@@ -135,13 +136,13 @@ export function SkillChip({ tile, onToggle }: { tile: Tile; onToggle?: () => voi
     </>
   );
   return (
-    <li className={onToggle ? undefined : look}>
-      {onToggle ? (
+    <li className={onOpen ? undefined : look}>
+      {onOpen ? (
         <button
           type="button"
-          aria-pressed={c === "course" || c === "also"}
-          onClick={onToggle}
-          className={cn(look, "transition-transform active:scale-[.97]")}
+          aria-expanded={!!open}
+          onClick={onOpen}
+          className={cn(look, "transition-transform active:scale-[.97]", open && "shadow-selected")}
         >
           {body}
         </button>

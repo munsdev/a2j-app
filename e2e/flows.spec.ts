@@ -391,3 +391,59 @@ test("compare: a tap on a skill opens a choice, it never changes anything by its
   await expect(sheet).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+test("edit: past jobs sit with the profile; the jobs you want on their own tab", async ({ page }) => {
+  await seed(page, { sample: "holmes" });
+  const errors = watchErrors(page);
+  const titles = (name: string) =>
+    page
+      .getByRole("region", { name })
+      .getByRole("textbox", { name: "Job", exact: true })
+      .evaluateAll((s) => s.map((x) => (x as HTMLInputElement).value));
+  await page.goto("#edit/profile");
+  await expect(page.getByRole("region", { name: "Your jobs so far" })).toBeVisible({ timeout: 30000 });
+  expect(await titles("Your jobs so far")).toEqual(["Private investigator", "Chemistry lab assistant"]);
+  await expect(page.getByRole("combobox", { name: "Kind" })).toHaveCount(0);
+  await page.goto("#edit/jobs");
+  await expect(page.getByRole("region", { name: "Goals" })).toBeVisible({ timeout: 30000 });
+  expect(await titles("Goals")).toEqual(["Fraud investigator", "Data analyst"]);
+  expect(await titles("Shortlist")).toEqual(["Forensic lab technician"]);
+  expect(errors).toEqual([]);
+});
+
+test("edit: skills show the ones you have first; switch to those you don't, or all", async ({ page }) => {
+  await seed(page, { sample: "holmes" });
+  await page.goto("#edit/skills");
+  const rated = page.getByRole("region", { name: "Rated skills" });
+  const rows = rated.getByRole("listitem");
+  await expect(rows.first()).toBeVisible({ timeout: 30000 });
+  const levels = async () =>
+    rated.getByRole("combobox").evaluateAll((s) => s.map((x) => +(x as HTMLSelectElement).value));
+  expect((await levels()).every((n) => n > 0)).toBe(true);
+  const have = await rows.count();
+  await page.getByRole("button", { name: "I don't have" }).click();
+  expect((await levels()).every((n) => n === 0)).toBe(true);
+  const not = await rows.count();
+  await page.getByRole("button", { name: "All", exact: true }).click();
+  await expect(rows).toHaveCount(have + not);
+});
+
+test("route sheet: a skill opens your level and the course choice, nothing changes by itself", async ({
+  page,
+}) => {
+  await seed(page, { sample: "holmes" });
+  await page.goto("#goals");
+  await page.getByRole("button", { name: /You're on route/ }).click();
+  await page.getByRole("button", { name: /^Edit route A/ }).click();
+  const sheet = page.getByRole("dialog");
+  const chip = sheet.locator("button[aria-expanded]").first();
+  await expect(chip).toBeVisible({ timeout: 30000 });
+  const before = await page.evaluate(() => localStorage.getItem("a2j:v2"));
+  await chip.click();
+  await expect(chip).toHaveAttribute("aria-expanded", "true");
+  await expect(sheet.getByRole("radiogroup", { name: "How well can you do this?" })).toBeVisible();
+  await expect(sheet.getByRole("checkbox", { name: /covers this/ })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("a2j:v2"))).toBe(before);
+  await chip.click();
+  await expect(sheet.getByRole("radiogroup", { name: "How well can you do this?" })).toHaveCount(0);
+});

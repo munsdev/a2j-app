@@ -28,7 +28,7 @@ export const strings = defineStrings(
     r_gives: "What this route gives you",
     r_gives_p:
       "Outlined skills are the ones the course adds. A ring around a filled skill: you have it already and the course teaches it again.",
-    r_tap: "Tap a skill to say whether the course covers it.",
+    r_tap: "Tap a skill to set your level, or to say the course covers it.",
     r_save: "Save route {x}",
     r_dup: "Route {x} is already this job with this course.",
     r_remove: "Remove route {x}",
@@ -101,7 +101,8 @@ export const strings = defineStrings(
     r_gives: "Was Ihnen diese Route bringt",
     r_gives_p:
       "Umrandete Fähigkeiten kommen durch den Kurs dazu. Ein Ring um eine gefüllte Fähigkeit: Sie haben sie schon, und der Kurs bringt sie noch einmal bei.",
-    r_tap: "Tippen Sie auf eine Fähigkeit, um festzulegen, ob der Kurs sie abdeckt.",
+    r_tap:
+      "Tippen Sie auf eine Fähigkeit, um Ihr Niveau festzulegen oder anzugeben, dass der Kurs sie abdeckt.",
     r_save: "Route {x} speichern",
     r_dup: "Route {x} ist schon dieser Beruf mit diesem Kurs.",
     r_remove: "Route {x} entfernen",

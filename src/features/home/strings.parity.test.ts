@@ -54,9 +54,18 @@ const BACKUP_MOVED = [
   ...["t_own_back", "t_own_start", "t_own_nokeep", "t_example", "fin_done"],
 ];
 /* strings for UI the previous app did not have */
-const EDIT_ADDED = ["e_filter", "e_filter_none"];
-/* reworded on purpose: the main goal became the route you are on */
-const EDIT_CHANGED = ["e_main"];
+const EDIT_ADDED = [
+  "e_filter",
+  "e_filter_none",
+  ...Object.keys(editStrings.en).filter((k) => k.startsWith("e_show")),
+  "e_add_past",
+  "e_past_h",
+  "e_goals_h",
+  "e_short_h",
+];
+/* reworded on purpose: the main goal became the route you are on; past jobs moved to the profile, so the jobs
+   tab holds the jobs you want */
+const EDIT_CHANGED = ["e_main", "e_jobs"];
 const BACKUP_ADDED = ["bk_choose", "bk_nofile", "bk_need_data", "bk_need_name", "bk_name", "bk_name_save"];
 /* Home of a returning person: the line (l_), the next stops (n_), the stages (s_) */
 const HOME_ADDED = Object.keys(homeStrings.en).filter((k) => /^[lns]_/.test(k));

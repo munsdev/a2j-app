@@ -6,20 +6,26 @@ import { normTxt, skLabel } from "@/domain/catalog";
 import { useSkillSearch } from "@/app/useCatalogSearch";
 import { addOwnSkill, setLevel } from "@/domain/skills";
 import { useT } from "@/i18n";
-import { Button, Field, Hint, Icon, Input, Panel, PanelTitle, Select, SuggestInput } from "@/ui";
+import { Button, Field, Hint, Icon, Input, Panel, PanelTitle, Segmented, Select, SuggestInput } from "@/ui";
 import { RowDelete } from "./fields";
 import { editStrings } from "./strings";
 
 const LEVELS = [0, 1, 2, 3, 4, 5] as const;
+/** Which skills show: the ones you have (level 1 or more, the default), the ones you do not (0), all. */
+const SHOWS = ["have", "not", "all"] as const;
+type Show = (typeof SHOWS)[number];
+const shows = (show: Show, level: number) => show === "all" || (show === "have") === level > 0;
 
-/** Rated catalogue skills and skills in the person's own words: change the level, delete, add. A filter
- *  above both lists finds a skill by name (there can be fifty). */
+/** Rated catalogue skills and skills in the person's own words: change the level, delete, add. Above both
+ *  lists: the skills you have, do not have, or all (first the ones you have, so the list shows what you can
+ *  do), and a filter by name (there can be fifty). */
 export function SkillsTab() {
   const t = useT(editStrings);
   const E = useEscoReady();
   const ratedMap = useDoc((d) => d.esco.rated);
   const own = useDoc((d) => d.esco.own);
   const [q, setQ] = useState("");
+  const [show, setShow] = useState<Show>("have");
   const query = normTxt(q);
   const hit = (...names: (string | undefined)[]) => !query || names.some((n) => normTxt(n).includes(query));
 
@@ -28,8 +34,8 @@ export function SkillsTab() {
     .sort((a, b) => a.name.localeCompare(b.name));
   /* keep each own skill's place in the list: deleting splices by it */
   const owned = own.map((o, i) => ({ ...o, i, linked: o.esco != null ? skLabel(E, o.esco) : undefined }));
-  const ratedShown = rated.filter((r) => hit(r.name));
-  const ownShown = owned.filter((o) => hit(o.name, o.linked));
+  const ratedShown = rated.filter((r) => shows(show, r.l) && hit(r.name));
+  const ownShown = owned.filter((o) => shows(show, o.level || 0) && hit(o.name, o.linked));
 
   /* the empty line of a list: nothing there yet, or nothing that matches the filter */
   const none = (all: number) =>
@@ -37,12 +43,24 @@ export function SkillsTab() {
       <Hint role="status" className="px-1 py-2">
         {t("e_filter_none")}
       </Hint>
+    ) : all ? (
+      <Hint role="status" className="px-1 py-2">
+        {t(show === "have" ? "e_show_none_have" : "e_show_none_not")}
+      </Hint>
     ) : (
       <Hint className="px-1">{t("e_none")}</Hint>
     );
 
   return (
     <>
+      {rated.length + own.length > 0 && (
+        <Segmented
+          label={t("e_show")}
+          value={show}
+          onChange={setShow}
+          options={SHOWS.map((v) => ({ value: v, label: t(`e_show_${v}`) }))}
+        />
+      )}
       {rated.length + own.length > 0 && (
         <Field label={t("e_filter")}>
           {(p) => (

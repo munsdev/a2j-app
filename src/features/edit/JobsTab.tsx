@@ -10,45 +10,84 @@ import { useOccSearch } from "@/app/useCatalogSearch";
 import { matchJobs } from "@/domain/skills";
 import { useT } from "@/i18n";
 import { profileFields } from "@/i18n/profileFields";
-import { Button, Choice, Field, Hint, Icon, Panel, Select } from "@/ui";
+import { Button, Choice, Field, Hint, Icon, Panel, PanelTitle, Select } from "@/ui";
 import { CommitText, RowDelete } from "./fields";
 import { editStrings } from "./strings";
 
-const ROLES: readonly JobRole[] = ["done", "goal", "maybe"];
+/** Past jobs belong to the profile; goals and the shortlist are the jobs you want. Each list keeps its kinds. */
+const ROLES = { past: ["done"], want: ["goal", "maybe"] } as const satisfies Record<
+  string,
+  readonly JobRole[]
+>;
+type Kind = keyof typeof ROLES;
 
-/** Every job: done before, goals and the shortlist, with the catalogue match. */
+/** The jobs you want: goals, then the shortlist. */
 export function JobsTab() {
+  const t = useT(editStrings);
+  return (
+    <>
+      <JobList kind="want" roles={["goal"]} title={t("e_goals_h")} add={false} />
+      <JobList kind="want" roles={["maybe"]} title={t("e_short_h")} add />
+    </>
+  );
+}
+
+/** Your jobs so far: part of the profile (Edit my data, Profile). */
+export function PastJobs() {
+  const t = useT(editStrings);
+  return <JobList kind="past" roles={["done"]} title={t("e_past_h")} add />;
+}
+
+function JobList({
+  kind,
+  roles,
+  title,
+  add,
+}: {
+  kind: Kind;
+  roles: readonly JobRole[];
+  title: string;
+  /** with a button to add one (a new job you want goes on the shortlist) */
+  add: boolean;
+}) {
   const t = useT(editStrings, profileFields);
-  const jobs = useDoc((d) => d.jobs);
+  const all = useDoc((d) => d.jobs);
+  const jobs = all.filter((j) => roles.includes(j.role));
   const mainId = useDoc((d) => mainGoal(d)?.id ?? null);
   const [added, setAdded] = useState<string | null>(null);
+  const hid = `edit-jobs-${roles.join("-")}`;
   return (
-    <Panel className="gap-4 p-2.5 sm:p-5">
+    <Panel aria-labelledby={hid} className="gap-4 p-2.5 sm:p-5">
+      <PanelTitle id={hid} className="px-1">
+        {title}
+      </PanelTitle>
       {jobs.length ? (
         <ul className="flex flex-col gap-3">
           {jobs.map((j) => (
-            <JobRow key={j.id} job={j} main={j.id === mainId} focus={j.id === added} />
+            <JobRow key={j.id} job={j} kind={kind} main={j.id === mainId} focus={j.id === added} />
           ))}
         </ul>
       ) : (
         <Hint className="px-1">{t("e_none")}</Hint>
       )}
-      <Button
-        className="self-start"
-        onClick={() => {
-          let id = "";
-          update((d) => void (id = addJob(d, { role: "maybe", title: "" }).id));
-          setAdded(id);
-        }}
-      >
-        <Icon name="plus" />
-        {t("e_add_job")}
-      </Button>
+      {add && (
+        <Button
+          className="self-start"
+          onClick={() => {
+            let id = "";
+            update((d) => void (id = addJob(d, { role: kind === "past" ? "done" : "maybe", title: "" }).id));
+            setAdded(id);
+          }}
+        >
+          <Icon name="plus" />
+          {t(kind === "past" ? "e_add_past" : "e_add_job")}
+        </Button>
+      )}
     </Panel>
   );
 }
 
-function JobRow({ job: j, main, focus }: { job: Job; main: boolean; focus: boolean }) {
+function JobRow({ job: j, kind, main, focus }: { job: Job; kind: Kind; main: boolean; focus: boolean }) {
   const t = useT(editStrings, profileFields);
   const E = useEscoReady();
   const hits = useOccSearch(E, j.title, 6);
@@ -81,30 +120,32 @@ function JobRow({ job: j, main, focus }: { job: Job; main: boolean; focus: boole
             />
           )}
         </Field>
-        <Field label={t("e_role")}>
-          {(p) => (
-            <Select
-              id={p.id}
-              value={j.role}
-              onChange={(e) => {
-                const role = e.target.value as JobRole;
-                update((d) => {
-                  const x = d.jobs.find((y) => y.id === j.id);
-                  if (!x) return;
-                  /* a goal is a job with a route: making one starts a route (while there is room) */
-                  if (role === "goal") addRoute(d, x.id);
-                  else x.role = role;
-                });
-              }}
-            >
-              {ROLES.map((r) => (
-                <option key={r} value={r} disabled={r === "goal" && j.role !== "goal" && full}>
-                  {t(`e_role_${r}`)}
-                </option>
-              ))}
-            </Select>
-          )}
-        </Field>
+        {kind === "want" && (
+          <Field label={t("e_role")}>
+            {(p) => (
+              <Select
+                id={p.id}
+                value={j.role}
+                onChange={(e) => {
+                  const role = e.target.value as JobRole;
+                  update((d) => {
+                    const x = d.jobs.find((y) => y.id === j.id);
+                    if (!x) return;
+                    /* a goal is a job with a route: making one starts a route (while there is room) */
+                    if (role === "goal") addRoute(d, x.id);
+                    else x.role = role;
+                  });
+                }}
+              >
+                {ROLES.want.map((r) => (
+                  <option key={r} value={r} disabled={r === "goal" && j.role !== "goal" && full}>
+                    {t(`e_role_${r}`)}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </Field>
+        )}
         <Field label={t("e_cat")} wide>
           {(p) => (
             <Select

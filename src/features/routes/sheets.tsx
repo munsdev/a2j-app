@@ -12,15 +12,9 @@ import { openFinder } from "@/features/courses/api";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Button, Choice, Field, Hint, Icon, RowButton, Select, SheetHead } from "@/ui";
-import {
-  goRoute,
-  openRouteSheet,
-  removeRouteWithUndo,
-  replaceRoute,
-  saveRoute,
-  toggleCovers,
-} from "./actions";
+import { goRoute, openRouteSheet, removeRouteWithUndo, replaceRoute, saveRoute } from "./actions";
 import { QuiltKey, RouteDisc, Score, SkillChip } from "./parts";
+import { SkillChoice } from "./SkillChoice";
 import { routeWords } from "./model";
 import { strings } from "./strings";
 
@@ -115,6 +109,8 @@ export function RouteSheet({ id, jobId }: { id: RouteId | null; jobId: string | 
   const j = jobById(d, job);
   const c = course ? (d.courses.find((x) => x.id === course) ?? null) : null;
   const tiles = useMemo(() => (j && E ? jobTiles(d, E, j.occ, j, c) : []), [d, E, j, c]);
+  const [skill, setSkill] = useState<string | null>(null);
+  const openTile = tiles.find((x) => x.key === skill) ?? null;
   const keys = useMemo(() => new Set(tiles.map((x) => x.key)), [tiles]);
   const courses = useMemo(() => {
     const mine = d.courses.filter((x) => x.goals.includes(job));
@@ -237,13 +233,27 @@ export function RouteSheet({ id, jobId }: { id: RouteId | null; jobId: string | 
                   <SkillChip
                     key={x.key}
                     tile={x}
-                    onToggle={c ? () => toggleCovers(c.id, x.x, x.name) : undefined}
+                    open={x.key === skill}
+                    onOpen={() => setSkill(x.key === skill ? null : x.key)}
                   />
                 ))}
               </ul>
+              {/* one skill open at a time: your level, and whether the chosen course covers it */}
+              {openTile && (
+                <div className="flex animate-fade-in flex-col gap-3 rounded-option bg-surface p-3">
+                  <p className="font-bold break-words">{openTile.name}</p>
+                  <SkillChoice
+                    x={openTile.x}
+                    name={openTile.name}
+                    courseId={c?.id ?? null}
+                    occ={j?.occ ?? null}
+                    jobId={j?.id ?? null}
+                  />
+                </div>
+              )}
               <QuiltKey cells={["have", "also", "some", "course", "learn"]} />
               <Hint>{t("r_gives_p")}</Hint>
-              {c && <Hint>{t("r_tap")}</Hint>}
+              <Hint>{t("r_tap")}</Hint>
             </section>
           )}
           <div className="flex flex-wrap items-center justify-between gap-2">
