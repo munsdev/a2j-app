@@ -9,7 +9,7 @@ import { focusForStep } from "@/lib/focus";
 import { cn } from "@/lib/cn";
 import { useEscoReady, useOnet } from "@/app/catalog";
 import { go } from "@/app/router";
-import { toast, toastUndo } from "@/app/toast";
+import { toastUndo } from "@/app/toast";
 import { loadOnet, occLabel } from "@/domain/catalog";
 import { type DeckFilter, type Idea, READY, canRank, rankAll, setVote, voteOf } from "@/domain/rank";
 import { useT } from "@/i18n";
@@ -58,7 +58,6 @@ export function Ideas() {
       pass: s.pass,
       rankVer: s.rankVer,
       rating: s.rating,
-      last: s.last,
     })),
   );
   const ranks = canRank(d);
@@ -144,44 +143,37 @@ export function Ideas() {
     );
     if (to !== pos) window.scrollTo(0, 0);
   };
+  /* The two thumbs work the same way: a thumb marks the card and turns it to its skills, where the person can
+     say what they like (or what puts them off) at will; Next goes on. The filled thumb again takes the mark
+     away, the other one switches it. Every mark is one step of the app's undo (the toast, Ctrl+Z). */
   const like = (occ: number) => {
     commit(); // thumbs on another card's skills are their own undo step
-    const prevVote = voteOf(getDoc(), occ);
-    let jobId: string | null = null;
     update((dr) => {
       setVote(dr, occ, 1);
-      if (!jobForOcc(dr, occ)) jobId = addJob(dr, { title: occLabel(E, occ), occ, role: "maybe" }).id;
+      if (!jobForOcc(dr, occ)) addJob(dr, { title: occLabel(E, occ), occ, role: "maybe" });
     });
-    at({ rating: occ, last: { occ, prevVote, jobId }, rankVer: ver + 1 });
+    at({ rating: occ, rankVer: ver + 1 });
     setFlip(cardKey(occ), false);
     aimFocus(['[data-nav="next"]']);
-    toast(t("c_liked"));
+    window.scrollTo(0, 0); // the question on the card's back ("What puts you off?") in view
+    toastUndo(t("c_liked"));
   };
-  /* marks the card and goes on; Undo in the toast is the app's undo (also Ctrl+Z), so it takes back exactly
-     this step */
   const notForMe = (occ: number) => {
     commit();
-    update((dr) => void setVote(dr, occ, -1));
-    const to = stepPos(pos, 1, view.length);
-    at({ pos: to, rating: null, rankVer: ver + 1 });
+    update((dr) => {
+      /* from "I like it": off the shortlist too (a goal is changed on its own page) */
+      const j = jobForOcc(dr, occ);
+      if (j?.role === "maybe") removeJob(dr, j.id);
+      setVote(dr, occ, -1);
+    });
+    at({ rating: occ, rankVer: ver + 1 });
     setFlip(cardKey(occ), false);
-    aimFocus(
-      to >= view.length
-        ? ['[data-end="go"]', '[data-end="goals"]']
-        : ['[data-idea="no"]', '[data-nav="next"]'],
-    );
-    window.scrollTo(0, 0);
+    aimFocus(['[data-nav="next"]']);
+    window.scrollTo(0, 0); // the question on the card's back ("What puts you off?") in view
     toastUndo(t("c_no_t"));
   };
+  /** the filled thumb again: no mark (and off the shortlist), back to the front */
   const unmark = (occ: number) => {
-    commit();
-    update((dr) => void setVote(dr, occ, 0));
-    at({ rankVer: ver + 1 });
-    aimFocus(['[data-idea="no"]', '[data-nav="next"]']);
-    toast(t("c_unmark_t"));
-  };
-  /* the reverse of "I like it" (a goal is changed on its own page, where its courses and ads are) */
-  const takeOff = (occ: number) => {
     commit();
     update((dr) => {
       const j = jobForOcc(dr, occ);
@@ -189,31 +181,28 @@ export function Ideas() {
       setVote(dr, occ, 0);
     });
     at({ rating: st.rating === occ ? null : st.rating, rankVer: ver + 1 });
-    aimFocus(['[data-idea="yes"]', '[data-nav="next"]']);
-    toast(t("c_off_t"));
+    aimFocus(['[data-nav="next"]']);
+    toastUndo(t("c_unmark_t"));
   };
-  const rate = (occ: number) => {
-    commit();
-    at({ rating: occ });
-    aimFocus(['[data-idea="done"]', '[data-nav="next"]']);
+  /** "See skills" / "Front": a card turned to its skills after a thumb goes back to the front */
+  const flipCard = (occ: number) => {
+    if (st.rating === occ) {
+      commit();
+      at({ rating: null, rankVer: ver + 1 });
+      setFlip(cardKey(occ), false);
+    } else toggleFlip(cardKey(occ));
   };
-  const done = () => {
-    commit(); // the skill thumbs of this card become one undo step
-    at({ rating: null, rankVer: ver + 1 });
-    aimFocus(['[data-idea="rate"]', '[data-nav="next"]']);
+  const thumbUp = (occ: number) => {
+    const m = markOf(occ);
+    if (m === "goal") return;
+    if (m === "like") unmark(occ);
+    else like(occ);
   };
-  const undo = () => {
-    const last = st.last;
-    if (!last) return;
-    update((dr) => {
-      const v = dr.esco.votes;
-      const i = v.findIndex((x) => x.o === last.occ);
-      if (i >= 0) v.splice(i, 1);
-      if (last.prevVote) v.push(structuredClone(last.prevVote));
-      if (last.jobId) removeJob(dr, last.jobId);
-    });
-    at({ rating: null, last: null, rankVer: ver + 1 });
-    aimFocus(['[data-idea="yes"]', '[data-nav="next"]']);
+  const thumbDown = (occ: number) => {
+    const m = markOf(occ);
+    if (m === "goal") return;
+    if (m === "no") unmark(occ);
+    else notForMe(occ);
   };
   const startPass = () => {
     at({ pass: unmarked(order, (o) => markOf(o) !== null), pos: 0, rating: null });
@@ -246,24 +235,21 @@ export function Ideas() {
       step(k === "ArrowLeft" ? -1 : 1);
       return;
     }
-    if (st.rating != null) {
-      if (k === "Enter" && !onControl) {
-        e.preventDefault();
-        step(1);
-      }
+    if (st.rating != null && k === "Enter" && !onControl) {
+      e.preventDefault();
+      step(1);
       return;
     }
     if (cur == null) return;
-    const mark = markOf(cur);
-    if (k === "l" && (mark === null || mark === "no")) {
+    if (k === "l") {
       e.preventDefault();
-      like(cur);
-    } else if (k === "n" && mark === null) {
+      thumbUp(cur);
+    } else if (k === "n") {
       e.preventDefault();
-      notForMe(cur);
+      thumbDown(cur);
     } else if (k === " " && !onControl) {
       e.preventDefault();
-      toggleFlip(cardKey(cur));
+      flipCard(cur);
     }
   });
   useEffect(() => {
@@ -416,17 +402,7 @@ export function Ideas() {
       </div>,
     );
 
-  const handlers: CardActions = {
-    like,
-    notForMe,
-    unmark,
-    takeOff,
-    rate,
-    done,
-    undo,
-    step,
-    canBack: pos > 0,
-  };
+  const handlers: CardActions = { thumbUp, thumbDown, flipCard, step, canBack: pos > 0 };
   return shell(
     <div ref={deckRef} className="flex flex-col">
       <Single
@@ -435,7 +411,6 @@ export function Ideas() {
         idea={ideaOf(cur)}
         mark={markOf(cur)}
         rating={st.rating === cur}
-        canUndo={st.last?.occ === cur}
         nav={nav}
         {...handlers}
       />
@@ -444,13 +419,9 @@ export function Ideas() {
 }
 
 interface CardActions {
-  like: (occ: number) => void;
-  notForMe: (occ: number) => void;
-  unmark: (occ: number) => void;
-  takeOff: (occ: number) => void;
-  rate: (occ: number) => void;
-  done: () => void;
-  undo: () => void;
+  thumbUp: (occ: number) => void;
+  thumbDown: (occ: number) => void;
+  flipCard: (occ: number) => void;
   step: (dir: 1 | -1) => void;
   canBack: boolean;
 }
@@ -458,9 +429,8 @@ interface CardProps extends CardActions {
   occ: number;
   idea: Idea | null;
   mark: IdeaMark;
+  /** turned to its skills after a thumb */
   rating: boolean;
-  /** the like on this card can be taken back (it was the last one) */
-  canUndo: boolean;
 }
 
 /* a swipe to the left brings the next card, to the right the one before (not past the first card) */
@@ -533,107 +503,53 @@ function Nav({
 }
 
 /** The marks of a card, by what it is marked now. */
-function Buttons({
-  occ,
-  mark,
-  rating,
-  canUndo,
-  like,
-  notForMe,
-  unmark,
-  takeOff,
-  rate,
-  done,
-  undo,
-}: CardProps) {
+/** The marks, in the same place on every card: Not for me (red), See skills / Front, I like it (green). Unmarked,
+ *  both thumbs are outlined in their colour; the mark fills its thumb (aria-pressed). A job that is one of the
+ *  goals shows "On your goals" and is changed on its own page. */
+function Buttons({ occ, mark, rating, thumbUp, thumbDown, flipCard }: CardProps) {
   const t = useT(strings);
-  const flipped = useFlipped(cardKey(occ));
+  const flipped = useFlipped(cardKey(occ)) || rating;
   const tall = "min-h-16 flex-col gap-0.5 px-1.5 text-small whitespace-normal [&_svg]:size-6";
-  if (rating)
-    return canUndo ? (
-      <Button key="undo" data-idea="undo" className="min-h-11" onClick={undo}>
-        <Icon name="back" />
-        {t("undo")}
-      </Button>
-    ) : (
-      <Button key="done" data-idea="done" className="min-h-11" onClick={done}>
-        <Icon name="check" />
-        {t("c_done")}
-      </Button>
-    );
-  const flip = (
-    <Button
-      key="flip"
-      className={tall}
-      data-idea="flip"
-      aria-keyshortcuts="Space"
-      onClick={() => toggleFlip(cardKey(occ))}
-    >
-      <Icon name="flip" />
-      <span>{flipped ? t("c_front") : t("c_flip")}</span>
-    </Button>
-  );
-  if (mark === "like" || mark === "goal")
-    return (
-      <>
-        {mark === "like" && (
-          <Button key="off" className={tall} data-idea="off" onClick={() => takeOff(occ)}>
-            <Icon name="close" />
-            <span>{t("c_off")}</span>
-          </Button>
-        )}
-        {flip}
-        <Button key="rate" variant="yes" className={tall} data-idea="rate" onClick={() => rate(occ)}>
-          <Icon name="up" />
-          <span>{t("c_rate")}</span>
-        </Button>
-      </>
-    );
-  if (mark === "no")
-    return (
-      <>
-        <Button key="unmark" className={tall} data-idea="unmark" onClick={() => unmark(occ)}>
-          <Icon name="reset" />
-          <span>{t("c_unmark")}</span>
-        </Button>
-        {flip}
-        <Button
-          key="yes"
-          variant="yes"
-          className={tall}
-          data-idea="yes"
-          aria-keyshortcuts="L"
-          onClick={() => like(occ)}
-        >
-          <Icon name="up" />
-          <span>{t("c_yes_after")}</span>
-        </Button>
-      </>
-    );
+  const goal = mark === "goal";
+  const up = mark === "like" || goal;
+  const down = mark === "no";
   return (
     <>
       <Button
         key="no"
-        variant="no"
-        className={tall}
+        variant={down ? "danger" : "soft"}
+        className={cn(tall, !down && "text-no shadow-[inset_0_0_0_1.5px_var(--no)] hover:bg-no-bg")}
         data-idea="no"
+        aria-pressed={down}
+        aria-disabled={goal || undefined}
         aria-keyshortcuts="N"
-        onClick={() => notForMe(occ)}
+        onClick={() => thumbDown(occ)}
       >
         <Icon name="up" flip />
         <span>{t("c_no")}</span>
       </Button>
-      {flip}
+      <Button
+        key="flip"
+        className={tall}
+        data-idea="flip"
+        aria-keyshortcuts="Space"
+        onClick={() => flipCard(occ)}
+      >
+        <Icon name="flip" />
+        <span>{flipped ? t("c_front") : t("c_flip")}</span>
+      </Button>
       <Button
         key="yes"
-        variant="yes"
-        className={tall}
+        variant={up ? "yes" : "soft"}
+        className={cn(tall, !up && "text-yes shadow-[inset_0_0_0_1.5px_var(--yes)] hover:bg-yes-bg")}
         data-idea="yes"
+        aria-pressed={up}
+        aria-disabled={goal || undefined}
         aria-keyshortcuts="L"
-        onClick={() => like(occ)}
+        onClick={() => thumbUp(occ)}
       >
         <Icon name="up" />
-        <span>{t("c_yes")}</span>
+        <span>{goal ? t("c_goal_on") : t("c_yes")}</span>
       </Button>
     </>
   );

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import type { Vote } from "@/data/types";
 import { READY, type DeckFilter, type Idea } from "@/domain/rank";
 import { useProfileEpoch } from "@/app/samples";
 import { storage } from "@/lib/storage";
@@ -9,13 +8,6 @@ import { storage } from "@/lib/storage";
    deck (and its filter) is saved, in a2j:deck, so a reload goes on where you were; everything goes when
    another profile opens (a sample or a backup replaced the data). */
 
-export interface LastIdea {
-  occ: number;
-  /** the vote before, to put back on Undo */
-  prevVote: Vote | null;
-  /** the shortlist job the vote added */
-  jobId: string | null;
-}
 interface GoalsState {
   /** card keys shown on their back */
   flipped: Record<string, true>;
@@ -33,7 +25,6 @@ interface GoalsState {
   rankVer: number;
   /** occupation whose card is in rating mode */
   rating: number | null;
-  last: LastIdea | null;
   /** compared job ids, null = not chosen yet (the first three) */
   cmp: string[] | null;
   cmpAll: boolean;
@@ -47,7 +38,6 @@ const initial = (): GoalsState => ({
   pass: null,
   rankVer: 0,
   rating: null,
-  last: null,
   cmp: null,
   cmpAll: false,
 });

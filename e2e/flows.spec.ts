@@ -122,24 +122,37 @@ test("browse the job ideas: next and back, and change a mark on a card seen befo
   await expect(count).toHaveText(/^1 of /);
   await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
 
-  // "Not for me" marks the card and goes on; going back shows the mark, which can be changed
-  await page.getByRole("button", { name: "Not for me" }).first().click();
+  // a thumb marks the card and turns it to its skills, it stays on the card; the filled thumb again takes the
+  // mark away, the other one switches it
+  const no = page.getByRole("button", { name: "Not for me" }).first();
+  const yes = page.getByRole("button", { name: "I like it", exact: true }).first();
+  await expect(no).toHaveAttribute("aria-pressed", "false");
+  await no.click();
+  await expect(no).toHaveAttribute("aria-pressed", "true");
+  await expect(count).toHaveText(/^1 of /);
+  await expect(page.getByText("What puts you off?")).toBeVisible();
+  await yes.click();
+  await expect(yes).toHaveAttribute("aria-pressed", "true");
+  await expect(no).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("What do you like about it?")).toBeVisible();
+  await yes.click();
+  await expect(yes).toHaveAttribute("aria-pressed", "false");
+
+  // the letter key marks too, and the toast's Undo takes the mark back
+  await page.keyboard.press("n");
+  await expect(no).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(no).toHaveAttribute("aria-pressed", "false");
+  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
+
+  // marked, then Next: going back shows the mark
+  await no.click();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
   await expect(count).toHaveText(/^2 of /);
   await back.click();
   await expect(count).toHaveText(/^1 of /);
-  const card = page.locator(".card3d").first();
-  await expect(card).toHaveAttribute("aria-label", first);
-  await expect(card.getByText("Not for me")).toBeVisible();
-  await page.getByRole("button", { name: "Remove the mark" }).first().click();
-  await expect(page.getByRole("button", { name: "I like it", exact: true }).first()).toBeVisible();
-
-  // the letter key marks too, and the toast's Undo takes the mark back; the card keeps its place
-  await page.keyboard.press("n");
-  await expect(count).toHaveText(/^2 of /);
-  await page.getByRole("button", { name: "Undo" }).click();
-  await page.keyboard.press("ArrowLeft");
-  await expect(page.locator(".card3d").first()).toHaveAttribute("aria-label", first);
-  await expect(page.locator(".card3d").first().getByText("Not for me")).toBeHidden();
+  await expect(page.locator(".card3d").first().getByText("Not for me")).toBeVisible();
+  await no.click();
 
   // the place in the deck survives a reload
   await page.keyboard.press("ArrowRight");

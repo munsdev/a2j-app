@@ -21,8 +21,9 @@ import "./card.css";
 /* =================== THE JOB CARD ===================
    Front: what the job is and how well it matches (one score, two reasons: interests and skills). Back: its
    skills as tiles (have, a saved course covers it, still to learn). Tapping the front turns the card over; the
-   flip button does the same and is the way for keyboards. In rating mode (job ideas, after a thumb) the back
-   lists the skills as rows with two buttons each: "I like this" and "Rather not". */
+   flip button does the same and is the way for keyboards. In rating mode (job ideas, after a thumb up or down)
+   the back asks what the person likes about it (or what puts them off) and lists the skills as rows with two
+   buttons each: "I like this" and "Rather not". */
 
 export interface JobCardProps {
   /** catalogue occupation, -1 when not in the catalogue */
@@ -67,7 +68,7 @@ export function JobCard({ occ, job, idea, rate, fill, deal, main, mark }: JobCar
         <CardFront occ={occ} job={job ?? null} idea={idea ?? null} main={!!main} mark={mark ?? null} />
       </div>
       <div className="face back" aria-hidden={!flipped || undefined} inert={!flipped}>
-        <CardBack occ={occ} job={job ?? null} rate={!!rate} main={!!main} />
+        <CardBack occ={occ} job={job ?? null} rate={!!rate} main={!!main} mark={mark ?? null} />
       </div>
     </article>
   );
@@ -249,7 +250,19 @@ function CardFront({
 }
 
 /* ---------- the back ---------- */
-function CardBack({ occ, job, rate, main }: { occ: number; job: Job | null; rate: boolean; main: boolean }) {
+function CardBack({
+  occ,
+  job,
+  rate,
+  main,
+  mark,
+}: {
+  occ: number;
+  job: Job | null;
+  rate: boolean;
+  main: boolean;
+  mark: IdeaMark;
+}) {
   const t = useT(strings);
   const E = useEscoReady();
   const d = useDoc();
@@ -263,9 +276,15 @@ function CardBack({ occ, job, rate, main }: { occ: number; job: Job | null; rate
           <Title text={title} split />
         </H>
         {rate ? (
-          <p className="rounded-tile bg-surface-2 px-3 py-2.5 text-small text-ink-2">
-            <b className="text-ink">{t("c_rate_opt")}</b> {t("c_rate_hint")}
-          </p>
+          <div className="flex flex-col gap-1 rounded-tile bg-surface-2 px-3 py-2.5">
+            {/* after a thumb: what the person likes about it, or what puts them off */}
+            <p className="text-label font-extrabold text-ink">
+              {t(mark === "no" ? "c_why_no" : "c_why_yes")}
+            </p>
+            <p className="text-small text-ink-2">
+              <b className="text-ink">{t("c_rate_opt")}</b> {t("c_rate_hint")}
+            </p>
+          </div>
         ) : (
           tiles.length > 0 && <TileLegend />
         )}
