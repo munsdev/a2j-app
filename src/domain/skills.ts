@@ -187,7 +187,9 @@ export function buildDeck(d: Doc, E: Esco): Deck {
     });
   jobs.forEach((j) => add(E.g.e[j.occ!], j));
   if (d.esco.more) jobs.forEach((j) => add(E.g.o[j.occ!], j));
-  return { cards: cards.filter((s) => d.esco.rated[s] == null), from };
+  /* the cards not rated yet; when every one is rated (changing answers), all of them, with their levels */
+  const open = cards.filter((s) => d.esco.rated[s] == null);
+  return { cards: open.length ? open : cards, from };
 }
 
 /** A skill typed in plain words: rate the catalogue skill when the words match it, otherwise keep it as an own

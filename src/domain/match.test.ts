@@ -5,6 +5,7 @@ import { shape } from "@/data/doc";
 import type { Doc } from "@/data/types";
 import { loadCatalog, loadOnet, type Esco, type Onet } from "./catalog";
 import { interestScore, matchBand, matchOf } from "./match";
+import { buildDeck } from "./skills";
 
 describe("match scale", () => {
   it("rescales the interest fit so 'no relationship' is 0", () => {
@@ -50,5 +51,15 @@ describe("matchOf on the Holmes sample (the numbers in the approved mockup)", { 
     const bare = { ...d, assess: { ...d.assess, answers: {} } };
     const m = matchOf(bare, E, O, job("Private investigator").occ!, job("Private investigator"));
     expect([m.interest, m.score]).toEqual([null, 92]);
+  });
+
+  it("the skill cards: the open ones; with every card rated, all of them again (to change a level)", () => {
+    const deck = buildDeck(d, E).cards;
+    expect(deck.length).toBeGreaterThan(0);
+    const all = structuredClone(d);
+    all.esco.rated = {};
+    const full = buildDeck(all, E).cards; // the whole deck: nothing rated
+    full.forEach((s) => (all.esco.rated[s] = 3));
+    expect(buildDeck(all, E).cards).toEqual(full);
   });
 });
