@@ -1,10 +1,9 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-/* Page structure. Every screen sits in the same 1100px frame, so titles and back links keep one left edge as
-   people move between screens. width sets how wide the content may grow inside it: "narrow" (760px) for flows
-   and forms, "medium" (960px), "wide" (the full frame) for overviews with columns. Panel is the white card
-   everything sits on. */
+/* Page structure. Every screen is centred under the top bar. width sets how wide the content may grow:
+   "narrow" (760px) for flows and forms, "medium" (960px), "wide" (the full 1100px frame) for overviews with
+   columns. Panel is the white card everything sits on. */
 
 export function Page({
   width = "narrow",
@@ -18,9 +17,11 @@ export function Page({
   return (
     <div
       className={cn(
-        "mx-auto flex w-full max-w-[1100px] flex-col gap-[18px] px-[max(16px,env(safe-area-inset-left))] pt-[22px] pb-7",
-        width === "narrow" && "[&>*]:max-w-[760px]",
-        width === "medium" && "[&>*]:max-w-[960px]",
+        "mx-auto flex w-full flex-col gap-[18px] px-[max(16px,env(safe-area-inset-left))] pt-[22px] pb-7",
+        /* the content width plus the side padding */
+        width === "narrow" && "max-w-[792px]",
+        width === "medium" && "max-w-[992px]",
+        width === "wide" && "max-w-[1100px]",
         className,
       )}
     >
