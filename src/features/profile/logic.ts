@@ -1,7 +1,7 @@
 import type { Doc, Lang, PartKey } from "@/data/types";
 import { jobById, mainGoal } from "@/data/doc";
 import { PARTS, partStatus, type PartStatus } from "@/domain/assess";
-import type { AssessItem, SettingRow } from "@/domain/items";
+import type { SettingRow } from "@/domain/items";
 import { type Esco, normTxt, searchSkillScored } from "@/domain/catalog";
 
 /* Pure helpers of the profile screen. No React, so they are unit-tested (logic.test.ts). */
@@ -9,28 +9,32 @@ import { type Esco, normTxt, searchSkillScored } from "@/domain/catalog";
 /** Today as an ISO date (2026-10-18): the value of assess.done[part]. */
 export const todayIso = (now = new Date()): string => now.toISOString().slice(0, 10);
 
-/** Where a question run starts: the first unanswered question, or the first one. */
-export function startPos(items: readonly AssessItem[], answers: Record<string, number>): number {
-  const i = items.findIndex((x) => !answers[x.id]);
-  return i < 0 ? 0 : i;
-}
-
-export interface QuestionPos {
+/** A walk through the cards of a run: the order they come in (card numbers), where you are, and how long the
+ *  first pass is. Cards skipped on the first pass come back once, one after another, at the end. */
+export interface Walk {
+  order: number[];
   pos: number;
-  /** the run already went back once to the questions that were skipped */
-  wrapped: boolean;
+  first: number;
 }
-/** The next question after pos. At the end, go back once to the first unanswered one; after that, finish. */
-export function advance(
-  cur: QuestionPos,
-  items: readonly AssessItem[],
-  answers: Record<string, number>,
-): QuestionPos | "finish" {
-  if (cur.pos < items.length - 1) return { ...cur, pos: cur.pos + 1 };
-  const miss = items.findIndex((x) => !answers[x.id]);
-  if (miss >= 0 && !cur.wrapped) return { pos: miss, wrapped: true };
+const range = (n: number) => Array.from({ length: n }, (_, i) => i);
+/** The open cards in order; when every card is done (changing answers), all of them. */
+export function startWalk(n: number, done: (i: number) => boolean): Walk {
+  const open = range(n).filter((i) => !done(i));
+  const order = open.length ? open : range(n);
+  return { order, pos: 0, first: order.length };
+}
+/** The next card. After the first pass, the ones still open follow once; after those, finish. */
+export function stepOn(w: Walk, done: (i: number) => boolean): Walk | "finish" {
+  if (w.pos < w.order.length - 1) return { ...w, pos: w.pos + 1 };
+  if (w.order.length === w.first) {
+    const later = w.order.filter((i) => !done(i));
+    if (later.length) return { ...w, order: [...w.order, ...later], pos: w.pos + 1 };
+  }
   return "finish";
 }
+/** On the cards that were skipped: [this one, of how many]. Null on the first pass. */
+export const laterStep = (w: Walk): [number, number] | null =>
+  w.pos >= w.first ? [w.pos - w.first + 1, w.order.length - w.first] : null;
 
 /** The part to suggest after finishing one: the next unfinished part after it, else the first unfinished. */
 export function partAfter(d: Doc, k: PartKey): PartKey | null {

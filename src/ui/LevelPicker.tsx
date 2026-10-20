@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 export function LevelPicker({
   value,
   onChange,
+  onPick,
   label,
   size = "md",
   hint,
@@ -16,6 +17,8 @@ export function LevelPicker({
 }: {
   value: number | null;
   onChange: (n: number) => void;
+  /** a level was clicked or tapped (not moved to with the arrow keys) */
+  onPick?: (n: number) => void;
   label: string;
   size?: "md" | "sm";
   hint?: boolean;
@@ -58,7 +61,10 @@ export function LevelPicker({
               role="radio"
               aria-checked={on}
               tabIndex={on || (value == null && n === 0) ? 0 : -1}
-              onClick={() => pick(n)}
+              onClick={() => {
+                pick(n);
+                onPick?.(n);
+              }}
               className={cn(
                 "flex flex-col items-center gap-0.5 rounded-option bg-surface px-1.5 py-2.5 text-center shadow-card transition-[box-shadow,background-color] hover:shadow-[var(--shadow-ring-strong),var(--shadow-card)]",
                 size === "sm" ? "min-h-[58px]" : "min-h-[68px]",

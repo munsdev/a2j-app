@@ -2,9 +2,8 @@ import { describe, expect, it } from "vitest";
 import { emptyDoc } from "@/data/doc";
 import type { Doc } from "@/data/types";
 import type { Esco } from "@/domain/catalog";
-import { INT_ITEMS, SETTING } from "@/domain/items";
+import { SETTING } from "@/domain/items";
 import {
-  advance,
   cleanJobs,
   digitKey,
   dotFill,
@@ -12,7 +11,9 @@ import {
   partAfter,
   partCardText,
   settingPrefs,
-  startPos,
+  laterStep,
+  startWalk,
+  stepOn,
   swipeDir,
   todayIso,
   togglePickWithinMax,
@@ -20,21 +21,36 @@ import {
   wantRows,
 } from "./logic";
 
-const items = INT_ITEMS.slice(0, 4);
-const answered = (...ids: string[]) => Object.fromEntries(ids.map((id) => [id, 3]));
-
 describe("question runs", () => {
-  it("start at the first unanswered question, or the first one", () => {
-    expect(startPos(items, {})).toBe(0);
-    expect(startPos(items, answered(items[0].id, items[1].id))).toBe(2);
-    expect(startPos(items, answered(...items.map((x) => x.id)))).toBe(0);
+  const done =
+    (...ns: number[]) =>
+    (i: number) =>
+      ns.includes(i);
+  it("start with the open cards only, or all of them when every one is done", () => {
+    expect(startWalk(4, done()).order).toEqual([0, 1, 2, 3]);
+    expect(startWalk(4, done(0, 1))).toEqual({ order: [2, 3], pos: 0, first: 2 });
+    expect(startWalk(4, done(0, 1, 2, 3)).order).toEqual([0, 1, 2, 3]);
   });
-  it("go forward, wrap once to the first skipped question, then finish", () => {
-    const ans = answered(items[0].id, items[2].id, items[3].id);
-    expect(advance({ pos: 0, wrapped: false }, items, ans)).toEqual({ pos: 1, wrapped: false });
-    expect(advance({ pos: 3, wrapped: false }, items, ans)).toEqual({ pos: 1, wrapped: true });
-    expect(advance({ pos: 3, wrapped: true }, items, ans)).toBe("finish");
-    expect(advance({ pos: 3, wrapped: false }, items, answered(...items.map((x) => x.id)))).toBe("finish");
+  it("skipped cards come back once, one after another, at the end, then finish", () => {
+    /* 50 cards; 4, 22 and 38 skipped (card numbers 3, 21 and 37) */
+    const skipped = [3, 21, 37];
+    const d = (i: number) => !skipped.includes(i);
+    let w = startWalk(50, () => false);
+    w = { ...w, pos: 49 };
+    const r = stepOn(w, d);
+    expect(r).not.toBe("finish");
+    const w2 = r as Exclude<typeof r, "finish">;
+    expect(w2.order.slice(50)).toEqual(skipped);
+    expect(w2.order[w2.pos]).toBe(3);
+    expect(laterStep(w2)).toEqual([1, 3]);
+    const end = { ...w2, pos: w2.order.length - 1 };
+    expect(laterStep(end)).toEqual([3, 3]);
+    /* still skipped on the second pass: finish, they stay open */
+    expect(stepOn(end, d)).toBe("finish");
+  });
+  it("nothing skipped: finish after the last card", () => {
+    expect(stepOn({ order: [0, 1], pos: 1, first: 2 }, () => true)).toBe("finish");
+    expect(laterStep({ order: [0, 1], pos: 1, first: 2 })).toBeNull();
   });
 });
 

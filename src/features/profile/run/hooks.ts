@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, type MutableRefObject, type TouchEvent } from "react";
+import { useSettings } from "@/app/settings";
 import { isShortcutBlocked } from "@/lib/keys";
 import { focusForStep } from "@/lib/focus";
 import { digitKey, swipeDir } from "../logic";
@@ -65,4 +66,23 @@ export function useRunBack(back: (() => void) | null) {
       ref.current = null;
     };
   });
+}
+
+/** How long a chosen answer stays on screen before the next card comes: long enough to see the check. */
+export const AUTO_NEXT_MS = 320;
+/** Go on to the next card a moment after an answer, when "go on automatically" is on. Returns the function to
+ *  call after an answer. A pending step is dropped when the card changes first (Back, Next) or the run closes. */
+export function useAutoNext(step: unknown, next: () => void): () => void {
+  const on = useSettings((s) => s.autoNext);
+  const cb = useRef(next);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => {
+    cb.current = next;
+  });
+  useEffect(() => () => clearTimeout(timer.current), [step]);
+  return () => {
+    if (!on) return;
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => cb.current(), AUTO_NEXT_MS);
+  };
 }

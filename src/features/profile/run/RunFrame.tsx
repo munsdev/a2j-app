@@ -4,7 +4,8 @@ import { go } from "@/app/router";
 import { PARTS } from "@/domain/assess";
 import { useT } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { Button, Icon, RunHeader } from "@/ui";
+import { setAutoNext, useSettings } from "@/app/settings";
+import { Button, Checkbox, Icon, RunHeader } from "@/ui";
 import { strings } from "../strings";
 
 /* The frame of a part in progress: header with the way back to the overview, "Part n · name", count and
@@ -14,6 +15,7 @@ import { strings } from "../strings";
 export function RunFrame({
   part,
   step,
+  count,
   children,
   swipe,
   track,
@@ -22,6 +24,8 @@ export function RunFrame({
   part: PartKey;
   /** [current, total] for the count and the track */
   step?: [number, number];
+  /** the count in words instead of "n of t" (the skipped cards at the end) */
+  count?: string;
   /** [value, max] for a track without a count (the count is said elsewhere, as in Values) */
   track?: [number, number];
   children: ReactNode;
@@ -41,7 +45,7 @@ export function RunFrame({
         onBack={() => go("profile")}
         backLabel={t("run_overview")}
         eyebrow={`${t("part_n", { n })} · ${t(`part_${part}`)}`}
-        count={step ? t("st_prog", { a: step[0], t: step[1] }) : undefined}
+        count={count ?? (step ? t("st_prog", { a: step[0], t: step[1] }) : undefined)}
         progress={
           step ? { value: step[0], max: step[1] } : track ? { value: track[0], max: track[1] } : undefined
         }
@@ -75,6 +79,23 @@ export const StepIntro = ({ className, ...rest }: HTMLAttributes<HTMLDivElement>
 export const Context = ({ className, ...rest }: HTMLAttributes<HTMLParagraphElement>) => (
   <p className={cn("max-w-[62ch] text-ink-2", className)} {...rest} />
 );
+
+/** The last row of the action bar: whether an answer goes on to the next card by itself. On unless turned off;
+ *  the label says what will happen before anything moves (WCAG 3.2.2). */
+export function AutoNextBox({ what = "question" }: { what?: "question" | "card" }) {
+  const t = useT(strings);
+  const on = useSettings((s) => s.autoNext);
+  return (
+    <div data-row="full">
+      <Checkbox
+        className="min-h-9 text-small text-ink-2"
+        label={t(what === "card" ? "run_auto_card" : "run_auto")}
+        checked={on}
+        onChange={(e) => setAutoNext(e.target.checked)}
+      />
+    </div>
+  );
+}
 
 /** "Pause": back to the overview, low emphasis, only as wide as its word (ActionBar gives a ghost button its
  *  own row on phones). label only for the skill cards' "Finish for now", which takes this slot. */

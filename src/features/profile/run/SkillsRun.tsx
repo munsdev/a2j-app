@@ -8,18 +8,30 @@ import { useT } from "@/i18n";
 import { ActionBar, Button, Eyebrow, Hint, Icon, LevelPicker, LineMark, type LineState } from "@/ui";
 import { strings } from "../strings";
 import { AddSkill } from "./AddSkill";
-import { useDigitKeys, useRunBack, useStepFocus, useTouchSwipe } from "./hooks";
-import { BackButton, Context, ForwardButton, PauseButton, RunFrame, StepHeading } from "./RunFrame";
+import { useAutoNext, useDigitKeys, useRunBack, useStepFocus, useTouchSwipe } from "./hooks";
+import {
+  AutoNextBox,
+  BackButton,
+  Context,
+  ForwardButton,
+  PauseButton,
+  RunFrame,
+  StepHeading,
+} from "./RunFrame";
 
 /* Part 6: the skills of the jobs done, one card at a time, rated 0 to 5 with the kit's LevelPicker (arrow
    keys inside it, digit keys 0..5 anywhere). The deck is built once per visit from the cards not rated yet,
-   so rating a card does not make it vanish; Back walks the cards seen, also from the end of the deck.
+   so rating a card does not make it vanish; Back walks the cards seen, also from the end of the deck. A rating
+   goes on to the next card a moment later (unless turned off); cards passed without a rating come back once, one
+   after another, at the end of the deck.
    The bar keeps the run's three slots; on the cards the ghost slot is "Finish for now". */
 export function SkillsRun({ onFinish }: { onFinish: () => void }) {
   const t = useT(strings);
   const E = useEscoReady();
   const [deck, setDeck] = useState(() => buildDeck(getDoc(), E));
   const [pos, setPos] = useState(0);
+  /* the length of the deck before the skipped cards were put at its end; null until they are */
+  const [first, setFirst] = useState<number | null>(null);
   const [seen, setSeen] = useState<number[]>([]);
   const hasJobs = useDoc((d) => d.jobs.some((j) => j.role === "done" && j.occ != null && j.occ >= 0));
   const more = useDoc((d) => d.esco.more);
@@ -35,10 +47,20 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
   const next =
     s != null
       ? () => {
+          if (pos === deck.cards.length - 1 && first == null) {
+            const rated = getDoc().esco.rated;
+            const later = [...new Set(deck.cards.filter((c) => rated[c] == null))];
+            if (later.length) {
+              setFirst(deck.cards.length);
+              setDeck((k) => ({ ...k, cards: [...k.cards, ...later] }));
+            }
+          }
           setSeen((h) => [...h, pos]);
           setPos(pos + 1);
         }
       : null;
+  const later = first != null && pos >= first ? [pos - first + 1, deck.cards.length - first] : null;
+  const auto = useAutoNext(pos, () => next?.());
   const back = seen.length
     ? () => {
         setPos(seen[seen.length - 1]);
@@ -51,6 +73,7 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
     hasJobs && s != null
       ? (n) => {
           rate(n);
+          auto();
           picker.current?.querySelectorAll<HTMLElement>("[role=radio]")[n]?.focus({ preventScroll: true });
         }
       : null,
@@ -108,6 +131,7 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
                 onClick={() => {
                   update((d) => void (d.esco.more = true));
                   setDeck(buildDeck(getDoc(), E));
+                  setFirst(null);
                   setPos(0);
                   setSeen([]);
                 }}
@@ -129,7 +153,12 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
 
   const sources = [...new Set(deck.from[s] || [])];
   return (
-    <RunFrame part="skills" step={[pos + 1, deck.cards.length]} swipe={swipe}>
+    <RunFrame
+      part="skills"
+      step={later ? [later[0], later[1]] : [pos + 1, first ?? deck.cards.length]}
+      count={later ? t("run_later", { a: later[0], t: later[1] }) : undefined}
+      swipe={swipe}
+    >
       <div
         key={s}
         className="flex animate-deal-in flex-col items-center gap-2 rounded-panel border-t-6 border-have bg-surface px-5.5 py-6.5 text-center shadow-lift"
@@ -141,16 +170,18 @@ export function SkillsRun({ onFinish }: { onFinish: () => void }) {
         {sources.length > 0 && <Hint>{t("sk_from", { x: sources.join(", ") })}</Hint>}
       </div>
       <div ref={picker} className="flex flex-col gap-2.5">
+        {later && <Context>{t("run_later_p")}</Context>}
         <Context aria-hidden="true" className="font-bold text-ink">
           {t("sk_q")}
         </Context>
-        <LevelPicker value={value ?? null} onChange={rate} label={t("sk_q")} hint />
+        <LevelPicker value={value ?? null} onChange={rate} onPick={auto} label={t("sk_q")} hint />
       </div>
       <AddSkill />
       <ActionBar>
         <BackButton onClick={back ?? undefined} disabled={!back} />
         <PauseButton label={t("sk_finish")} onClick={onFinish} />
         <ForwardButton ready={value != null} onClick={() => next?.()} />
+        <AutoNextBox what="card" />
       </ActionBar>
     </RunFrame>
   );

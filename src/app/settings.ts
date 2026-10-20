@@ -2,10 +2,12 @@ import { create } from "zustand";
 import type { Lang } from "@/data/types";
 import { storage } from "@/lib/storage";
 
-/* Interface settings, per browser: language and colour theme. Not part of the document or of backups. */
+/* Interface settings, per browser: language, colour theme, and whether an answer in the profile goes on to the
+   next question by itself. Not part of the document or of backups. */
 
 const LANG_KEY = "a2j:lang";
 const THEME_KEY = "a2j:theme";
+const AUTO_KEY = "a2j:autonext";
 export type Theme = "light" | "dark";
 
 /** A language chosen before wins; otherwise German browsers start in German, all others in English. */
@@ -31,12 +33,15 @@ interface SettingsState {
   theme: Theme;
   /** the theme follows the system until the person picks one */
   themeAuto: boolean;
+  /** an answer in the profile goes on to the next question by itself (on unless turned off) */
+  autoNext: boolean;
 }
 
 export const useSettings = create<SettingsState>(() => ({
   lang: initialLang(),
   theme: storedTheme() ?? systemTheme(),
   themeAuto: !storedTheme(),
+  autoNext: storage.get(AUTO_KEY) !== "0",
 }));
 
 function applyTheme(t: Theme) {
@@ -55,6 +60,11 @@ export function setTheme(theme: Theme): void {
   storage.set(THEME_KEY, theme);
   applyTheme(theme);
   useSettings.setState({ theme, themeAuto: false });
+}
+
+export function setAutoNext(on: boolean): void {
+  storage.set(AUTO_KEY, on ? "1" : "0");
+  useSettings.setState({ autoNext: on });
 }
 
 /** Called once at start: sync <html> and follow the system theme while no theme is picked. */

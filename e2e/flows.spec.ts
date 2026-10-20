@@ -12,9 +12,10 @@ test("answer the first questions, undo, and keep the answers after a reload", as
     .first()
     .click();
   await expect(page).toHaveURL(/#profile\/apt/);
-  for (let i = 0; i < 3; i++) {
+  /* an answer goes on to the next question by itself */
+  for (let i = 1; i <= 3; i++) {
     await page.getByRole("button", { name: "Often" }).click();
-    await page.getByRole("button", { name: /^Next/ }).click();
+    await expect(page.getByText(`${i + 1} of 45`)).toBeVisible();
   }
   await page.reload();
   await page.goto("#profile");
@@ -162,7 +163,6 @@ test("phone back inside a part goes back a step, and leaves for the overview fro
   await page.goto("#profile/apt");
   await expect(page.getByText("1 of 45")).toBeVisible();
   await page.getByRole("button", { name: "Often" }).click();
-  await page.getByRole("button", { name: /^Next/ }).click();
   await expect(page.getByText("2 of 45")).toBeVisible();
   await page.goBack();
   await expect(page.getByText("1 of 45")).toBeVisible();
@@ -200,4 +200,20 @@ test("a route that needs no course: Home points to applying, the plan leaves the
   await page.goto("#plan");
   await expect(page.getByText(/No course chosen yet/)).toHaveCount(0);
   expect(errors).toEqual([]);
+});
+
+test("with going on automatically turned off, an answer stays until Next", async ({ page }) => {
+  await seed(page);
+  await page.goto("#profile/apt");
+  const box = page.getByLabel("Go to the next question automatically");
+  await expect(box).toBeChecked();
+  await box.uncheck();
+  await page.getByRole("button", { name: "Often" }).click();
+  await page.waitForTimeout(700);
+  await expect(page.getByText("1 of 45")).toBeVisible();
+  await page.getByRole("button", { name: /^Next/ }).click();
+  await expect(page.getByText("2 of 45")).toBeVisible();
+  /* the choice is kept on this device */
+  await page.reload();
+  await expect(page.getByLabel("Go to the next question automatically")).not.toBeChecked();
 });

@@ -7,8 +7,16 @@ import { cn } from "@/lib/cn";
 import { ActionBar, Button, Chips, Eyebrow, Icon, Lede, ToggleChip } from "@/ui";
 import { midSentence } from "../logic";
 import { strings } from "../strings";
-import { useRunBack, useStepFocus, useTouchSwipe } from "./hooks";
-import { BackButton, ForwardButton, PauseButton, RunFrame, StepHeading, StepIntro } from "./RunFrame";
+import { useAutoNext, useRunBack, useStepFocus, useTouchSwipe } from "./hooks";
+import {
+  AutoNextBox,
+  BackButton,
+  ForwardButton,
+  PauseButton,
+  RunFrame,
+  StepHeading,
+  StepIntro,
+} from "./RunFrame";
 
 /* Part 3: one two-ended scale per screen, then what is ruled out. A scale starts in the middle (either), so
    there is no separate "doesn't matter": Next keeps the middle when the dot was not moved. */
@@ -31,6 +39,7 @@ export function SettingRun({ onFinish }: { onFinish: () => void }) {
   const back = pos > 0 ? () => setPos((p) => p - 1) : null;
   const swipe = useTouchSwipe(next, back);
   useRunBack(back);
+  const auto = useAutoNext(pos, next);
 
   if (!row)
     return (
@@ -56,11 +65,21 @@ export function SettingRun({ onFinish }: { onFinish: () => void }) {
       <StepIntro>
         <StepHeading ref={heading}>{t("set_q")}</StepHeading>
       </StepIntro>
-      <Scale key={row.id} row={row} value={value} onChange={set} />
+      <Scale
+        key={row.id}
+        row={row}
+        value={value}
+        onChange={set}
+        onPick={(v) => {
+          set(v);
+          auto();
+        }}
+      />
       <ActionBar>
         <BackButton onClick={back ?? undefined} disabled={!back} />
         <PauseButton />
         <ForwardButton ready onClick={next} />
+        <AutoNextBox />
       </ActionBar>
     </RunFrame>
   );
@@ -70,8 +89,19 @@ export function SettingRun({ onFinish }: { onFinish: () => void }) {
    carries a check (the shared selected look), never the "have" colour. */
 const DOT_SIZE = ["size-10", "size-7.5", "size-5.5", "size-7.5", "size-10"];
 
-/** A five-point scale between two ends, as a radio group: arrow keys move and choose, Tab leaves. */
-function Scale({ row, value, onChange }: { row: SettingRow; value: number; onChange: (v: number) => void }) {
+/** A five-point scale between two ends, as a radio group: arrow keys move and choose (onChange), Tab leaves; a
+ *  click or tap chooses (onPick), which may go on to the next scale. */
+function Scale({
+  row,
+  value,
+  onChange,
+  onPick,
+}: {
+  row: SettingRow;
+  value: number;
+  onChange: (v: number) => void;
+  onPick: (v: number) => void;
+}) {
   const t = useT(strings);
   const lang = useLang();
   const [left, right] = pick(row, lang);
@@ -118,7 +148,7 @@ function Scale({ row, value, onChange }: { row: SettingRow; value: number; onCha
               aria-checked={on}
               aria-label={label(n)}
               tabIndex={on ? 0 : -1}
-              onClick={() => onChange(n)}
+              onClick={() => onPick(n)}
               onKeyDown={(e) => onKey(e, n)}
               className="group relative flex size-12 items-center justify-center rounded-full"
             >
