@@ -51,6 +51,10 @@ export interface Onet {
   c: Record<ContextKey, (number | null)[]>;
   /** German level (CEFR) by occupation index, only where a law or regulation states one (data/german-level.csv) */
   lv?: Record<string, string>;
+  /** the field: the O*NET-SOC major group (11 management … 53 transport) */
+  f?: (number | null)[];
+  /** related occupations (O*NET Related Occupations, primary tier), as occupation indices, closest first */
+  rel?: (number[] | null)[];
 }
 export interface Esco {
   lang: Lang;

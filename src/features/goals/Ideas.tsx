@@ -20,7 +20,8 @@ import { useEscoReady, useOnet } from "@/app/catalog";
 import { go } from "@/app/router";
 import { toastUndo } from "@/app/toast";
 import { loadOnet, occLabel } from "@/domain/catalog";
-import { type DeckFilter, type Idea, READY, canRank, rankAll, setVote, voteOf } from "@/domain/rank";
+import { type Idea, canRank, setVote, voteOf } from "@/domain/rank";
+import { EXPLORE, lensRank, type ExploreLens, type Lens } from "@/domain/lenses";
 import { useT } from "@/i18n";
 import { closeSheet, openSheet } from "@/app/sheet";
 import { Button, EmptyState, Icon, LinkButton, Page, RunHeader, Select } from "@/ui";
@@ -74,7 +75,7 @@ export function Ideas() {
 
   /* preparation levels come with the O*NET file: without it there is nothing to filter by */
   const zones = !!O?.z;
-  const zone: DeckFilter = zones ? st.zone : 0;
+  const zone: Lens = zones ? st.zone : "all";
   /* the profile, not the epoch: the place in the deck is kept across reloads (another profile opening clears it
      anyway, see the store) */
   const key = `${d.example ?? "own"}:${zone}:${O ? 1 : 0}`;
@@ -84,7 +85,7 @@ export function Ideas() {
   const pass = same ? st.pass : null;
   const ver = same ? st.rankVer : 0;
   const ranking = useMemo(
-    () => (ranks ? ideaRanking(key, ver, () => rankAll(getDoc(), E, O, zone), seen, DECK_SIZE) : null),
+    () => (ranks ? ideaRanking(key, ver, () => lensRank(getDoc(), E, O, zone), seen, DECK_SIZE) : null),
     // ranked again only when marks changed (ver), not on every skill thumb
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [key, ver, ranks],
@@ -217,7 +218,7 @@ export function Ideas() {
     at({ pass: unmarked(order, (o) => markOf(o) !== null), pos: 0 });
     aimFocus(['[data-nav="next"]']);
   };
-  const setZone = (z: DeckFilter) => useGoals.setState({ zone: z });
+  const setZone = (z: Lens) => useGoals.setState({ zone: z });
 
   useEffect(() => {
     const aim = focusAim.current;
@@ -272,18 +273,27 @@ export function Ideas() {
   /* one slim line: the way back, "Job ideas", the count and the filter, so the card gets the screen */
   const filter = zones && (
     <Select
-      aria-label={t("c_filter")}
+      aria-label={t("lens_label")}
       value={zone}
-      onChange={(e) => setZone(+e.target.value as DeckFilter)}
+      onChange={(e) => setZone(e.target.value as Lens)}
       className="min-h-9 w-auto max-w-[34vw] truncate rounded-tile py-1 pr-7 pl-2 text-caption font-bold sm:max-w-none"
     >
-      <option value={0}>{t("c_all_levels")}</option>
-      <option value={READY}>{t("c_ready")}</option>
-      {ZONES.map((z) => (
-        <option key={z} value={z}>
-          {t(`z${z}`)}
-        </option>
-      ))}
+      <option value="all">{t("lens_all")}</option>
+      <optgroup label={t("lens_explore")}>
+        {EXPLORE.map((l) => (
+          <option key={l} value={l}>
+            {t(`lens_${l}`)}
+          </option>
+        ))}
+      </optgroup>
+      <optgroup label={t("c_filter")}>
+        <option value="ready">{t("c_ready")}</option>
+        {ZONES.map((z) => (
+          <option key={z} value={`z${z}`}>
+            {t(`z${z}`)}
+          </option>
+        ))}
+      </optgroup>
     </Select>
   );
   const head = (
@@ -322,18 +332,24 @@ export function Ideas() {
         {t("g_ideas_need")}
       </EmptyState>,
     );
-  if (!order.length && zone)
+  if (!order.length && zone !== "all")
     return shell(
       <EmptyState
         size={72}
-        title={t(zone === READY ? "c_ready_none_h" : "c_zone_none_h")}
+        title={t(zone === "ready" ? "c_ready_none_h" : zone[0] === "z" ? "c_zone_none_h" : "lens_none_h")}
         actions={
-          <Button variant="primary" onClick={() => setZone(0)}>
-            {t("c_zone_all")}
+          <Button variant="primary" onClick={() => setZone("all")}>
+            {t("lens_back")}
           </Button>
         }
       >
-        {t(zone === READY ? "c_ready_none_p" : "c_zone_none_p")}
+        {t(
+          zone === "ready"
+            ? "c_ready_none_p"
+            : zone[0] === "z"
+              ? "c_zone_none_p"
+              : `lens_none_${zone as ExploreLens}`,
+        )}
       </EmptyState>,
     );
   if (!order.length)

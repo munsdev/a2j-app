@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Build public/esco/onet.json: interest profile, preparation level and a few
-work context and physical measures for every ESCO occupation, from O*NET data.
+work context and physical measures for every ESCO occupation, from O*NET data;
+also its field (the O*NET-SOC major group) and its related occupations (O*NET
+Related Occupations, primary tier, mapped back to ESCO through the crosswalk).
 
 Usage:
   python3 tools/build_onet.py CROSSWALK.csv ONET_TEXT_DIR public/esco/en.json public/esco/onet.json
@@ -128,6 +130,36 @@ def main(cw_path, onet_dir, en_path, out_path):
             if vs:
                 out["c"][k][i] = round(sum(v * w for v, w in vs) / sum(w for _, w in vs))
 
+    # field: the SOC major group (first two digits) of the strongest link
+    out["f"] = [None] * n_esco
+    for i, ls in links.items():
+        best = max(ls, key=lambda x: x[1])
+        out["f"][i] = int(best[0][:2])
+
+    # related occupations: O*NET's primary tier, in its order, mapped back to the ESCO occupations linked to
+    # them by an exact, narrow or close match (strongest first); at most 10, never the occupation itself
+    back = defaultdict(list)  # O*NET code -> [(esco index, weight)]
+    for i, ls in links.items():
+        for c, w, _ in ls:
+            if w >= 0.6:
+                back[c].append((i, w))
+    for c in back:
+        back[c].sort(key=lambda x: -x[1])
+    related = defaultdict(list)  # O*NET code -> related O*NET codes, in O*NET's order
+    for r in read_tsv(os.path.join(onet_dir, "Related Occupations.txt")):
+        if r["Relatedness Tier"].startswith("Primary"):
+            related[r["O*NET-SOC Code"]].append((int(r["Index"]), r["Related O*NET-SOC Code"]))
+    out["rel"] = [None] * n_esco
+    for i, ls in links.items():
+        seen, rel = {i}, []
+        for c, _, _ in sorted(ls, key=lambda x: -x[1]):
+            for _, rc in sorted(related.get(c, [])):
+                for j, _ in back.get(rc, []):
+                    if j not in seen and len(rel) < 10:
+                        seen.add(j)
+                        rel.append(j)
+        out["rel"][i] = rel or None
+
     # German level, only where a cited rule states it (never borrowed or averaged)
     out["lv"] = {}
     with open(LEVELS, encoding="utf-8") as f:
@@ -158,6 +190,7 @@ def main(cw_path, onet_dir, en_path, out_path):
                 best, bj = j, jac
         if best is not None:
             out["r"][i], out["z"][i], out["q"][i] = out["r"][best], out["z"][best], 0
+            out["f"][i] = out["f"][best]
             for k in out["c"]:
                 out["c"][k][i] = out["c"][k][best]
             borrowed += 1

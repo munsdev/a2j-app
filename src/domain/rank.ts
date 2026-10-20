@@ -1,9 +1,9 @@
-import type { Doc, Vote } from "@/data/types";
+import type { Doc, SkillRef, Vote } from "@/data/types";
 import { jobsIn } from "@/data/doc";
 import type { ContextKey, Esco, Onet } from "./catalog";
 import { coverage, type Coverage } from "./skills";
 import { assessOf, userInterests } from "./assess";
-import { INTERESTS, type Interest } from "./items";
+import { INTERESTS, type Interest, type InterestId } from "./items";
 
 /* =================== JOB IDEAS: RANKING WITHOUT AI ===================
    Suggests occupations from three signals:
@@ -280,7 +280,18 @@ export interface Idea {
   likeOf?: number;
   wantUp?: number[];
   wantDn?: number[];
+  /** why an explore option (lens) brought it up */
+  why?: Why;
 }
+/** Why a job came up in one of the explore options (see lenses.ts). */
+export type Why =
+  | { k: "skills"; n: number; x: number[] }
+  | { k: "path"; from: string }
+  | { k: "hobby"; words: string; x: number }
+  | { k: "step"; x: SkillRef[] }
+  | { k: "love"; x: number[] }
+  | { k: "day"; x: string[] }
+  | { k: "wild"; x: InterestId[] };
 
 function voteAdjust(E: Esco, O: Onet | null, r: Idea, V: Vote[]) {
   r.base = r.score;

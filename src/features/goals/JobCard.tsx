@@ -7,7 +7,9 @@ import { useEscoReady, useOnet } from "@/app/catalog";
 import { occLabel, skLabel } from "@/domain/catalog";
 import { type Idea, distinct, warnings, zoneOf } from "@/domain/rank";
 import { jobCount, type Tile } from "@/domain/skills";
-import { useT } from "@/i18n";
+import { pick, useLang, useT } from "@/i18n";
+import { assessOf } from "@/domain/assess";
+import { INTERESTS, SETTING } from "@/domain/items";
 import { cn } from "@/lib/cn";
 import { Icon, SkillTile, Tag, TileGrid, TileLegend } from "@/ui";
 import { HalfMark } from "@/features/routes/parts";
@@ -232,6 +234,7 @@ function CardFront({
     </H>
   );
   const fit = m && (deck ? <FitLine m={m} /> : <FitBlock m={m} main={isMain} />);
+  const lensWhy = useLensWhy(idea);
   if (!info)
     return (
       <div
@@ -257,6 +260,12 @@ function CardFront({
       {tags}
       <div className="flex flex-col gap-1">
         {heading}
+        {lensWhy && (
+          <p className="flex items-start gap-1.5 text-small font-semibold text-ink-2" data-why>
+            <Icon name="spark" className="mt-px size-4 flex-none text-brand" />
+            {lensWhy}
+          </p>
+        )}
         {job && lc(job.title) !== lc(occLabel(E, occ)) && (
           <p className="text-small break-words text-ink-3">
             <Title text={occLabel(E, occ)} />
@@ -417,6 +426,46 @@ export function IdeaDetails({
   return (
     <CardFront occ={occ} job={null} idea={idea} main={false} mark={mark} view="detail" onMore={onMore} />
   );
+}
+
+/** Why an explore option dealt this card (lenses.ts), in one line; null for the usual ranking. */
+function useLensWhy(idea: Idea | null): string | null {
+  const t = useT(strings);
+  const lang = useLang();
+  const E = useEscoReady();
+  const d = useDoc();
+  const w = idea?.why;
+  if (!w) return null;
+  const sk = (x: readonly number[]) =>
+    x
+      .slice(0, 3)
+      .map((i) => skLabel(E, i))
+      .join(", ");
+  switch (w.k) {
+    case "skills":
+      return t("why_skills", { n: w.n, x: sk(w.x) });
+    case "path":
+      return t("why_path", { x: w.from });
+    case "hobby":
+      return t("why_hobby", { w: w.words, x: skLabel(E, w.x) });
+    case "step":
+      return t("why_step", { x: w.x.map((s) => (typeof s === "number" ? skLabel(E, s) : s)).join(", ") });
+    case "love":
+      return t("why_love", { x: sk(w.x) });
+    case "day": {
+      if (!w.x.length) return null;
+      const s = assessOf(d).setting;
+      const ends = w.x.flatMap((id) => {
+        const row = SETTING.find((r) => r.id === id);
+        return row && s[id] != null ? [pick(row, lang)[s[id] > 3 ? 1 : 0]] : [];
+      });
+      return t("why_day", { x: ends.join(", ") });
+    }
+    case "wild":
+      return t("why_wild", {
+        x: w.x.flatMap((id) => INTERESTS.filter((i) => i.id === id).map((i) => pick(i, lang)[0])).join(", "),
+      });
+  }
 }
 
 /** The score in one line, for the deck: the number, its band and the two reasons. */

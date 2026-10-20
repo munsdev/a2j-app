@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { READY, type DeckFilter, type Idea } from "@/domain/rank";
+import type { Idea } from "@/domain/rank";
+import { isLens, type Lens } from "@/domain/lenses";
 import { useProfileEpoch } from "@/app/samples";
 import { storage } from "@/lib/storage";
 
@@ -11,8 +12,8 @@ import { storage } from "@/lib/storage";
 interface GoalsState {
   /** card keys shown on their back */
   flipped: Record<string, true>;
-  /** preparation level filter, READY for jobs to apply for now, 0 = any */
-  zone: DeckFilter;
+  /** how the deck is dealt: for you, ready now, a preparation level, or an explore option (lenses.ts) */
+  zone: Lens;
   /** the deck the position and history belong to (filter, profile, catalogue); another one starts afresh */
   deckKey: string;
   /** the ideas seen so far, in the order they were first seen: Back walks this list */
@@ -29,7 +30,7 @@ interface GoalsState {
 }
 const initial = (): GoalsState => ({
   flipped: {},
-  zone: 0,
+  zone: "all",
   deckKey: "",
   seen: [],
   pos: 0,
@@ -53,7 +54,7 @@ function savedDeck(): Partial<SavedDeck> {
     const nums = (a: unknown) => Array.isArray(a) && a.every((n) => Number.isInteger(n));
     if (!v || typeof v.deckKey !== "string" || !nums(v.seen) || !Number.isInteger(v.pos)) return {};
     return {
-      zone: ([0, 1, 2, 3, 4, READY] as const).includes(v.zone) ? v.zone : 0,
+      zone: isLens(v.zone) ? v.zone : "all",
       deckKey: v.deckKey,
       seen: v.seen,
       pos: v.pos,

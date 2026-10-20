@@ -106,6 +106,26 @@ test("the match score with courses; a liked idea goes on the shortlist, its skil
   expect(errors).toEqual([]);
 });
 
+test("job ideas: the explore options in the dropdown deal other ideas and say why", async ({ page }) => {
+  await seed(page, { sample: "holmes" });
+  const errors = watchErrors(page);
+  await page.goto("#goals/ideas");
+  const count = page.getByText(/^\d+ of \d+$/);
+  await expect(count).toHaveText(/^1 of /, { timeout: 30000 });
+  const lens = page.getByRole("combobox", { name: "Which ideas" });
+  await lens.selectOption("paths");
+  await expect(count).toHaveText(/^1 of /);
+  await expect(page.locator("[data-why]")).toContainText("People who worked as Private investigator");
+  await lens.selectOption("skills");
+  await expect(page.locator("[data-why]")).toContainText(/Uses \d+ of your skills/);
+  // an option with nothing to deal says what to fill in, and leads back
+  await lens.selectOption("step");
+  await page.getByRole("button", { name: "Back to ideas for you" }).click();
+  await expect(lens).toHaveValue("all");
+  await expect(page.locator("[data-why]")).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
 test("job ideas: two big answers, skip, a small back, swipes and keys", async ({ page }) => {
   await seed(page, { sample: "holmes" });
   const errors = watchErrors(page);
