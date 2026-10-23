@@ -172,7 +172,7 @@ export function Board({ job }: { job: Job }) {
               <span className="lr-here-me" aria-hidden="true">
                 {me ?? <Icon name="person" />}
               </span>
-              {p.have.length || p.some.length ? t("b_you_here") : t("b_at_start")}
+              {p.have.length || p.course.length ? t("b_you_here") : t("b_at_start")}
             </span>
           </Row>
         );
