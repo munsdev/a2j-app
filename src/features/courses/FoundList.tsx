@@ -25,8 +25,12 @@ export function FoundList({
   const course = kind === "course";
   const n = keep.filter(Boolean).length;
   const head = useRef<HTMLHeadingElement>(null);
-  /* the results appear below the paste box: bring them into view (the live region announces them) */
-  useEffect(() => head.current?.scrollIntoView({ behavior: "smooth", block: "start" }), []);
+  /* the results appear below the paste box: bring them into view (the live region announces them).
+     Braces, not an expression body: newer Chrome returns a Promise from scrollIntoView, and React
+     would call it as the cleanup on unmount ("is not a function"). */
+  useEffect(() => {
+    head.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
   return (
     <>
       <div className="flex flex-col gap-0.5">
