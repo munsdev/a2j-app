@@ -82,9 +82,9 @@ export type LineRow = LineItem & {
   lit: boolean;
 };
 
-/** The line from You to the job, one row per stop, in reading order: You; the skills you have and the ones
- *  your course covers; where you are; the ones you have some of; the next stop (one course for the gaps,
- *  your course, or applying); the rest still to learn; the job (with every skill had, the next stop is job
+/** The line from You to the job, one row per stop, in reading order: You; the skills you have; your course and
+ *  the skills it covers; where you are; the ones you have some of; without a course, the next stop (one
+ *  course for the gaps, or applying); the rest still to learn; the job (with every skill had, the next stop is job
  *  ads, just before it). Long groups show
  *  the first `cap` stops and a "+N more" row (open = the groups shown in full). The line is lit up to
  *  where you are, all the way when you have every skill. */
@@ -99,7 +99,9 @@ export function boardLine(p: BoardPath, cap = 8, open: ReadonlySet<Zone> = new S
     rows.push({ kind: "zone", zone: "have", n: p.have.length });
     group("have", p.have);
   }
-  /* what your course covers counts as had, like a perk: before where you are */
+  /* your course, then what it covers: counted as had, like a perk, so before where you are */
+  const courseFirst = p.next.kind === "course";
+  if (courseFirst) rows.push({ kind: "next" });
   if (p.courses.length) {
     rows.push({ kind: "zone", zone: "courses", n: p.course.length });
     group("courses", p.course);
@@ -110,7 +112,7 @@ export function boardLine(p: BoardPath, cap = 8, open: ReadonlySet<Zone> = new S
     rows.push({ kind: "zone", zone: "some", n: p.some.length });
     group("some", p.some);
   }
-  if (p.next.kind !== "none") rows.push({ kind: "next" });
+  if (!courseFirst && p.next.kind !== "none") rows.push({ kind: "next" });
   if (p.learn.length) {
     rows.push({ kind: "zone", zone: "learn", n: p.learn.length });
     group("learn", p.learn);
