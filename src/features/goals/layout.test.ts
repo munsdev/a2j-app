@@ -46,7 +46,7 @@ describe("the board's line", () => {
       })
       .join(" ");
 
-  it("you, what you have, you are here, what courses cover, the next stop, the rest, the job", () => {
+  it("you, what you have, what courses cover, you are here, the next stop, the rest, the job", () => {
     const p = boardPath(
       [
         tile("a", "have"),
@@ -64,14 +64,14 @@ describe("the board's line", () => {
     ]);
     /* the route's course is the next stop, with what it leaves open; never one skill at a time */
     expect(p.next).toMatchObject({ kind: "course", course: { id: "c1" }, open: p.learn });
-    expect(line(p)).toBe("START HAVE1 A HERE courses3 b c d next learn2 e f job");
+    expect(line(p)).toBe("START HAVE1 A COURSES3 B C D HERE next learn2 e f job");
   });
 
   it("no course yet: the next stop is one course for all the gaps, the partly-had ones included", () => {
     const p = boardPath([tile("a", "have"), tile("b", "some"), tile("c", "learn"), tile("d", "learn")], []);
     expect(p.some.map((x) => x.key)).toEqual(["b"]);
     expect(p.next).toEqual({ kind: "find", gaps: [p.some[0], ...p.learn] });
-    expect(line(p)).toBe("START HAVE1 A SOME1 B HERE next learn2 c d job");
+    expect(line(p)).toBe("START HAVE1 A HERE some1 b next learn2 c d job");
   });
 
   it("a route that needs no course: the next stop is applying", () => {
@@ -88,13 +88,13 @@ describe("the board's line", () => {
   it("a course saved for the job that covers none of its skills is still listed", () => {
     const p = boardPath([tile("a", "learn")], [{ id: "c9", name: "Course c9" }]);
     expect(p.courses).toEqual([{ id: "c9", name: "Course c9", skills: [] }]);
-    expect(line(p)).toBe("START HERE courses0 next learn1 a job");
+    expect(line(p)).toBe("START COURSES0 HERE next learn1 a job");
   });
 
-  it("everything covered: the next stop is starting the first course, after the courses", () => {
+  it("everything covered: the next stop is starting the first course, after where you are", () => {
     const p = boardPath([tile("a", "have"), tile("b", "course", "c1")], [{ id: "c1", name: "Course c1" }]);
     expect(p.next).toMatchObject({ kind: "course", course: { id: "c1" } });
-    expect(line(p)).toBe("START HAVE1 A HERE courses1 b next job");
+    expect(line(p)).toBe("START HAVE1 A COURSES1 B HERE next job");
   });
 
   it("everything had: arrived, the whole line lit, next is job ads", () => {

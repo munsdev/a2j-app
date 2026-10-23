@@ -32,6 +32,8 @@ export function BoardCard({ actions = true }: { actions?: boolean }) {
   const tr = useT(routeStrings);
   const route = currentRoute(d);
   const rc = g ? courseForJob(d, g.id) : null;
+  /* the count: skills you have plus the ones the route's course covers */
+  const done = c ? c.have + c.course : 0;
   const shell = "flex flex-col gap-4 rounded-panel bg-surface p-[18px] shadow-card sm:px-6 sm:pb-6";
   if (!g) {
     return (
@@ -77,9 +79,9 @@ export function BoardCard({ actions = true }: { actions?: boolean }) {
         {c ? (
           c.total > 0 && (
             <p className="flex-none font-display font-bold whitespace-nowrap text-ink-2 tabular-nums">
-              <span className="sr-only">{t("c_skills", { h: c.have, t: c.total })}</span>
+              <span className="sr-only">{t("c_skills", { h: done, t: c.total })}</span>
               <span aria-hidden="true">
-                {t("b_stop")} <b className="text-display leading-none font-extrabold text-ink">{c.have}</b>
+                {t("b_stop")} <b className="text-display leading-none font-extrabold text-ink">{done}</b>
                 <span className="text-title"> / {c.total}</span>
               </span>
             </p>

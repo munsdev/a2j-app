@@ -83,7 +83,7 @@ export type LineRow = LineItem & {
 };
 
 /** The line from You to the job, one row per stop, in reading order: You; the skills you have and the ones
- *  you have some of; where you are; the skills your course covers; the next stop (one course for the gaps,
+ *  your course covers; where you are; the ones you have some of; the next stop (one course for the gaps,
  *  your course, or applying); the rest still to learn; the job (with every skill had, the next stop is job
  *  ads, just before it). Long groups show
  *  the first `cap` stops and a "+N more" row (open = the groups shown in full). The line is lit up to
@@ -99,15 +99,16 @@ export function boardLine(p: BoardPath, cap = 8, open: ReadonlySet<Zone> = new S
     rows.push({ kind: "zone", zone: "have", n: p.have.length });
     group("have", p.have);
   }
-  if (p.some.length) {
-    rows.push({ kind: "zone", zone: "some", n: p.some.length });
-    group("some", p.some);
-  }
-  rows.push({ kind: "here" });
-  const here = rows.length - 1;
+  /* what your course covers counts as had, like a perk: before where you are */
   if (p.courses.length) {
     rows.push({ kind: "zone", zone: "courses", n: p.course.length });
     group("courses", p.course);
+  }
+  rows.push({ kind: "here" });
+  const here = rows.length - 1;
+  if (p.some.length) {
+    rows.push({ kind: "zone", zone: "some", n: p.some.length });
+    group("some", p.some);
   }
   if (p.next.kind !== "none") rows.push({ kind: "next" });
   if (p.learn.length) {
